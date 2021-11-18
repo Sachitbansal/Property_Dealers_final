@@ -33,6 +33,9 @@ class _AddState extends State<Add> {
   late String name = 'None';
   late String number = 'None';
 
+  late double minValue = 0;
+  late double maxValue = 1000.0;
+
   final landSizeController = TextEditingController();
   final keywordsController = TextEditingController();
   final addressController = TextEditingController();
@@ -67,7 +70,8 @@ class _AddState extends State<Add> {
             'address': address,
             'name': name,
             'number': number,
-            'types': type
+            'types': type,
+            'Price Range': [minValue, maxValue]
           })
           .then(
             (value) => ScaffoldMessenger.of(context).showSnackBar(
@@ -191,7 +195,7 @@ class _AddState extends State<Add> {
                 values: _currentRangeValues,
                 min: 0,
                 max: 100,
-                divisions: 5,
+                divisions: 10,
                 labels: RangeLabels(
                   _currentRangeValues.start.round().toString(),
                   _currentRangeValues.end.round().toString(),
@@ -199,6 +203,8 @@ class _AddState extends State<Add> {
                 onChanged: (RangeValues values) {
                   setState(() {
                     _currentRangeValues = values;
+                    minValue = _currentRangeValues.start;
+                    maxValue = _currentRangeValues.end;
                   });
                 },
               ),
