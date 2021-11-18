@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/update_prooperty.dart';
 import 'add_property.dart';
 import 'loginpage.dart';
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AddStudentPage(
+            builder: (context) => Add(
               collection: widget.uid.toString(),
             ),
           ),
@@ -246,15 +247,21 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       TableCell(
                                         child: Center(
-                                            child: Text(storedocs[i]['name'],
-                                                style: const TextStyle(
-                                                    fontSize: 18.0))),
+                                          child: Text(
+                                            storedocs[i]['buyRent'],
+                                            style:
+                                                const TextStyle(fontSize: 18.0),
+                                          ),
+                                        ),
                                       ),
                                       TableCell(
                                         child: Center(
-                                            child: Text(storedocs[i]['email'],
-                                                style: const TextStyle(
-                                                    fontSize: 18.0))),
+                                          child: Text(
+                                            storedocs[i]['bedRooms'],
+                                            style:
+                                                const TextStyle(fontSize: 18.0),
+                                          ),
+                                        ),
                                       ),
                                       TableCell(
                                         child: Row(

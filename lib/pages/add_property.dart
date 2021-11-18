@@ -15,6 +15,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   var name = "";
   var email = "";
   var password = "";
+
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final nameController = TextEditingController();
@@ -35,17 +36,29 @@ class _AddStudentPageState extends State<AddStudentPage> {
     emailController.clear();
     passwordController.clear();
   }
+
   @override
   Widget build(BuildContext context) {
-
     CollectionReference students =
-    FirebaseFirestore.instance.collection(widget.collection.toString());
+        FirebaseFirestore.instance.collection(widget.collection.toString());
 
     Future<void> addUser() {
       return students
           .add({'name': name, 'email': email, 'password': password})
-          .then((value) => print('User Added'))
-          .catchError((error) => print('Failed to Add user: $error'));
+          .then(
+            (value) => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Added Successfully'),
+              ),
+            ),
+          )
+          .catchError(
+            (error) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed: {$error}'),
+              ),
+            ),
+          );
     }
 
     return Scaffold(
@@ -67,7 +80,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     labelStyle: TextStyle(fontSize: 20.0),
                     border: OutlineInputBorder(),
                     errorStyle:
-                    TextStyle(color: Colors.redAccent, fontSize: 15),
+                        TextStyle(color: Colors.redAccent, fontSize: 15),
                   ),
                   controller: nameController,
                   validator: (value) {
@@ -87,7 +100,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     labelStyle: TextStyle(fontSize: 20.0),
                     border: OutlineInputBorder(),
                     errorStyle:
-                    TextStyle(color: Colors.redAccent, fontSize: 15),
+                        TextStyle(color: Colors.redAccent, fontSize: 15),
                   ),
                   controller: emailController,
                   validator: (value) {
@@ -110,7 +123,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     labelStyle: TextStyle(fontSize: 20.0),
                     border: OutlineInputBorder(),
                     errorStyle:
-                    TextStyle(color: Colors.redAccent, fontSize: 15),
+                        TextStyle(color: Colors.redAccent, fontSize: 15),
                   ),
                   controller: passwordController,
                   validator: (value) {

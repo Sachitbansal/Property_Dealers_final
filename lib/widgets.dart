@@ -267,3 +267,84 @@ class InfoWidget extends StatelessWidget {
     );
   }
 }
+
+class ReusableCard extends StatelessWidget {
+  const ReusableCard({required this.colour, required this.cardChild, required this.onPress});
+
+  final Color colour;
+  final Widget cardChild;
+  final void Function() onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPress,
+      child: Container(
+        child: cardChild,
+        margin: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          color: colour,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+    );
+  }
+}
+
+class PropertyType extends StatelessWidget {
+  const PropertyType({required this.name, required this.icon, required this.onTap, required this.color});
+
+  final String name;
+  final IconData icon;
+  final void Function() onTap;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            child: Icon(icon),
+            backgroundColor: color,
+          ),
+          Text(name)
+        ],
+      ),
+    );
+  }
+}
+
+class Animal {
+  final int id;
+  final String name;
+
+  Animal({
+    required this.id,
+    required this.name,
+  });
+}
+
+class Select extends StatelessWidget {
+
+  final MaterialStateProperty<Color> bgColor;
+  final void Function() onPressed;
+  final String text;
+
+  const Select({required this.bgColor, required this.onPressed, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        style: ButtonStyle(
+            backgroundColor: bgColor
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 18),
+        ),
+        onPressed: onPressed
+    );
+  }
+}
