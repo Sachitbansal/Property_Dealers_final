@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets.dart';
 
 class Add extends StatefulWidget {
-  const Add({Key? key, this.collection}) : super(key: key);
+  const Add({Key? key, required this.collection}) : super(key: key);
   final String? collection;
 
   @override
@@ -30,6 +30,7 @@ class _AddState extends State<Add> {
   late String landSize = 'None';
   late String keywords = 'None';
   late String address = 'None';
+  late String title = 'None';
   late String name = 'None';
   late String number = 'None';
 
@@ -41,6 +42,7 @@ class _AddState extends State<Add> {
   final addressController = TextEditingController();
   final nameController = TextEditingController();
   final numberController = TextEditingController();
+  final titleController = TextEditingController();
 
   @override
   void dispose() {
@@ -49,6 +51,7 @@ class _AddState extends State<Add> {
     keywordsController.dispose();
     addressController.dispose();
     numberController.dispose();
+    titleController.dispose();
     super.dispose();
   }
 
@@ -58,35 +61,27 @@ class _AddState extends State<Add> {
         FirebaseFirestore.instance.collection(widget.collection.toString());
 
     Future<void> addUser() {
-      return students
-          .add({
-            'buyRent': buyRent,
-            'bedRooms': bedRooms,
-            'bathRooms': bathRooms,
-            'sizeUnit': sizeUnit,
-            'construction': construction,
-            'landSize': landSize,
-            'keywords': keywords,
-            'address': address,
-            'name': name,
-            'number': number,
-            'types': type,
-            'Price Range': [minValue, maxValue]
-          })
-          .then(
-            (value) => ScaffoldMessenger.of(context).showSnackBar(
+      return students.add({
+        'buyRent': buyRent,
+        'bedRooms': bedRooms,
+        'bathRooms': bathRooms,
+        'sizeUnit': sizeUnit,
+        'construction': construction,
+        'landSize': landSize,
+        'keywords': keywords,
+        'address': address,
+        'name': name,
+        'number': number,
+        'types': type,
+        'Price Range': [minValue, maxValue],
+        'title': title,
+      }).then((value) => {
+            ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Added Successfully'),
               ),
             ),
-          )
-          .catchError(
-            (error) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Failed: {$error}'),
-              ),
-            ),
-          );
+          });
     }
 
     return Scaffold(
@@ -125,6 +120,17 @@ class _AddState extends State<Add> {
                         : kInactiveCardColour,
                   ),
                 ],
+              ),
+              const Text('Title'),
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'Title'),
+                controller: titleController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter a Title';
+                  }
+                  return null;
+                },
               ),
               const Text('Property Type'),
               Row(
@@ -477,6 +483,7 @@ class _AddState extends State<Add> {
                       address = addressController.text;
                       name = nameController.text;
                       number = numberController.text;
+                      title = titleController.text;
                       addUser();
                     });
                   }

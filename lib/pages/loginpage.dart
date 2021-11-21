@@ -1,15 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/pages/correct_signup.dart';
 import 'package:untitled/pages/reset_pass.dart';
 import '../widgets.dart';
-import 'home_page.dart';
+import 'home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -46,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(
+            builder: (context) => Home(
               uid: FirebaseAuth.instance.currentUser?.uid,
             ),
           ),
@@ -252,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePage(
+                              builder: (context) => Home(
                                 uid: FirebaseAuth.instance.currentUser?.uid,
                               ),
                             ),

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:untitled/pages/home_page.dart';
+import 'package:untitled/pages/home.dart';
 import 'package:untitled/pages/loginpage.dart';
 
 void main() async {
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             home: FirebaseAuth.instance.currentUser == null
                 ? const LoginScreen()
-                : HomePage(
+                : Home(
                     uid: FirebaseAuth.instance.currentUser?.uid,
                   ),
           );
