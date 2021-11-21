@@ -21,8 +21,6 @@ class _HouseDetailsState extends State<HouseDetails> {
     "https://image.freepik.com/free-photo/charming-yellow-house-with-wooden-windows-green-grassy-garden_181624-8074.jpg"
   ];
 
-  final bool _isPlaying = false;
-
   late CarouselSliderController _sliderController;
 
   @override

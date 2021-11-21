@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/update_prooperty.dart';
 import 'home.dart';
-import 'loginpage.dart';
+import 'loginPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -118,7 +118,6 @@ class _HomePageState extends State<HomePage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    print('Something went Wrong');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Something Went Wrong.'),

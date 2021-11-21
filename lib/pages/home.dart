@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/pages/add.dart';
 import 'filter.dart';
 import 'house_details.dart';
-import 'loginpage.dart';
+import 'loginPage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.uid}) : super(key: key);
@@ -29,13 +29,6 @@ class _HomeState extends State<Home> {
     final Stream<QuerySnapshot> studentsStream = FirebaseFirestore.instance
         .collection(widget.uid.toString())
         .snapshots();
-
-    CollectionReference students =
-        FirebaseFirestore.instance.collection(widget.uid.toString());
-
-    Future<void> deleteUser(id) {
-      return students.doc(id).delete();
-    }
 
     void showBottomSheet() {
       showModalBottomSheet(
@@ -165,7 +158,6 @@ class _HomeState extends State<Home> {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
-                  print('Something went Wrong');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Something Went Wrong.'),
