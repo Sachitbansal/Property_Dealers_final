@@ -34,9 +34,9 @@ class _SearchState extends State<Search> {
 
     final data = noticeCollection
         .where("types", isEqualTo: widget.propertyType)
-        .where("bedRooms", isGreaterThanOrEqualTo : widget.rooms)
-        // .where("buyRent", arrayContainsAny: widget.buyOrRent)
-        // .where("bathRooms", isEqualTo: widget.bathrooms)
+        .where("buyRent", arrayContainsAny: [widget.buyOrRent])
+        .where("bedRooms", isGreaterThanOrEqualTo: widget.rooms)
+        .where("bathRooms", isEqualTo: widget.bathrooms)
         .snapshots();
 
     return Scaffold(
@@ -50,32 +50,37 @@ class _SearchState extends State<Search> {
           child: Column(
             children: [
               TextFormField(),
-              StreamBuilder<QuerySnapshot>(
-                  stream: data,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
+              SizedBox(
+                height: 200,
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: data,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading');
+                      }
 
-                    final List storedocs = [];
-                    snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map a = document.data() as Map<String, dynamic>;
-                      storedocs.add(a);
-                      a['id'] = document.id;
-                    }).toList();
+                      final data = snapshot.requireData;
 
-                    return Column(
-                      children: [
-                        for (var i = 0; i < storedocs.length; i++) ...[
-                          _nearbyHomes(
-                            "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
-                            storedocs[i]['title'],
-                            storedocs[i]['address'],
-                            storedocs[i]['bedRooms'],
-                            storedocs[i]['bathRooms'],
-                          ),
-                        ]
-                      ],
-                    );
-                  })
+                      return ListView.builder(
+                          reverse: true,
+                          itemCount: data.size,
+                          itemBuilder: (context, index) {
+                            return Column(children: [
+                              _nearbyHomes(
+                                "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
+                                '${data.docs[index]['title']}',
+                                '${data.docs[index]['address']}',
+                                '${data.docs[index]['bedRooms']}',
+                                '${data.docs[index]['bathRooms']}',
+                              ),
+                            ]);
+                          });
+                    }),
+              ),
             ],
           ),
         ),

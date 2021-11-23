@@ -332,7 +332,7 @@ class _FilterState extends State<Filter> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Demo(
+                  builder: (context) => Search(
                     uid: widget.uid.toString(),
                     propertyType: propertyType,
                     rooms: rooms,

@@ -32,14 +32,14 @@ class _DemoState extends State<Demo> {
         .where("types", isEqualTo: widget.propertyType)
         .where("buyRent", arrayContainsAny: [widget.buyOrRent])
         .where("bedRooms", isGreaterThanOrEqualTo: widget.rooms)
-        .where("bathRooms", isEqualTo: widget.bathrooms)
+        .where("bathRooms", isLessThanOrEqualTo: widget.bathrooms)
         .snapshots();
 
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
-            height: MediaQuery.of(context).size.height - 88 - 61,
+            height: 200,
             child: StreamBuilder<QuerySnapshot>(
               stream: data,
               builder: (BuildContext context,
