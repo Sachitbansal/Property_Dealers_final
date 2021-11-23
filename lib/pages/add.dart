@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets.dart';
+import 'dart:io';
 
 class Add extends StatefulWidget {
   const Add({Key? key, required this.collection}) : super(key: key);
@@ -18,11 +21,42 @@ class _AddState extends State<Add> {
 
   final _formKey = GlobalKey<FormState>();
 
+  File? _image;
+  final imagePicker = ImagePicker();
+  String? downloadUrl = 'https://miro.medium.com/max/800/1*UL9RWkTUtJlyHW7kGm20hQ.png';
 
+  Future imagePickerMethod() async {
+    final pick = await imagePicker.pickImage(source: ImageSource.gallery);
+    setState(
+      () {
+        if (pick != null) {
+          _image = File(pick.path);
+          uploadImage();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No file Selected'),
+            ),
+          );
+        }
+      },
+    );
+  }
 
+  Future uploadImage() async {
+    final postID = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('${widget.collection}/images')
+        .child('post_$postID');
+    await ref.putFile(_image!);
+    downloadUrl = await ref.getDownloadURL();
+    print('DownloadURL');
+    print(downloadUrl);
+  }
 
   late List buyRent = ['', 'Any'];
-  late List bedRooms = ['','None'];
+  late List bedRooms = ['', 'None'];
   late List bathRooms = ['', 'None'];
   late String sizeUnit = 'None';
   late String construction = 'None';
@@ -96,6 +130,10 @@ class _AddState extends State<Add> {
           key: _formKey,
           child: Column(
             children: [
+              TextButton(
+                child: const Text('Image Uthaa'),
+                onPressed: imagePickerMethod,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -106,8 +144,8 @@ class _AddState extends State<Add> {
                       });
                     },
                     bgColor: buyRent[0] == 'Buy'
-                          ? kActiveCardColour
-                          : kInactiveCardColour,
+                        ? kActiveCardColour
+                        : kInactiveCardColour,
                     text: 'Buy',
                   ),
                   Select(
