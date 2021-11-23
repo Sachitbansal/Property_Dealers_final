@@ -25,7 +25,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     final Stream<QuerySnapshot> studentsStream = FirebaseFirestore.instance
         .collection(widget.uid.toString())
         .snapshots();
@@ -111,7 +110,10 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
-                      icon: Icon(Icons.search, size: ScreenUtil().setHeight(24.0),),
+                      icon: Icon(
+                        Icons.search,
+                        size: ScreenUtil().setHeight(24.0),
+                      ),
                       color: Colors.black,
                       onPressed: () {
                         logout();
@@ -146,7 +148,7 @@ class _HomeState extends State<Home> {
                       fontSize: ScreenUtil().setSp(12.0),
                     ),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     showBottomSheet();
                   },
                 )
@@ -210,7 +212,9 @@ class _HomeState extends State<Home> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Add(collection: widget.uid.toString(),),
+                builder: (context) => Add(
+                  collection: widget.uid.toString(),
+                ),
               ),
             );
           },

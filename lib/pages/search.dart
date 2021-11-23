@@ -34,9 +34,9 @@ class _SearchState extends State<Search> {
 
     final data = noticeCollection
         .where("types", isEqualTo: widget.propertyType)
-        .where("bedRooms", isEqualTo: widget.rooms)
-        .where("buyRent", isEqualTo: widget.buyOrRent)
-        .where("bathRooms", isEqualTo: widget.bathrooms)
+        .where("bedRooms", isGreaterThanOrEqualTo : widget.rooms)
+        // .where("buyRent", arrayContainsAny: widget.buyOrRent)
+        // .where("bathRooms", isEqualTo: widget.bathrooms)
         .snapshots();
 
     return Scaffold(
@@ -54,18 +54,6 @@ class _SearchState extends State<Search> {
                   stream: data,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Something Went Wrong.'),
-                        ),
-                      );
-                    }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
 
                     final List storedocs = [];
                     snapshot.data!.docs.map((DocumentSnapshot document) {

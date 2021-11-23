@@ -16,13 +16,11 @@ class _AddState extends State<Add> {
   MaterialStateProperty<Color> kInactiveCardColour =
       MaterialStateProperty.all<Color>(Colors.transparent);
 
-  RangeValues _currentRangeValues = const RangeValues(0, 100);
-
   final _formKey = GlobalKey<FormState>();
 
-  late String buyRent = 'None';
-  late String bedRooms = 'None';
-  late String bathRooms = 'None';
+  late List buyRent = ['', 'Any'];
+  late List bedRooms = ['','None'];
+  late List bathRooms = ['', 'None'];
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String type = 'None';
@@ -34,8 +32,7 @@ class _AddState extends State<Add> {
   late String name = 'None';
   late String number = 'None';
 
-  late double minValue = 0;
-  late double maxValue = 1000.0;
+  late String price = 'None';
 
   final landSizeController = TextEditingController();
   final keywordsController = TextEditingController();
@@ -43,6 +40,7 @@ class _AddState extends State<Add> {
   final nameController = TextEditingController();
   final numberController = TextEditingController();
   final titleController = TextEditingController();
+  final priceController = TextEditingController();
 
   @override
   void dispose() {
@@ -52,6 +50,7 @@ class _AddState extends State<Add> {
     addressController.dispose();
     numberController.dispose();
     titleController.dispose();
+    priceController.dispose();
     super.dispose();
   }
 
@@ -73,7 +72,7 @@ class _AddState extends State<Add> {
         'name': name,
         'number': number,
         'types': type,
-        'Price Range': [minValue, maxValue],
+        'Price': price,
         'title': title,
       }).then((value) => {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -100,22 +99,22 @@ class _AddState extends State<Add> {
                   Select(
                     onPressed: () {
                       setState(() {
-                        buyRent = 'Buy';
+                        buyRent[0] = 'Buy';
                       });
                     },
-                    bgColor: buyRent == 'Buy'
-                        ? kActiveCardColour
-                        : kInactiveCardColour,
+                    bgColor: buyRent[0] == 'Buy'
+                          ? kActiveCardColour
+                          : kInactiveCardColour,
                     text: 'Buy',
                   ),
                   Select(
                     text: 'Rent',
                     onPressed: () {
                       setState(() {
-                        buyRent = 'Rent';
+                        buyRent[0] = 'Rent';
                       });
                     },
-                    bgColor: buyRent == 'Rent'
+                    bgColor: buyRent[0] == 'Rent'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                   ),
@@ -147,31 +146,27 @@ class _AddState extends State<Add> {
                     },
                   ),
                   Select(
-                    text: 'Apartment',
-                    bgColor: type == 'Apartment'
+                    text: 'Flat',
+                    bgColor: type == 'Flat'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        type = 'Apartment';
+                        type = 'Flat';
                       });
                     },
                   ),
                   Select(
-                    text: 'Villa',
-                    bgColor: type == 'Villa'
+                    text: 'Room',
+                    bgColor: type == 'Room'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        type = 'Villa';
+                        type = 'Room';
                       });
                     },
                   ),
-                ],
-              ),
-              Row(
-                children: [
                   Select(
                     text: 'Land',
                     bgColor: type == 'Land'
@@ -183,35 +178,17 @@ class _AddState extends State<Add> {
                       });
                     },
                   ),
-                  Select(
-                    text: 'Blocks of Units',
-                    bgColor: type == 'Blocks of Units'
-                        ? kActiveCardColour
-                        : kInactiveCardColour,
-                    onPressed: () {
-                      setState(() {
-                        type = 'Blocks of Units';
-                      });
-                    },
-                  ),
                 ],
               ),
               const Text('Price Range'),
-              RangeSlider(
-                values: _currentRangeValues,
-                min: 0,
-                max: 100,
-                divisions: 10,
-                labels: RangeLabels(
-                  _currentRangeValues.start.round().toString(),
-                  _currentRangeValues.end.round().toString(),
-                ),
-                onChanged: (RangeValues values) {
-                  setState(() {
-                    _currentRangeValues = values;
-                    minValue = _currentRangeValues.start;
-                    maxValue = _currentRangeValues.end;
-                  });
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'e.g 100000'),
+                controller: priceController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter a desired price';
+                  }
+                  return null;
                 },
               ),
               const Text('Bedrooms'),
@@ -220,56 +197,56 @@ class _AddState extends State<Add> {
                 children: [
                   Select(
                     text: '1',
-                    bgColor: bedRooms == '1'
+                    bgColor: bedRooms[0] == '1'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bedRooms = '1';
+                        bedRooms[0] = '1';
                       });
                     },
                   ),
                   Select(
                     text: '2',
-                    bgColor: bedRooms == '2'
+                    bgColor: bedRooms[0] == '2'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bedRooms = '2';
+                        bedRooms[0] = '2';
                       });
                     },
                   ),
                   Select(
                     text: '3',
-                    bgColor: bedRooms == '3'
+                    bgColor: bedRooms[0] == '3'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bedRooms = '3';
+                        bedRooms[0] = '3';
                       });
                     },
                   ),
                   Select(
                     text: '4',
-                    bgColor: bedRooms == '4'
+                    bgColor: bedRooms[0] == '4'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bedRooms = '4';
+                        bedRooms[0] = '4';
                       });
                     },
                   ),
                   Select(
                     text: '4+',
-                    bgColor: bedRooms == '4+'
+                    bgColor: bedRooms[0] == '4+'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bedRooms = '4+';
+                        bedRooms[0] = '4+';
                       });
                     },
                   ),
@@ -281,56 +258,56 @@ class _AddState extends State<Add> {
                 children: [
                   Select(
                     text: '1',
-                    bgColor: bathRooms == '1'
+                    bgColor: bathRooms[0] == '1'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bathRooms = '1';
+                        bathRooms[0] = '1';
                       });
                     },
                   ),
                   Select(
                     text: '2',
-                    bgColor: bathRooms == '2'
+                    bgColor: bathRooms[0] == '2'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bathRooms = '2';
+                        bathRooms[0] = '2';
                       });
                     },
                   ),
                   Select(
                     text: '3',
-                    bgColor: bathRooms == '3'
+                    bgColor: bathRooms[0] == '3'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bathRooms = '3';
+                        bathRooms[0] = '3';
                       });
                     },
                   ),
                   Select(
                     text: '4',
-                    bgColor: bathRooms == '4'
+                    bgColor: bathRooms[0] == '4'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bathRooms = '4';
+                        bathRooms[0] = '4';
                       });
                     },
                   ),
                   Select(
                     text: '4+',
-                    bgColor: bathRooms == '4+'
+                    bgColor: bathRooms[0] == '4+'
                         ? kActiveCardColour
                         : kInactiveCardColour,
                     onPressed: () {
                       setState(() {
-                        bathRooms = '4+';
+                        bathRooms[0] = '4+';
                       });
                     },
                   ),
@@ -342,7 +319,7 @@ class _AddState extends State<Add> {
                 controller: landSizeController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please Enter Email';
+                    return 'Please Enter Minimum Land Size';
                   }
                   return null;
                 },
@@ -477,12 +454,12 @@ class _AddState extends State<Add> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     setState(() {
-                      name = nameController.text;
                       landSize = landSizeController.text;
                       keywords = keywordsController.text;
                       address = addressController.text;
                       name = nameController.text;
                       number = numberController.text;
+                      price = priceController.text;
                       title = titleController.text;
                       addUser();
                     });

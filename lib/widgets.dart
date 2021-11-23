@@ -353,14 +353,13 @@ class Select extends StatelessWidget {
   }
 }
 
-class PropertyTypeSelection extends StatelessWidget {
-  const PropertyTypeSelection(
+class ButtonWithTextAndIcon extends StatelessWidget {
+  const ButtonWithTextAndIcon(
       {Key? key,
       required this.onTap,
       required this.bgColor,
       required this.textIconColor,
       required this.title,
-      required this.width,
       required this.icon})
       : super(key: key);
 
@@ -369,14 +368,13 @@ class PropertyTypeSelection extends StatelessWidget {
   final Color? textIconColor;
   final String title;
   final IconData icon;
-  final double width;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: width,
+        // width: width,
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(15.0)),
         child: Padding(
@@ -424,6 +422,51 @@ class FilterTitle extends StatelessWidget {
       style: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+class ButtonWithText extends StatelessWidget {
+  const ButtonWithText(
+      {Key? key,
+      required this.onTap,
+      required this.size,
+      required this.title,
+      required this.bgColor,
+      required this.fontColor})
+      : super(key: key);
+  final void Function() onTap;
+  final double? size;
+  final String title;
+  final Color? bgColor, fontColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ScreenUtil().setWidth(15.0),
+            vertical: ScreenUtil().setHeight(15.0),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: GoogleFonts.play(
+                color: fontColor,
+                fontWeight: FontWeight.w600,
+                fontSize: ScreenUtil().setSp(14.0),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

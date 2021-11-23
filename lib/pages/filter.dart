@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/pages/search.dart';
+import 'package:untitled/pages/searchdemo.dart';
 import '../widgets.dart';
 
 class Filter extends StatefulWidget {
@@ -19,7 +19,7 @@ class _FilterState extends State<Filter> {
   String propertyType = 'Flat';
   String rooms = 'Any';
   String bathrooms = 'Any';
-  String buyOrRent = 'Buy';
+  String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
   double rangeLabelEnd = 1000.0;
 
@@ -37,56 +37,77 @@ class _FilterState extends State<Filter> {
           const SizedBox(
             height: 10,
           ),
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
-                    EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                PropertyTypeSelection(
-                  width: size.width * .20,
-                  textIconColor:
-                      propertyType == 'Flat' ? Colors.white : kActiveColor,
-                  title: 'Flat',
-                  onTap: () {
-                    setState(() {
-                      propertyType = 'Flat';
-                    });
-                  },
-                  bgColor:
-                      propertyType == 'Flat' ? kActiveColor : kInActiveColor,
-                  icon: Icons.apartment,
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(20.0)) +
+                  EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
+              child: SizedBox(
+                width: size.width * 1.05,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ButtonWithTextAndIcon(
+                      textIconColor:
+                          propertyType == 'Flat' ? Colors.white : kActiveColor,
+                      title: 'Flat',
+                      onTap: () {
+                        setState(() {
+                          propertyType = 'Flat';
+                        });
+                      },
+                      bgColor: propertyType == 'Flat'
+                          ? kActiveColor
+                          : kInActiveColor,
+                      icon: Icons.apartment,
+                    ),
+                    ButtonWithTextAndIcon(
+                      textIconColor:
+                          propertyType == 'House' ? Colors.white : kActiveColor,
+                      title: 'House',
+                      onTap: () {
+                        setState(() {
+                          propertyType = 'House';
+                        });
+                      },
+                      bgColor: propertyType == 'House'
+                          ? kActiveColor
+                          : kInActiveColor,
+                      icon: Icons.house,
+                    ),
+                    ButtonWithTextAndIcon(
+                      textIconColor:
+                          propertyType == 'Room' ? Colors.white : kActiveColor,
+                      title: 'Room',
+                      onTap: () {
+                        setState(() {
+                          propertyType = 'Room';
+                        });
+                      },
+                      bgColor: propertyType == 'Room'
+                          ? kActiveColor
+                          : kInActiveColor,
+                      icon: Icons.meeting_room,
+                    ),
+                    ButtonWithTextAndIcon(
+                      textIconColor:
+                          propertyType == 'Land' ? Colors.white : kActiveColor,
+                      title: 'Land',
+                      onTap: () {
+                        setState(() {
+                          propertyType = 'Land';
+                        });
+                      },
+                      bgColor: propertyType == 'Land'
+                          ? kActiveColor
+                          : kInActiveColor,
+                      icon: Icons.meeting_room,
+                    ),
+                  ],
                 ),
-                PropertyTypeSelection(
-                  width: size.width * .25,
-                  textIconColor:
-                      propertyType == 'House' ? Colors.white : kActiveColor,
-                  title: 'House',
-                  onTap: () {
-                    setState(() {
-                      propertyType = 'House';
-                    });
-                  },
-                  bgColor:
-                      propertyType == 'House' ? kActiveColor : kInActiveColor,
-                  icon: Icons.house,
-                ),
-                PropertyTypeSelection(
-                  width: size.width * .20,
-                  textIconColor:
-                      propertyType == 'Land' ? Colors.white : kActiveColor,
-                  title: 'Land',
-                  onTap: () {
-                    setState(() {
-                      propertyType = 'Land';
-                    });
-                  },
-                  bgColor:
-                      propertyType == 'Land' ? kActiveColor : kInActiveColor,
-                  icon: Icons.meeting_room,
-                ),
-              ],
+              ),
             ),
           ),
           const FilterTitle(
@@ -102,70 +123,38 @@ class _FilterState extends State<Filter> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
+                ButtonWithText(
+                  onTap: () {
+                    setState(() {
+                      buyOrRent = 'Any';
+                    });
+                  },
+                  size: size.width * .20,
+                  title: 'Any',
+                  bgColor: buyOrRent == 'Any' ? kActiveColor : kInActiveColor,
+                  fontColor: buyOrRent == 'Any' ? Colors.white : kActiveColor,
+                ),
+                ButtonWithText(
                   onTap: () {
                     setState(() {
                       buyOrRent = 'Buy';
                     });
                   },
-                  child: Container(
-                    width: size.width * .35,
-                    decoration: BoxDecoration(
-                      color: buyOrRent == 'Buy' ? kActiveColor : kInActiveColor,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setWidth(15.0),
-                        vertical: ScreenUtil().setHeight(15.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Buy',
-                          style: GoogleFonts.play(
-                            color: buyOrRent == 'Buy'
-                                ? Colors.white
-                                : kActiveColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: ScreenUtil().setSp(14.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  size: size.width * .20,
+                  title: 'Buy',
+                  bgColor: buyOrRent == 'Buy' ? kActiveColor : kInActiveColor,
+                  fontColor: buyOrRent == 'Buy' ? Colors.white : kActiveColor,
                 ),
-                GestureDetector(
+                ButtonWithText(
                   onTap: () {
                     setState(() {
                       buyOrRent = 'Rent';
                     });
                   },
-                  child: Container(
-                    width: size.width * .35,
-                    decoration: BoxDecoration(
-                      color:
-                          buyOrRent == 'Rent' ? kActiveColor : kInActiveColor,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setWidth(15.0),
-                        vertical: ScreenUtil().setHeight(15.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Rent',
-                          style: GoogleFonts.play(
-                            color: buyOrRent == 'Rent'
-                                ? Colors.white
-                                : kActiveColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: ScreenUtil().setSp(14.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  size: size.width * .20,
+                  title: 'Rent',
+                  bgColor: buyOrRent == 'Rent' ? kActiveColor : kInActiveColor,
+                  fontColor: buyOrRent == 'Rent' ? Colors.white : kActiveColor,
                 ),
               ],
             ),
@@ -228,16 +217,6 @@ class _FilterState extends State<Filter> {
               buildOption(
                 onTap: () {
                   setState(() {
-                    rooms = 'Any';
-                  });
-                },
-                text: "Any",
-                textColor: rooms == 'Any' ? Colors.white : kActiveColor,
-                bgColor: rooms == 'Any' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                onTap: () {
-                  setState(() {
                     rooms = '1';
                   });
                 },
@@ -265,6 +244,16 @@ class _FilterState extends State<Filter> {
                 textColor: rooms == '3' ? Colors.white : kActiveColor,
                 bgColor: rooms == '3' ? kActiveColor : kInActiveColor,
               ),
+              buildOption(
+                onTap: () {
+                  setState(() {
+                    rooms = '1234';
+                  });
+                },
+                text: "Any",
+                textColor: rooms == '1234' ? Colors.white : kActiveColor,
+                bgColor: rooms == '1234' ? kActiveColor : kInActiveColor,
+              ),
             ],
           ),
           const SizedBox(
@@ -279,16 +268,6 @@ class _FilterState extends State<Filter> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    bathrooms = 'Any';
-                  });
-                },
-                text: "Any",
-                textColor: bathrooms == 'Any' ? Colors.white : kActiveColor,
-                bgColor: bathrooms == 'Any' ? kActiveColor : kInActiveColor,
-              ),
               buildOption(
                 onTap: () {
                   setState(() {
@@ -319,6 +298,16 @@ class _FilterState extends State<Filter> {
                 text: "3",
                 bgColor: bathrooms == '3' ? kActiveColor : kInActiveColor,
               ),
+              buildOption(
+                textColor: bathrooms == '4' ? Colors.white : kActiveColor,
+                onTap: () {
+                  setState(() {
+                    bathrooms = '4';
+                  });
+                },
+                text: "4",
+                bgColor: bathrooms == '4' ? kActiveColor : kInActiveColor,
+              ),
             ],
           ),
           const SizedBox(
@@ -343,7 +332,7 @@ class _FilterState extends State<Filter> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Search(
+                  builder: (context) => Demo(
                     uid: widget.uid.toString(),
                     propertyType: propertyType,
                     rooms: rooms,
