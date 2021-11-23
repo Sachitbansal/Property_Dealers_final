@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../widgets.dart';
 import 'house_details.dart';
 
 class Search extends StatefulWidget {
@@ -66,128 +64,47 @@ class _SearchState extends State<Search> {
                       final data = snapshot.requireData;
 
                       return ListView.builder(
-                          reverse: true,
-                          itemCount: data.size,
-                          itemBuilder: (context, index) {
-                            return Column(children: [
-                              _nearbyHomes(
-                                "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
-                                '${data.docs[index]['title']}',
-                                '${data.docs[index]['address']}',
-                                '${data.docs[index]['bedRooms']}',
-                                '${data.docs[index]['bathRooms']}',
+                        reverse: true,
+                        itemCount: data.size,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              NearbyHomes(
+                                asset:
+                                    "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
+                                name: data.docs[index]['title'],
+                                location: data.docs[index]['address'],
+                                bedCount: data.docs[index]['bedRooms'],
+                                bathCount: data.docs[index]['bathRooms'],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HouseDetails(
+                                        title: data.docs[index]['title'],
+                                        address: data.docs[index]['address'],
+                                        bedRooms: data.docs[index]['bedRooms'],
+                                        bathRooms: data.docs[index]
+                                            ['bathRooms'],
+                                        price: data.docs[index]['Price'],
+                                        landSize: data.docs[index]['landSize'],
+                                        keywords: data.docs[index]['keywords'],
+                                        name: data.docs[index]['name'],
+                                        number: data.docs[index]['number'],
+                                        sizeUnit: data.docs[index]['sizeUnit'],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ]);
-                          });
+                            ],
+                          );
+                        },
+                      );
                     }),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  _nearbyHomes(String asset, String name, String location, String bedCount,
-      String bathCount) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
-          EdgeInsets.only(bottom: ScreenUtil().setHeight(20.0)),
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HouseDetails()),
-          );
-        },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.network(
-                  asset,
-                  fit: BoxFit.cover,
-                  height: ScreenUtil().setHeight(100.0),
-                  width: ScreenUtil().setWidth(100.0),
-                )),
-            SizedBox(
-              width: ScreenUtil().setWidth(10.0),
-            ),
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: GoogleFonts.play(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: ScreenUtil().setSp(16.0),
-                  ),
-                ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(5.0),
-                ),
-                Text(
-                  location,
-                  style: GoogleFonts.play(
-                    color: Colors.grey,
-                    fontSize: ScreenUtil().setSp(14.0),
-                  ),
-                ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(5.0),
-                ),
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.king_bed,
-                          color: Colors.grey,
-                          size: ScreenUtil().setHeight(18.0),
-                        ),
-                        SizedBox(
-                          width: ScreenUtil().setWidth(5.0),
-                        ),
-                        Text(
-                          bedCount,
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontSize: ScreenUtil().setSp(14.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: ScreenUtil().setWidth(10.0),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.bathtub,
-                          color: Colors.grey,
-                          size: ScreenUtil().setHeight(16.0),
-                        ),
-                        SizedBox(
-                          width: ScreenUtil().setWidth(5.0),
-                        ),
-                        Text(
-                          bathCount,
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontSize: ScreenUtil().setSp(14.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            )),
-          ],
         ),
       ),
     );

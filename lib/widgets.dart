@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:untitled/pages/house_details.dart';
 
 class MyDivider extends StatelessWidget {
   @override
@@ -466,6 +468,123 @@ class ButtonWithText extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NearbyHomes extends StatelessWidget {
+  const NearbyHomes({
+    Key? key,
+    required this.asset,
+    required this.name,
+    required this.location,
+    required this.bedCount,
+    required this.bathCount,
+    required this.onTap,
+  }) : super(key: key);
+  final String asset;
+  final String name;
+  final String location;
+  final String bedCount;
+  final String bathCount;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
+          EdgeInsets.only(bottom: ScreenUtil().setHeight(20.0)),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image.network(
+                  asset,
+                  fit: BoxFit.cover,
+                  height: ScreenUtil().setHeight(100.0),
+                  width: ScreenUtil().setWidth(100.0),
+                )),
+            SizedBox(
+              width: ScreenUtil().setWidth(10.0),
+            ),
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: GoogleFonts.play(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: ScreenUtil().setSp(16.0),
+                  ),
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(5.0),
+                ),
+                Text(
+                  location,
+                  style: GoogleFonts.play(
+                    color: Colors.grey,
+                    fontSize: ScreenUtil().setSp(14.0),
+                  ),
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(5.0),
+                ),
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.king_bed,
+                          color: Colors.grey,
+                          size: ScreenUtil().setHeight(18.0),
+                        ),
+                        SizedBox(
+                          width: ScreenUtil().setWidth(5.0),
+                        ),
+                        Text(
+                          bedCount,
+                          style: GoogleFonts.play(
+                            color: Colors.black,
+                            fontSize: ScreenUtil().setSp(14.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: ScreenUtil().setWidth(10.0),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.bathtub,
+                          color: Colors.grey,
+                          size: ScreenUtil().setHeight(16.0),
+                        ),
+                        SizedBox(
+                          width: ScreenUtil().setWidth(5.0),
+                        ),
+                        Text(
+                          bathCount,
+                          style: GoogleFonts.play(
+                            color: Colors.black,
+                            fontSize: ScreenUtil().setSp(14.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            )),
+          ],
         ),
       ),
     );

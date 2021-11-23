@@ -18,6 +18,9 @@ class _AddState extends State<Add> {
 
   final _formKey = GlobalKey<FormState>();
 
+
+
+
   late List buyRent = ['', 'Any'];
   late List bedRooms = ['','None'];
   late List bathRooms = ['', 'None'];

@@ -5,9 +5,32 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HouseDetails extends StatefulWidget {
-  const HouseDetails({Key? key}) : super(key: key);
+  const HouseDetails(
+      {Key? key,
+      required this.title,
+      required this.price,
+      required this.address,
+      required this.bedRooms,
+      required this.bathRooms,
+      required this.landSize,
+      required this.sizeUnit,
+      required this.keywords,
+      required this.name,
+      required this.number})
+      : super(key: key);
+  final String title;
+  final String price;
+  final String address;
+  final String bedRooms;
+  final String bathRooms;
+  final String landSize;
+  final String sizeUnit;
+  final String keywords;
+  final String name;
+  final String number;
 
   @override
   _HouseDetailsState createState() => _HouseDetailsState();
@@ -31,6 +54,16 @@ class _HouseDetailsState extends State<HouseDetails> {
 
   @override
   Widget build(BuildContext context) {
+
+    void phoneCall() async {
+      final url = 'tel:${widget.number}';
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -48,7 +81,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                     child: Row(
                       children: [
                         Text(
-                          "Luxurious Duplex Flat",
+                          widget.title,
                           style: GoogleFonts.play(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -57,7 +90,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                         ),
                         const Spacer(),
                         Text(
-                          "\$2450/mo",
+                          '₹${widget.price}',
                           style: GoogleFonts.play(
                             color: const Color(0xfff63e3c),
                             fontWeight: FontWeight.w600,
@@ -71,7 +104,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                     height: ScreenUtil().setHeight(10.0),
                   ),
                   Text(
-                    "328 Icaw Drive, 10001 NY",
+                    widget.address,
                     style: GoogleFonts.play(
                       color: Colors.grey,
                       fontSize: ScreenUtil().setSp(14.0),
@@ -93,7 +126,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                             width: ScreenUtil().setWidth(5.0),
                           ),
                           Text(
-                            "4",
+                            widget.bedRooms,
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -116,7 +149,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                             width: ScreenUtil().setWidth(5.0),
                           ),
                           Text(
-                            "2",
+                            widget.bathRooms,
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -139,7 +172,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                             width: ScreenUtil().setWidth(5.0),
                           ),
                           Text(
-                            "1560 sqft",
+                            "${widget.landSize} ${widget.sizeUnit}",
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -154,7 +187,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                     height: ScreenUtil().setHeight(10.0),
                   ),
                   Text(
-                    "With so many different ways today to find information online, it can sometimes be hard to know where to go to first. There is something for anyone.",
+                    widget.keywords,
                     style: GoogleFonts.play(
                       color: Colors.black87,
                       letterSpacing: 1.0,
@@ -214,7 +247,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Irene Frank",
+                          widget.name,
                           style: GoogleFonts.play(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -225,7 +258,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                           height: ScreenUtil().setHeight(5.0),
                         ),
                         Text(
-                          "Owner",
+                          widget.number,
                           style: GoogleFonts.play(
                             color: Colors.grey,
                             fontSize: ScreenUtil().setSp(14.0),
@@ -242,10 +275,10 @@ class _HouseDetailsState extends State<HouseDetails> {
                         color: Colors.white, shape: BoxShape.circle),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.phone,
+                      child: IconButton(
+                        icon: Icon(Icons.phone, size: ScreenUtil().setHeight(22.0),),
                         color: Colors.green,
-                        size: ScreenUtil().setHeight(22.0),
+                        onPressed: phoneCall,
                       ),
                     ),
                   ),
@@ -257,10 +290,12 @@ class _HouseDetailsState extends State<HouseDetails> {
                         color: Colors.white, shape: BoxShape.circle),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.message,
+                      child: IconButton(
+                        icon: Icon(Icons.message, size: ScreenUtil().setHeight(22.0),),
                         color: const Color(0xfff63e3c),
-                        size: ScreenUtil().setHeight(22.0),
+                        onPressed: () async {
+                          await launch('https://api.whatsapp.com/send/?phone=91${widget.number}&text&app_absent=0');
+                        },
                       ),
                     ),
                   ),

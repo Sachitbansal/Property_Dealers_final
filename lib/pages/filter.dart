@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:untitled/pages/search.dart';
-import 'package:untitled/pages/searchdemo.dart';
 import '../widgets.dart';
 
 class Filter extends StatefulWidget {
