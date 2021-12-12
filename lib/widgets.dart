@@ -419,12 +419,22 @@ class FilterTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 }
@@ -464,7 +474,7 @@ class ButtonWithText extends StatelessWidget {
               style: GoogleFonts.play(
                 color: fontColor,
                 fontWeight: FontWeight.w600,
-                fontSize: ScreenUtil().setSp(14.0),
+                fontSize: ScreenUtil().setSp(16.0),
               ),
             ),
           ),

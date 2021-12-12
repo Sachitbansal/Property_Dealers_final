@@ -33,9 +33,6 @@ class _FilterState extends State<Filter> {
           const FilterTitle(
             title: 'Filter Your Search',
           ),
-          const SizedBox(
-            height: 10,
-          ),
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
@@ -112,9 +109,6 @@ class _FilterState extends State<Filter> {
           const FilterTitle(
             title: 'Buy Or Rent',
           ),
-          const SizedBox(
-            height: 10,
-          ),
           Padding(
             padding:
                 EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
@@ -158,9 +152,6 @@ class _FilterState extends State<Filter> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
           Row(
             children: const [
               FilterTitle(
@@ -201,14 +192,8 @@ class _FilterState extends State<Filter> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 16,
-          ),
           const FilterTitle(
             title: 'Rooms',
-          ),
-          const SizedBox(
-            height: 16,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,14 +240,8 @@ class _FilterState extends State<Filter> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 16,
-          ),
           const FilterTitle(
             title: 'Bathrooms',
-          ),
-          const SizedBox(
-            height: 16,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
