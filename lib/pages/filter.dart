@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:untitled/pages/search.dart';
 import '../widgets.dart';
 
@@ -38,8 +37,7 @@ class _FilterState extends State<Filter> {
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding: EdgeInsets.symmetric(
-                      horizontal: ScreenUtil().setWidth(20.0)) +
-                  EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
+                      horizontal: 20),
               child: SizedBox(
                 width: size.width * 1.05,
                 child: Row(
@@ -111,8 +109,7 @@ class _FilterState extends State<Filter> {
           ),
           Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
-                    EdgeInsets.only(bottom: ScreenUtil().setHeight(10.0)),
+                EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

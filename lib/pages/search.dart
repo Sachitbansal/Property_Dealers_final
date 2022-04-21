@@ -70,8 +70,7 @@ class _SearchState extends State<Search> {
                           return Column(
                             children: [
                               NearbyHomes(
-                                asset:
-                                    "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
+                                asset: data.docs[index]['images'],
                                 name: data.docs[index]['title'],
                                 location: data.docs[index]['address'],
                                 bedCount: data.docs[index]['bedRooms'],
@@ -82,6 +81,9 @@ class _SearchState extends State<Search> {
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
                                         title: data.docs[index]['title'],
+                                        facilities: data.docs[index]
+                                            ['keywords'],
+                                        assets: data.docs[index]['images'],
                                         address: data.docs[index]['address'],
                                         bedRooms: data.docs[index]['bedRooms'],
                                         bathRooms: data.docs[index]

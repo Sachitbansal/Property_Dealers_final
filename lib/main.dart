@@ -49,6 +49,7 @@ class _MyAppState extends State<MyApp> {
         }
         // once Completed, show your application
         if (snapshot.connectionState == ConnectionState.done) {
+
           return MaterialApp(
             title: 'Flutter Firestore CRUD',
             theme: ThemeData(

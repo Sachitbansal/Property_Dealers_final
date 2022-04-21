@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/pages/add.dart';
+import 'package:untitled/pages/searchbar.dart';
 import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
@@ -64,163 +63,162 @@ class _HomeState extends State<Home> {
       );
     }
 
-    ScreenUtil.init(
-        BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height),
-        designSize: const Size(360, 690),
-        orientation: Orientation.portrait);
-
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
-                    EdgeInsets.only(
-                      top: ScreenUtil().setHeight(50.0),
-                      bottom: ScreenUtil().setHeight(40.0),
-                    ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RichText(
-                  text: TextSpan(
-                      text: 'Find your\n',
-                      style: GoogleFonts.play(
-                          color: Colors.grey,
-                          fontSize: ScreenUtil().setSp(26.0)),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Perfect Home',
-                          style: GoogleFonts.play(
-                              color: Colors.blue[300],
-                              fontSize: ScreenUtil().setSp(26.0),
-                              fontWeight: FontWeight.w600),
-                        )
-                      ]),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: Border.all(
-                      color: Colors.grey[300]!,
-                    ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                        text: 'Find your\n',
+                        style:
+                            GoogleFonts.play(color: Colors.grey, fontSize: 26),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'Perfect Home',
+                            style: GoogleFonts.play(
+                                color: Colors.blue[300],
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600),
+                          )
+                        ]),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.search,
-                        size: ScreenUtil().setHeight(24.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(15.0),
+                      border: Border.all(
+                        color: Colors.grey[300]!,
                       ),
-                      color: Colors.black,
-                      onPressed: () {
-                        logout();
-                      },
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ScreenUtil().setWidth(20.0),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  "Nearby Homes",
-                  style: GoogleFonts.play(
-                    color: const Color(0xff4d3a58),
-                    fontWeight: FontWeight.w600,
-                    fontSize: ScreenUtil().setSp(18.0),
-                  ),
-                ),
-                const Spacer(),
-                TextButton(
-                  child: Text(
-                    "FILTER",
-                    style: GoogleFonts.play(
-                      color: const Color(0xfff63e3c),
-                      fontWeight: FontWeight.w600,
-                      fontSize: ScreenUtil().setSp(12.0),
-                    ),
-                  ),
-                  onPressed: () {
-                    showBottomSheet();
-                  },
-                )
-              ],
-            ),
-          ),
-          StreamBuilder<QuerySnapshot>(
-              stream: studentsStream,
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Something Went Wrong.'),
-                    ),
-                  );
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final List storedocs = [];
-                snapshot.data!.docs.map((DocumentSnapshot document) {
-                  Map a = document.data() as Map<String, dynamic>;
-                  storedocs.add(a);
-                  a['id'] = document.id;
-                }).toList();
-
-                return isLoading
-                    ? const Center(
-                        child: Text('Loading'),
-                      )
-                    : Expanded(
-                        child: ListView(
-                          physics: const BouncingScrollPhysics(),
-                          children: [
-                            for (var i = 0; i < storedocs.length; i++) ...[
-                              NearbyHomes(
-                                asset: "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
-                                name: storedocs[i]['title'],
-                                location: storedocs[i]['address'],
-                                bedCount: storedocs[i]['bedRooms'],
-                                bathCount: storedocs[i]['bathRooms'],
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HouseDetails(
-                                        title: storedocs[i]['title'],
-                                        address: storedocs[i]['address'],
-                                        bedRooms: storedocs[i]['bedRooms'],
-                                        bathRooms: storedocs[i]['bathRooms'],
-                                        price: storedocs[i]['Price'],
-                                        landSize: storedocs[i]['landSize'],
-                                        keywords: storedocs[i]['keywords'],
-                                        name: storedocs[i]['name'],
-                                        number: storedocs[i]['number'],
-                                        sizeUnit: storedocs[i]['sizeUnit'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ]
-                          ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.search,
+                          size: 24.0,
                         ),
-                      );
-              }),
-        ],
+                        color: Colors.black,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SearchBarData(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    "Nearby Homes",
+                    style: GoogleFonts.play(
+                      color: const Color(0xff4d3a58),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    child: Text(
+                      "FILTER",
+                      style: GoogleFonts.play(
+                        color: const Color(0xfff63e3c),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                    onPressed: () {
+                      print(widget.uid);
+                      print('widget.uid');
+                      showBottomSheet();
+                    },
+                  )
+                ],
+              ),
+            ),
+            StreamBuilder<QuerySnapshot>(
+                stream: studentsStream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Something Went Wrong.'),
+                      ),
+                    );
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  final List storedocs = [];
+                  snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map a = document.data() as Map<String, dynamic>;
+                    storedocs.add(a);
+                    a['id'] = document.id;
+                  }).toList();
+
+                  return isLoading
+                      ? const Center(
+                          child: Text('Loading'),
+                        )
+                      : Expanded(
+                          child: ListView(
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              for (var i = 0; i < storedocs.length; i++) ...[
+                                NearbyHomes(
+                                  asset: storedocs[i]['images'],
+                                  name: storedocs[i]['title'],
+                                  location: storedocs[i]['address'],
+                                  bedCount: storedocs[i]['bedRooms'][0],
+                                  bathCount: storedocs[i]['bathRooms'][0],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HouseDetails(
+                                          assets: storedocs[i]['images'],
+                                          facilities: storedocs[i]['keywords'],
+                                          title: storedocs[i]['title'],
+                                          address: storedocs[i]['address'],
+                                          bedRooms: storedocs[i]['bedRooms'][0],
+                                          bathRooms: storedocs[i]['bathRooms']
+                                              [0],
+                                          price: storedocs[i]['Price'],
+                                          landSize: storedocs[i]['landSize'],
+                                          keywords: storedocs[i]['keywords'],
+                                          name: storedocs[i]['name'],
+                                          number: storedocs[i]['number'],
+                                          sizeUnit: storedocs[i]['sizeUnit'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ]
+                            ],
+                          ),
+                        );
+                }),
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ClipRRect(
@@ -241,7 +239,7 @@ class _HomeState extends State<Home> {
           tooltip: 'Increment',
           child: Icon(
             Icons.add,
-            size: ScreenUtil().setHeight(26.0),
+            size: 26,
           ),
           elevation: 2.0,
         ),
@@ -249,8 +247,8 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomAppBar(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(30.0),
-            vertical: ScreenUtil().setHeight(20.0),
+            horizontal: 30,
+            vertical: 20,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -258,22 +256,22 @@ class _HomeState extends State<Home> {
               Icon(
                 Icons.home,
                 color: const Color(0xff442243),
-                size: ScreenUtil().setHeight(26.0),
+                size: 26,
               ),
               Icon(
                 Icons.explore_outlined,
                 color: Colors.grey,
-                size: ScreenUtil().setHeight(26.0),
+                size: 26,
               ),
               Icon(
                 Icons.bookmark_border,
                 color: Colors.grey,
-                size: ScreenUtil().setHeight(26.0),
+                size: 26,
               ),
               Icon(
                 Icons.person_outline,
                 color: Colors.grey,
-                size: ScreenUtil().setHeight(26.0),
+                size: 26,
               ),
             ],
           ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart' as yo;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:untitled/pages/house_details.dart';
 
 class MyDivider extends StatelessWidget {
@@ -381,25 +382,25 @@ class ButtonWithTextAndIcon extends StatelessWidget {
             color: bgColor, borderRadius: BorderRadius.circular(15.0)),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(15.0),
-            vertical: ScreenUtil().setHeight(15.0),
+            horizontal: 15,
+            vertical: 15,
           ),
           child: Column(
             children: [
               Icon(
                 icon,
                 color: textIconColor,
-                size: ScreenUtil().setHeight(30.0),
+                size: 30,
               ),
               SizedBox(
-                height: ScreenUtil().setHeight(10.0),
+                height: 10,
               ),
               Text(
                 title,
                 style: GoogleFonts.play(
                   color: textIconColor,
                   fontWeight: FontWeight.w600,
-                  fontSize: ScreenUtil().setSp(14.0),
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -465,8 +466,8 @@ class ButtonWithText extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(15.0),
-            vertical: ScreenUtil().setHeight(15.0),
+            horizontal: 15,
+            vertical: 15,
           ),
           child: Center(
             child: Text(
@@ -474,7 +475,7 @@ class ButtonWithText extends StatelessWidget {
               style: GoogleFonts.play(
                 color: fontColor,
                 fontWeight: FontWeight.w600,
-                fontSize: ScreenUtil().setSp(16.0),
+                fontSize: 16,
               ),
             ),
           ),
@@ -494,7 +495,7 @@ class NearbyHomes extends StatelessWidget {
     required this.bathCount,
     required this.onTap,
   }) : super(key: key);
-  final String asset;
+  final List asset;
   final String name;
   final String location;
   final String bedCount;
@@ -504,23 +505,45 @@ class NearbyHomes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20.0)) +
-          EdgeInsets.only(bottom: ScreenUtil().setHeight(20.0)),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
         onTap: onTap,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.network(
-                  asset,
-                  fit: BoxFit.cover,
-                  height: ScreenUtil().setHeight(100.0),
-                  width: ScreenUtil().setWidth(100.0),
-                )),
+            Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black, width: 2),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    autoPlay: true,
+                    disableCenter: false,
+                  ),
+                  items: asset
+                      .map(
+                        (item) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                item.toString(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
             SizedBox(
-              width: ScreenUtil().setWidth(10.0),
+              width: 100,
             ),
             Expanded(
                 child: Column(
@@ -531,21 +554,21 @@ class NearbyHomes extends StatelessWidget {
                   style: GoogleFonts.play(
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
-                    fontSize: ScreenUtil().setSp(16.0),
+                    fontSize: 16,
                   ),
                 ),
                 SizedBox(
-                  height: ScreenUtil().setHeight(5.0),
+                  height: 5,
                 ),
                 Text(
                   location,
                   style: GoogleFonts.play(
                     color: Colors.grey,
-                    fontSize: ScreenUtil().setSp(14.0),
+                    fontSize: 14,
                   ),
                 ),
                 SizedBox(
-                  height: ScreenUtil().setHeight(5.0),
+                  height: 5,
                 ),
                 Row(
                   children: [
@@ -554,38 +577,38 @@ class NearbyHomes extends StatelessWidget {
                         Icon(
                           Icons.king_bed,
                           color: Colors.grey,
-                          size: ScreenUtil().setHeight(18.0),
+                          size: 18,
                         ),
                         SizedBox(
-                          width: ScreenUtil().setWidth(5.0),
+                          width: 5,
                         ),
                         Text(
                           bedCount,
                           style: GoogleFonts.play(
                             color: Colors.black,
-                            fontSize: ScreenUtil().setSp(14.0),
+                            fontSize: 14,
                           ),
                         ),
                       ],
                     ),
                     SizedBox(
-                      width: ScreenUtil().setWidth(10.0),
+                      width: 10,
                     ),
                     Row(
                       children: [
                         Icon(
                           Icons.bathtub,
                           color: Colors.grey,
-                          size: ScreenUtil().setHeight(16.0),
+                          size: 16,
                         ),
                         SizedBox(
-                          width: ScreenUtil().setWidth(5.0),
+                          width: 5,
                         ),
                         Text(
                           bathCount,
                           style: GoogleFonts.play(
                             color: Colors.black,
-                            fontSize: ScreenUtil().setSp(14.0),
+                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -597,6 +620,46 @@ class NearbyHomes extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  const CustomTextField({
+    Key? key,
+    required this.titleController,
+    required this.labelText,
+    this.validator,
+  }) : super(key: key);
+
+  final TextEditingController titleController;
+  final String labelText;
+  final String? Function(String?)? validator;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      cursorColor: Colors.blue[300],
+      decoration: InputDecoration(
+        isCollapsed: true,
+        fillColor: Colors.blue[200]?.withOpacity(0.05),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: const BorderSide(width: 0.8),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            width: 0.8,
+            color: Colors.blue[300]!,
+          ),
+        ),
+        labelText: labelText,
+      ),
+      controller: titleController,
+      validator: validator,
     );
   }
 }

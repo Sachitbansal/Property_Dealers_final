@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
@@ -19,32 +18,29 @@ class HouseDetails extends StatefulWidget {
       required this.sizeUnit,
       required this.keywords,
       required this.name,
-      required this.number})
+      required this.number,
+      required this.facilities,
+      required this.assets})
       : super(key: key);
-  final String title;
-  final String price;
-  final String address;
-  final String bedRooms;
-  final String bathRooms;
-  final String landSize;
-  final String sizeUnit;
-  final String keywords;
-  final String name;
-  final String number;
+  final String title,
+      price,
+      facilities,
+      address,
+      bedRooms,
+      number,
+      name,
+      keywords,
+      sizeUnit,
+      landSize,
+      bathRooms;
+  final List assets;
 
   @override
   _HouseDetailsState createState() => _HouseDetailsState();
 }
 
 class _HouseDetailsState extends State<HouseDetails> {
-  final List<String> imgList = [
-    "https://image.freepik.com/free-photo/house-isolated-field_1303-23773.jpg",
-    "https://image.freepik.com/free-photo/interior-home-design-living-room-with-open-kitchen-loft-house_41487-613.jpg",
-    "https://image.freepik.com/free-photo/3d-rendering-luxury-modern-design-wood-building-near-park-nature-night-scene_105762-1045.jpg",
-    "https://image.freepik.com/free-photo/charming-yellow-house-with-wooden-windows-green-grassy-garden_181624-8074.jpg"
-  ];
-
-  late CarouselSliderController _sliderController;
+    late CarouselSliderController _sliderController;
 
   @override
   void initState() {
@@ -54,6 +50,9 @@ class _HouseDetailsState extends State<HouseDetails> {
 
   @override
   Widget build(BuildContext context) {
+
+    final String facility = widget.facilities;
+    final List splits = facility.split(',');
 
     void phoneCall() async {
       final url = 'tel:${widget.number}';
@@ -70,14 +69,14 @@ class _HouseDetailsState extends State<HouseDetails> {
           slider(),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(top: ScreenUtil().setHeight(30.0)),
+                    padding: const EdgeInsets.only(top: 30),
                     child: Row(
                       children: [
                         Text(
@@ -85,7 +84,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                           style: GoogleFonts.play(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: ScreenUtil().setSp(18.0),
+                            fontSize: 18,
                           ),
                         ),
                         const Spacer(),
@@ -94,97 +93,97 @@ class _HouseDetailsState extends State<HouseDetails> {
                           style: GoogleFonts.play(
                             color: const Color(0xfff63e3c),
                             fontWeight: FontWeight.w600,
-                            fontSize: ScreenUtil().setSp(16.0),
+                            fontSize: 16,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(10.0),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Text(
                     widget.address,
                     style: GoogleFonts.play(
                       color: Colors.grey,
-                      fontSize: ScreenUtil().setSp(14.0),
+                      fontSize: 14,
                     ),
                   ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(10.0),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Row(
                     children: [
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.king_bed,
                             color: Colors.grey,
-                            size: ScreenUtil().setHeight(18.0),
+                            size: 18,
                           ),
-                          SizedBox(
-                            width: ScreenUtil().setWidth(5.0),
+                          const SizedBox(
+                            width: 5,
                           ),
                           Text(
                             widget.bedRooms,
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: ScreenUtil().setSp(14.0),
+                              fontSize: 14,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(15.0),
+                      const SizedBox(
+                        width: 15,
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.bathtub,
                             color: Colors.grey,
-                            size: ScreenUtil().setHeight(16.0),
+                            size: 16,
                           ),
-                          SizedBox(
-                            width: ScreenUtil().setWidth(5.0),
+                          const SizedBox(
+                            width: 5,
                           ),
                           Text(
                             widget.bathRooms,
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: ScreenUtil().setSp(14.0),
+                              fontSize: 14,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(15.0),
+                      const SizedBox(
+                        width: 15,
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.crop_square,
                             color: Colors.grey,
-                            size: ScreenUtil().setHeight(16.0),
+                            size: 16,
                           ),
-                          SizedBox(
-                            width: ScreenUtil().setWidth(5.0),
+                          const SizedBox(
+                            width: 5,
                           ),
                           Text(
                             "${widget.landSize} ${widget.sizeUnit}",
                             style: GoogleFonts.play(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: ScreenUtil().setSp(14.0),
+                              fontSize: 14,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(10.0),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Text(
                     widget.keywords,
@@ -192,30 +191,33 @@ class _HouseDetailsState extends State<HouseDetails> {
                       color: Colors.black87,
                       letterSpacing: 1.0,
                       wordSpacing: 2.0,
-                      fontSize: ScreenUtil().setSp(14.0),
+                      fontSize: 14,
                     ),
                   ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(10.0),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Text(
                     "Facilities",
                     style: GoogleFonts.play(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
-                      fontSize: ScreenUtil().setSp(16.0),
+                      fontSize: 16,
                     ),
                   ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(5.0),
+                  const SizedBox(
+                    height: 5,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _facilities(Icons.campaign, "CCTV"),
-                      _facilities(Icons.wifi, "WIFI"),
-                      _facilities(Icons.pool, "SWIMMING POOL"),
-                    ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < splits.length; i++) ...[
+                          _facilities(Icons.bubble_chart, "${splits[i]}"),
+                          const SizedBox(width: 10,),
+                        ]
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -224,9 +226,9 @@ class _HouseDetailsState extends State<HouseDetails> {
           Container(
             color: const Color(0xfff7f7f9),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(20.0),
-                vertical: ScreenUtil().setHeight(20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
               ),
               child: Row(
                 children: [
@@ -234,13 +236,13 @@ class _HouseDetailsState extends State<HouseDetails> {
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image.network(
                       "https://img.freepik.com/free-photo/happy-african-american-child-boy-smiling_263368-10.jpg?size=664&ext=jpg&ga=GA1.2.740930980.1616477634",
-                      height: ScreenUtil().setHeight(50.0),
-                      width: ScreenUtil().setWidth(50.0),
+                      height: 50,
+                      width: 50,
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(
-                    width: ScreenUtil().setWidth(10.0),
+                  const SizedBox(
+                    width: 10,
                   ),
                   Expanded(
                     child: Column(
@@ -251,24 +253,24 @@ class _HouseDetailsState extends State<HouseDetails> {
                           style: GoogleFonts.play(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: ScreenUtil().setSp(16.0),
+                            fontSize: 16,
                           ),
                         ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(5.0),
+                        const SizedBox(
+                          height: 5,
                         ),
                         Text(
                           widget.number,
                           style: GoogleFonts.play(
                             color: Colors.grey,
-                            fontSize: ScreenUtil().setSp(14.0),
+                            fontSize: 14,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: ScreenUtil().setWidth(10.0),
+                  const SizedBox(
+                    width: 10,
                   ),
                   Container(
                     decoration: const BoxDecoration(
@@ -276,14 +278,17 @@ class _HouseDetailsState extends State<HouseDetails> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
-                        icon: Icon(Icons.phone, size: ScreenUtil().setHeight(22.0),),
+                        icon: const Icon(
+                          Icons.phone,
+                          size: 22,
+                        ),
                         color: Colors.green,
                         onPressed: phoneCall,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: ScreenUtil().setWidth(20.0),
+                  const SizedBox(
+                    width: 20,
                   ),
                   Container(
                     decoration: const BoxDecoration(
@@ -291,10 +296,14 @@ class _HouseDetailsState extends State<HouseDetails> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
-                        icon: Icon(Icons.message, size: ScreenUtil().setHeight(22.0),),
+                        icon: const Icon(
+                          Icons.message,
+                          size: 22,
+                        ),
                         color: const Color(0xfff63e3c),
                         onPressed: () async {
-                          await launch('https://api.whatsapp.com/send/?phone=91${widget.number}&text&app_absent=0');
+                          await launch(
+                              'https://api.whatsapp.com/send/?phone=91${widget.number}&text&app_absent=0');
                         },
                       ),
                     ),
@@ -312,13 +321,13 @@ class _HouseDetailsState extends State<HouseDetails> {
     return Stack(
       children: [
         SizedBox(
-          height: ScreenUtil().setHeight(350.0),
+          height: 350,
           child: CarouselSlider.builder(
             unlimitedMode: true,
             controller: _sliderController,
             slideBuilder: (index) {
               return Image.network(
-                imgList[index],
+                widget.assets[index],
                 fit: BoxFit.cover,
               );
             },
@@ -328,7 +337,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                 indicatorBorderColor: Colors.white,
                 currentIndicatorColor: Colors.white,
                 indicatorBackgroundColor: Colors.transparent),
-            itemCount: imgList.length,
+            itemCount: widget.assets.length,
             initialPage: 0,
             enableAutoSlider: true,
           ),
@@ -346,12 +355,12 @@ class _HouseDetailsState extends State<HouseDetails> {
                 color: Colors.white70,
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.arrow_back,
                   color: Colors.black,
-                  size: ScreenUtil().setHeight(24.0),
+                  size: 24,
                 ),
               ),
             ),
@@ -366,26 +375,26 @@ class _HouseDetailsState extends State<HouseDetails> {
       decoration: BoxDecoration(
           color: Colors.grey[100], borderRadius: BorderRadius.circular(5.0)),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: ScreenUtil().setHeight(5.0),
-          horizontal: ScreenUtil().setWidth(10.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: 5,
+          horizontal: 10,
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
+            const Icon(
+              Icons.bubble_chart,
               color: Colors.black,
-              size: ScreenUtil().setHeight(16.0),
+              size: 16,
             ),
-            SizedBox(
-              width: ScreenUtil().setWidth(10.0),
+            const SizedBox(
+              width: 10,
             ),
             Text(
               facility,
               style: GoogleFonts.play(
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
-                fontSize: ScreenUtil().setSp(12.0),
+                fontSize: 12,
               ),
             ),
           ],
