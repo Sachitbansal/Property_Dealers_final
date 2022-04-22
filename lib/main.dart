@@ -2,11 +2,15 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/addHelper.dart';
 import 'package:untitled/pages/home.dart';
 import 'package:untitled/pages/loginPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -36,35 +40,42 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        // Check for Errors
-        if (snapshot.hasError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Something went wrong. Please try again later.'),
-            ),
-          );
-        }
-        // once Completed, show your application
-        if (snapshot.connectionState == ConnectionState.done) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AddProvider>(
+          create: (context) => AddProvider(),
+        )
+      ],
+      child: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          // Check for Errors
+          if (snapshot.hasError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Something went wrong. Please try again later.'),
+              ),
+            );
+          }
+          // once Completed, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
 
-          return MaterialApp(
-            title: 'Flutter Firestore CRUD',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            debugShowCheckedModeBanner: false,
-            home: FirebaseAuth.instance.currentUser == null
-                ? const LoginScreen()
-                : Home(
-                    uid: FirebaseAuth.instance.currentUser?.uid,
-                  ),
-          );
-        }
-        return const CircularProgressIndicator();
-      },
+            return MaterialApp(
+              title: 'Flutter Firestore CRUD',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              debugShowCheckedModeBanner: false,
+              home: FirebaseAuth.instance.currentUser == null
+                  ? const LoginScreen()
+                  : Home(
+                      uid: FirebaseAuth.instance.currentUser?.uid,
+                    ),
+            );
+          }
+          return const CircularProgressIndicator();
+        },
+      ),
     );
   }
 }

@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/addHelper.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/searchbar.dart';
 import '../widgets.dart';
@@ -21,6 +24,12 @@ class _HomeState extends State<Home> {
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'None';
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AddProvider>(context, listen: false).initialiseHomePageBanner();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +55,7 @@ class _HomeState extends State<Home> {
             );
           });
     }
+
 
     return Scaffold(
       body: SafeArea(
@@ -230,6 +240,28 @@ class _HomeState extends State<Home> {
           elevation: 2.0,
         ),
       ),
+
+
+      //todo: un comment after account approoved
+      // bottomNavigationBar: Consumer<AddProvider>(
+      //   builder: (context, adProvider, child) {
+      //
+      //     if (adProvider.isAddLoaded) {
+      //       return SizedBox(
+      //         height: adProvider.homePageBanner.size.height.toDouble(),
+      //         child: AdWidget(
+      //           ad: adProvider.homePageBanner,
+      //         ),
+      //       );
+      //     }
+      //     else {
+      //       return Container();
+      //     }
+      //
+      //   }
+      // ),
+
+      //todo: normal bottom sheet
       bottomNavigationBar: BottomAppBar(
         child: Padding(
           padding: const EdgeInsets.symmetric(

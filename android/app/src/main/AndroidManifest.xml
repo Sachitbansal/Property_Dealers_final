@@ -4,7 +4,13 @@
    <application
         android:label="untitled"
         android:icon="@mipmap/ic_launcher">
-        <activity
+
+               <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+               <meta-data
+                   android:name="com.google.android.gms.ads.APPLICATION_ID"
+                   android:value="ca-app-pub-9719585953227487~9933078888"/>
+
+       <activity
             android:exported="true"
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -528,21 +528,26 @@ class NearbyHomes extends StatelessWidget {
                   items: asset
                       .map(
                         (item) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                item.toString(),
-                              ),
-                            ),
-                          ),
+
+                          //todo: uncommer after fixing
+                          // decoration: BoxDecoration(
+                          //   image: DecorationImage(
+                          //     fit: BoxFit.cover,
+                          //     image: NetworkImage(
+                          //       item.toString(),
+                          //     ),
+                          //   ),
+                          // ),
+
+
+
                         ),
                       )
                       .toList(),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 100,
             ),
             Expanded(
