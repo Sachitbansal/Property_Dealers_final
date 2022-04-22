@@ -72,8 +72,9 @@ class _AddState extends State<Add> {
   final imagePicker = ImagePicker();
   List<String> downloadURL = [];
   List<String> urls = [];
+  var isLoading = false;
   int uploadItem = 0;
-  var isUploading = false;
+  UploadTask? uploadTask;
 
   Future imagePickerMethod() async {
     final pick = await imagePicker.pickMultiImage();
@@ -88,7 +89,7 @@ class _AddState extends State<Add> {
 
   void uploadFunction(List<XFile> images) async {
     setState(() {
-      isUploading = true;
+      isLoading = true;
     });
     for (int i = 0; i < images.length; i++) {
       var imgUrl = await uploadFile(images[i]);
@@ -131,15 +132,14 @@ class _AddState extends State<Add> {
 
   Future<String> uploadFile(XFile images) async {
     final imgId = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference reference = FirebaseStorage.instance.ref().child("post_$imgId");
-    UploadTask uploadTask = reference.putFile(File(images.path));
-    await uploadTask.whenComplete(() {
+    Reference reference = FirebaseStorage.instance
+        .ref()
+        .child(widget.collection.toString())
+        .child("post_$imgId");
+    uploadTask = reference.putFile(File(images.path));
+    await uploadTask?.whenComplete(() {
       setState(() {
-        uploadItem++;
-        if (uploadItem == _image!.length) {
-          isUploading = false;
-          uploadItem = 0;
-        }
+        isLoading = false;
       });
     });
     // print(await reference.getDownloadURL());
@@ -149,7 +149,6 @@ class _AddState extends State<Add> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add'),
@@ -158,8 +157,13 @@ class _AddState extends State<Add> {
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
-          child: isUploading
-              ? const Center(child: CircularProgressIndicator())
+          child: isLoading
+              ? Center(
+                  child: BuildProgress(
+                    width: size.width,
+                    uploadTask: uploadTask,
+                  ),
+                )
               : Padding(
                   padding: const EdgeInsets.only(
                       right: 24, left: 24, top: 15, bottom: 24),
@@ -661,10 +665,10 @@ class _AddState extends State<Add> {
                               Colors.blue[200]!),
                           alignment: Alignment.center,
                         ),
-                        child: SizedBox(
+                        child: const SizedBox(
                           height: 40,
-                          width: size.width * .8,
-                          child: const Center(
+                          // width: size.width * .8,
+                          child: Center(
                             child: Text(
                               'Add',
                               style:
@@ -687,7 +691,10 @@ class _AddState extends State<Add> {
                             });
                           }
                         },
-                      )
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                     ],
                   ),
                 ),
@@ -722,6 +729,57 @@ class _AddState extends State<Add> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BuildProgress extends StatelessWidget {
+  final UploadTask? uploadTask;
+  final double width;
+
+  const BuildProgress({Key? key, this.uploadTask, required this.width})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            double progress =
+                snapshot.data!.bytesTransferred / snapshot.data!.totalBytes;
+
+            return Center(
+              child: Column(
+                children: [
+                  Center(
+                    child: Center(
+                      child: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 12,
+                          backgroundColor: Colors.grey[200],
+                          color: Colors.blue[200],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  Text(
+                    '${(100 * progress).roundToDouble()}%',
+                    style: const TextStyle(color: Colors.black, fontSize: 20),
+                  )
+                ],
+              ),
+            );
+          }
+
+          return Container();
+        },
       ),
     );
   }

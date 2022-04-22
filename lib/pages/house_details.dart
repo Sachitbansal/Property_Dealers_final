@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +20,8 @@ class HouseDetails extends StatefulWidget {
       required this.keywords,
       required this.name,
       required this.number,
+      required this.uid,
+      required this.docId,
       required this.facilities,
       required this.assets})
       : super(key: key);
@@ -27,9 +30,11 @@ class HouseDetails extends StatefulWidget {
       facilities,
       address,
       bedRooms,
+      docId,
       number,
       name,
       keywords,
+      uid,
       sizeUnit,
       landSize,
       bathRooms;
@@ -53,6 +58,7 @@ class _HouseDetailsState extends State<HouseDetails> {
 
     final String facility = widget.facilities;
     final List splits = facility.split(',');
+    print(widget.docId);
 
     void phoneCall() async {
       final url = 'tel:${widget.number}';
@@ -63,10 +69,98 @@ class _HouseDetailsState extends State<HouseDetails> {
       }
     }
 
+    CollectionReference collectionrRef =
+    FirebaseFirestore.instance.collection(widget.uid);
+
+    Future<void> deleteUser(id) {
+      return collectionrRef.doc(id).delete();
+    }
+
+
     return Scaffold(
       body: Column(
         children: [
-          slider(),
+          Stack(
+            children: [
+              SizedBox(
+                height: 350,
+                child: CarouselSlider.builder(
+                  unlimitedMode: true,
+                  controller: _sliderController,
+                  slideBuilder: (index) {
+                    return Image.network(
+                      widget.assets[index],
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  slideTransform: const ParallaxTransform(),
+                  slideIndicator: CircularSlideIndicator(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      indicatorBorderColor: Colors.white,
+                      currentIndicatorColor: Colors.white,
+                      indicatorBackgroundColor: Colors.transparent),
+                  itemCount: widget.assets.length,
+                  initialPage: 0,
+                  enableAutoSlider: true,
+                ),
+              ),
+              Positioned(
+                top: 50.0,
+                left: 20.0,
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 50.0,
+                right: 20.0,
+                child: GestureDetector(
+                  onTap: () {
+                    deleteUser(widget.docId).whenComplete(() {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(
+                        content: Text("Deleted"),
+                        duration:
+                        Duration(milliseconds: 1000),
+                      ));
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -314,59 +408,6 @@ class _HouseDetailsState extends State<HouseDetails> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget slider() {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 350,
-          child: CarouselSlider.builder(
-            unlimitedMode: true,
-            controller: _sliderController,
-            slideBuilder: (index) {
-              return Image.network(
-                widget.assets[index],
-                fit: BoxFit.cover,
-              );
-            },
-            slideTransform: const ParallaxTransform(),
-            slideIndicator: CircularSlideIndicator(
-                padding: const EdgeInsets.only(bottom: 32),
-                indicatorBorderColor: Colors.white,
-                currentIndicatorColor: Colors.white,
-                indicatorBackgroundColor: Colors.transparent),
-            itemCount: widget.assets.length,
-            initialPage: 0,
-            enableAutoSlider: true,
-          ),
-        ),
-        Positioned(
-          top: 50.0,
-          left: 20.0,
-          child: GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              Navigator.pop(context);
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white70,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                  size: 24,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/pages/add.dart';
@@ -7,7 +7,6 @@ import 'package:untitled/pages/searchbar.dart';
 import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
-import 'loginPage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.uid}) : super(key: key);
@@ -46,21 +45,6 @@ class _HomeState extends State<Home> {
               ],
             );
           });
-    }
-
-    logout() async {
-      await FirebaseAuth.instance.signOut();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You are now Signed Out'),
-        ),
-      );
     }
 
     return Scaffold(
@@ -194,6 +178,8 @@ class _HomeState extends State<Home> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => HouseDetails(
+                                          uid: widget.uid.toString(),
+                                          docId: storedocs[i]['id'],
                                           assets: storedocs[i]['images'],
                                           facilities: storedocs[i]['keywords'],
                                           title: storedocs[i]['title'],
@@ -237,7 +223,7 @@ class _HomeState extends State<Home> {
             );
           },
           tooltip: 'Increment',
-          child: Icon(
+          child: const Icon(
             Icons.add,
             size: 26,
           ),
@@ -246,16 +232,16 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 30,
             vertical: 20,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: const <Widget>[
               Icon(
                 Icons.home,
-                color: const Color(0xff442243),
+                color: Color(0xff442243),
                 size: 26,
               ),
               Icon(
