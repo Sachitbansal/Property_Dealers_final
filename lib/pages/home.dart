@@ -28,7 +28,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AddProvider>(context, listen: false).initialiseHomePageBanner();
+
+      AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
+      adProvider.initialiseHomePageBanner();
   }
 
   @override
@@ -55,7 +57,6 @@ class _HomeState extends State<Home> {
             );
           });
     }
-
 
     return Scaffold(
       body: SafeArea(
@@ -145,74 +146,89 @@ class _HomeState extends State<Home> {
               ),
             ),
             StreamBuilder<QuerySnapshot>(
-                stream: studentsStream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Something Went Wrong.'),
-                      ),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+              stream: studentsStream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Something Went Wrong.'),
+                    ),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                  final List storedocs = [];
-                  snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map a = document.data() as Map<String, dynamic>;
-                    storedocs.add(a);
-                    a['id'] = document.id;
-                  }).toList();
+                final List storedocs = [];
+                snapshot.data!.docs.map((DocumentSnapshot document) {
+                  Map a = document.data() as Map<String, dynamic>;
+                  storedocs.add(a);
+                  a['id'] = document.id;
+                }).toList();
 
-                  return isLoading
-                      ? const Center(
-                          child: Text('Loading'),
-                        )
-                      : Expanded(
-                          child: ListView(
-                            physics: const BouncingScrollPhysics(),
-                            children: [
-                              for (var i = 0; i < storedocs.length; i++) ...[
-                                NearbyHomes(
-                                  asset: storedocs[i]['images'],
-                                  name: storedocs[i]['title'],
-                                  location: storedocs[i]['address'],
-                                  bedCount: storedocs[i]['bedRooms'][0],
-                                  bathCount: storedocs[i]['bathRooms'][0],
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HouseDetails(
-                                          uid: widget.uid.toString(),
-                                          docId: storedocs[i]['id'],
-                                          assets: storedocs[i]['images'],
-                                          facilities: storedocs[i]['keywords'],
-                                          title: storedocs[i]['title'],
-                                          address: storedocs[i]['address'],
-                                          bedRooms: storedocs[i]['bedRooms'][0],
-                                          bathRooms: storedocs[i]['bathRooms']
-                                              [0],
-                                          price: storedocs[i]['Price'],
-                                          landSize: storedocs[i]['landSize'],
-                                          keywords: storedocs[i]['keywords'],
-                                          name: storedocs[i]['name'],
-                                          number: storedocs[i]['number'],
-                                          sizeUnit: storedocs[i]['sizeUnit'],
-                                        ),
+                return isLoading
+                    ? const Center(
+                        child: Text('Loading'),
+                      )
+                    : Expanded(
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            for (var i = 0; i < storedocs.length; i++) ...[
+                              NearbyHomes(
+                                asset: storedocs[i]['images'],
+                                name: storedocs[i]['title'],
+                                location: storedocs[i]['address'],
+                                bedCount: storedocs[i]['bedRooms'][0],
+                                bathCount: storedocs[i]['bathRooms'][0],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HouseDetails(
+                                        uid: widget.uid.toString(),
+                                        docId: storedocs[i]['id'],
+                                        assets: storedocs[i]['images'],
+                                        facilities: storedocs[i]['keywords'],
+                                        title: storedocs[i]['title'],
+                                        address: storedocs[i]['address'],
+                                        bedRooms: storedocs[i]['bedRooms'][0],
+                                        bathRooms: storedocs[i]['bathRooms'][0],
+                                        price: storedocs[i]['Price'],
+                                        landSize: storedocs[i]['landSize'],
+                                        keywords: storedocs[i]['keywords'],
+                                        name: storedocs[i]['name'],
+                                        number: storedocs[i]['number'],
+                                        sizeUnit: storedocs[i]['sizeUnit'],
                                       ),
-                                    );
-                                  },
-                                ),
-                              ]
-                            ],
-                          ),
-                        );
-                }),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ]
+                          ],
+                        ),
+                      );
+              },
+            ),
+            SizedBox(
+              child:
+                  Consumer<AddProvider>(builder: (context, adProvider, child) {
+                if (adProvider.isHomePageBannerLoaded) {
+                  return SizedBox(
+                    height: adProvider.homePageBanner.size.height.toDouble(),
+                    child: AdWidget(
+                      ad: adProvider.homePageBanner,
+                    ),
+                  );
+                } else {
+                  return Container(height: 100, color: Colors.red[100],);
+                }
+              }),
+            )
           ],
         ),
       ),
@@ -241,60 +257,37 @@ class _HomeState extends State<Home> {
         ),
       ),
 
-
-      //todo: un comment after account approoved
-      // bottomNavigationBar: Consumer<AddProvider>(
-      //   builder: (context, adProvider, child) {
-      //
-      //     if (adProvider.isAddLoaded) {
-      //       return SizedBox(
-      //         height: adProvider.homePageBanner.size.height.toDouble(),
-      //         child: AdWidget(
-      //           ad: adProvider.homePageBanner,
-      //         ),
-      //       );
-      //     }
-      //     else {
-      //       return Container();
-      //     }
-      //
-      //   }
-      // ),
-
-      //todo: normal bottom sheet
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const <Widget>[
-              Icon(
-                Icons.home,
-                color: Color(0xff442243),
-                size: 26,
-              ),
-              Icon(
-                Icons.explore_outlined,
-                color: Colors.grey,
-                size: 26,
-              ),
-              Icon(
-                Icons.bookmark_border,
-                color: Colors.grey,
-                size: 26,
-              ),
-              Icon(
-                Icons.person_outline,
-                color: Colors.grey,
-                size: 26,
-              ),
-            ],
-          ),
+      //todo: un comment after account approved
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 30,
+          vertical: 20,
         ),
-        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const <Widget>[
+            Icon(
+              Icons.home,
+              color: Color(0xff442243),
+              size: 26,
+            ),
+            Icon(
+              Icons.explore_outlined,
+              color: Colors.grey,
+              size: 26,
+            ),
+            Icon(
+              Icons.bookmark_border,
+              color: Colors.grey,
+              size: 26,
+            ),
+            Icon(
+              Icons.person_outline,
+              color: Colors.grey,
+              size: 26,
+            ),
+          ],
+        ),
       ),
     );
   }

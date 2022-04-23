@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart' as yo;
@@ -505,7 +506,7 @@ class NearbyHomes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
         onTap: onTap,
         child: Row(
@@ -665,6 +666,57 @@ class CustomTextField extends StatelessWidget {
       ),
       controller: titleController,
       validator: validator,
+    );
+  }
+}
+
+class BuildProgress extends StatelessWidget {
+  final UploadTask? uploadTask;
+  final double width;
+
+  const BuildProgress({Key? key, this.uploadTask, required this.width})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            double progress =
+                snapshot.data!.bytesTransferred / snapshot.data!.totalBytes;
+
+            return Center(
+              child: Column(
+                children: [
+                  Center(
+                    child: Center(
+                      child: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 12,
+                          backgroundColor: Colors.grey[200],
+                          color: Colors.blue[200],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  Text(
+                    '${(100 * progress).roundToDouble()}%',
+                    style: const TextStyle(color: Colors.black, fontSize: 20),
+                  )
+                ],
+              ),
+            );
+          }
+
+          return Container();
+        },
+      ),
     );
   }
 }

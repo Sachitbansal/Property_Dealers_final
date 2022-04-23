@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../addHelper.dart';
 
 class HouseDetails extends StatefulWidget {
   const HouseDetails(
@@ -45,11 +50,17 @@ class HouseDetails extends StatefulWidget {
 }
 
 class _HouseDetailsState extends State<HouseDetails> {
-    late CarouselSliderController _sliderController;
+
+  late CarouselSliderController _sliderController;
 
   @override
   void initState() {
     super.initState();
+
+
+
+    AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
+    adProvider.initialiseDetailsPageBanner();
     _sliderController = CarouselSliderController();
   }
 
@@ -69,11 +80,16 @@ class _HouseDetailsState extends State<HouseDetails> {
       }
     }
 
-    CollectionReference collectionrRef =
+    CollectionReference collectionRef =
     FirebaseFirestore.instance.collection(widget.uid);
 
-    Future<void> deleteUser(id) {
-      return collectionrRef.doc(id).delete();
+    Future<void> deleteUser(String id, List urls) async {
+      collectionRef.doc(id).delete();
+
+      for (var url = 0; url < urls.length; url++) {
+        await FirebaseStorage.instance.refFromURL(urls[url]).delete();
+      }
+
     }
 
 
@@ -133,7 +149,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                 right: 20.0,
                 child: GestureDetector(
                   onTap: () {
-                    deleteUser(widget.docId).whenComplete(() {
+                    deleteUser(widget.docId, widget.assets).whenComplete(() {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context)
                           .showSnackBar(const SnackBar(
@@ -406,6 +422,20 @@ class _HouseDetailsState extends State<HouseDetails> {
               ),
             ),
           ),
+          SizedBox(
+            child: Consumer<AddProvider>(builder: (context, adProvider, child) {
+              if (adProvider.isdetailsPageBannerLoaded) {
+                return SizedBox(
+                  height: adProvider.detailsPageBanner.size.height.toDouble(),
+                  child: AdWidget(
+                    ad: adProvider.detailsPageBanner,
+                  ),
+                );
+              } else {
+                return Container(height: 100, color: Colors.red[100],);
+              }
+            }),
+          )
         ],
       ),
     );
