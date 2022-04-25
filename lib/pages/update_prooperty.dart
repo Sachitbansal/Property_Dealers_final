@@ -19,9 +19,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   final _formKey = GlobalKey<FormState>();
 
   MaterialStateProperty<Color> kActiveCardColour =
-      MaterialStateProperty.all<Color>(Colors.blue[100]!);
+  MaterialStateProperty.all<Color>(Colors.blue[100]!);
   MaterialStateProperty<Color> kInactiveCardColour =
-      MaterialStateProperty.all<Color>(Colors.transparent);
+  MaterialStateProperty.all<Color>(Colors.transparent);
 
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
@@ -72,11 +72,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
   Future imagePickerMethod() async {
     final pick = await imagePicker.pickMultiImage();
-      if (pick != null) {
-        _image = pick;
-      } else {
-        showSnackBar("No File selected", const Duration(milliseconds: 400));
-      }
+    if (pick != null) {
+      _image = pick;
+    } else {
+      showSnackBar("No File selected", const Duration(milliseconds: 400));
+    }
   }
 
   showSnackBar(String snackText, Duration d) {
@@ -148,9 +148,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
     Widget buildOption(
         {required String text,
-        Color? textColor,
-        Color? bgColor,
-        required void Function() onTap}) {
+          Color? textColor,
+          Color? bgColor,
+          required void Function() onTap}) {
       return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -176,7 +176,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       );
     }
 
-    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Update Property'),
@@ -208,12 +207,12 @@ class _UpdatePropertyState extends State<UpdateProperty> {
               titleController.text = data['title'];
               priceController.text = data['Price'];
 
-              // buyRent = data['buyRent'];
-              // bedRooms = data['bedRooms'];
-              // bathRooms = data['bathRooms'];
-              // sizeUnit = data['sizeUnit'];
-              // type = data['types'];
-              // construction = data['construction'];
+              buyRent = data['buyRent'];
+              bedRooms = data['bedRooms'];
+              bathRooms = data['bathRooms'];
+              sizeUnit = data['sizeUnit'];
+              type = data['types'];
+              construction = data['construction'];
 
               final List imageUrls = data['images'];
 
@@ -231,21 +230,21 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         ButtonWithText(
                           onTap: () {
-                              buyRent[0] = 'Buy';
+                            buyRent[0] = 'Buy';
                           },
-                          size: size.width * .40,
+                          size: 100,
                           title: 'Buy',
                           bgColor: buyRent[0] == 'Buy'
                               ? kActiveColor
                               : kInActiveColor,
                           fontColor:
-                              buyRent[0] == 'Buy' ? Colors.white : kActiveColor,
+                          buyRent[0] == 'Buy' ? Colors.white : kActiveColor,
                         ),
                         ButtonWithText(
                           onTap: () {
-                              buyRent[0] = 'Rent';
+                            buyRent[0] = 'Rent';
                           },
-                          size: size.width * .40,
+                          size: 100,
                           title: 'Rent',
                           bgColor: buyRent[0] == 'Rent'
                               ? kActiveColor
@@ -277,46 +276,46 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         ButtonWithTextAndIcon(
                           textIconColor:
-                              type == 'Flat' ? Colors.white : kActiveColor,
+                          type == 'Flat' ? Colors.white : kActiveColor,
                           title: 'Flat',
                           onTap: () {
-                                type = 'Flat';
+                            type = 'Flat';
                           },
                           bgColor:
-                              type == 'Flat' ? kActiveColor : kInActiveColor,
+                          type == 'Flat' ? kActiveColor : kInActiveColor,
                           icon: Icons.apartment,
                         ),
                         ButtonWithTextAndIcon(
                           textIconColor:
-                              type == 'House' ? Colors.white : kActiveColor,
+                          type == 'House' ? Colors.white : kActiveColor,
                           title: 'House',
                           onTap: () {
-                              type = 'House';
+                            type = 'House';
                           },
                           bgColor:
-                              type == 'House' ? kActiveColor : kInActiveColor,
+                          type == 'House' ? kActiveColor : kInActiveColor,
                           icon: Icons.house,
                         ),
                         ButtonWithTextAndIcon(
                           textIconColor:
-                              type == 'Room' ? Colors.white : kActiveColor,
+                          type == 'Room' ? Colors.white : kActiveColor,
                           title: 'Room',
                           onTap: () {
-                              type = 'Room';
+                            type = 'Room';
                           },
                           bgColor:
-                              type == 'Room' ? kActiveColor : kInActiveColor,
+                          type == 'Room' ? kActiveColor : kInActiveColor,
                           icon: Icons.meeting_room,
                         ),
                         ButtonWithTextAndIcon(
                           textIconColor:
-                              type == 'Land' ? Colors.white : kActiveColor,
+                          type == 'Land' ? Colors.white : kActiveColor,
                           title: 'Land',
                           onTap: () {
-                              type = 'Land';
+                            type = 'Land';
                           },
                           bgColor:
-                              type == 'Land' ? kActiveColor : kInActiveColor,
+                          type == 'Land' ? kActiveColor : kInActiveColor,
                           icon: Icons.meeting_room,
                         ),
                       ],
@@ -342,55 +341,55 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         buildOption(
                           onTap: () {
-                              bedRooms[0] = '1';
+                            bedRooms[0] = '1';
                           },
                           text: "1",
                           textColor:
-                              bedRooms[0] == '1' ? Colors.white : kActiveColor,
+                          bedRooms[0] == '1' ? Colors.white : kActiveColor,
                           bgColor: bedRooms[0] == '1'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bedRooms[0] = '2';
+                            bedRooms[0] = '2';
                           },
                           text: "2",
                           textColor:
-                              bedRooms[0] == '2' ? Colors.white : kActiveColor,
+                          bedRooms[0] == '2' ? Colors.white : kActiveColor,
                           bgColor: bedRooms[0] == '2'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bedRooms[0] = '3';
+                            bedRooms[0] = '3';
                           },
                           text: "3",
                           textColor:
-                              bedRooms[0] == '3' ? Colors.white : kActiveColor,
+                          bedRooms[0] == '3' ? Colors.white : kActiveColor,
                           bgColor: bedRooms[0] == '3'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bedRooms[0] = '4';
+                            bedRooms[0] = '4';
                           },
                           text: "4",
                           textColor:
-                              bedRooms[0] == '4' ? Colors.white : kActiveColor,
+                          bedRooms[0] == '4' ? Colors.white : kActiveColor,
                           bgColor: bedRooms[0] == '4'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bedRooms[0] = '4+';
+                            bedRooms[0] = '4+';
                           },
                           text: "4+",
                           textColor:
-                              bedRooms[0] == '4+' ? Colors.white : kActiveColor,
+                          bedRooms[0] == '4+' ? Colors.white : kActiveColor,
                           bgColor: bedRooms[0] == '4+'
                               ? kActiveColor
                               : kInActiveColor,
@@ -405,51 +404,51 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         buildOption(
                           onTap: () {
-                              bathRooms[0] = '1';
+                            bathRooms[0] = '1';
                           },
                           text: "1",
                           textColor:
-                              bathRooms[0] == '1' ? Colors.white : kActiveColor,
+                          bathRooms[0] == '1' ? Colors.white : kActiveColor,
                           bgColor: bathRooms[0] == '1'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bathRooms[0] = '2';
+                            bathRooms[0] = '2';
                           },
                           text: "2",
                           textColor:
-                              bathRooms[0] == '2' ? Colors.white : kActiveColor,
+                          bathRooms[0] == '2' ? Colors.white : kActiveColor,
                           bgColor: bathRooms[0] == '2'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bathRooms[0] = '3';
+                            bathRooms[0] = '3';
                           },
                           text: "3",
                           textColor:
-                              bathRooms[0] == '3' ? Colors.white : kActiveColor,
+                          bathRooms[0] == '3' ? Colors.white : kActiveColor,
                           bgColor: bathRooms[0] == '3'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bathRooms[0] = '4';
+                            bathRooms[0] = '4';
                           },
                           text: "4",
                           textColor:
-                              bathRooms[0] == '4' ? Colors.white : kActiveColor,
+                          bathRooms[0] == '4' ? Colors.white : kActiveColor,
                           bgColor: bathRooms[0] == '4'
                               ? kActiveColor
                               : kInActiveColor,
                         ),
                         buildOption(
                           onTap: () {
-                              bathRooms[0] = '4+';
+                            bathRooms[0] = '4+';
                           },
                           text: "4+",
                           textColor: bathRooms[0] == '4+'
@@ -482,32 +481,32 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         ButtonWithText(
                           onTap: () {
-                              sizeUnit = 'm²';
+                            sizeUnit = 'm²';
                           },
-                          size: size.width * .20,
+                          size: 100,
                           title: 'm²',
                           bgColor:
-                              sizeUnit == 'm²' ? kActiveColor : kInActiveColor,
+                          sizeUnit == 'm²' ? kActiveColor : kInActiveColor,
                           fontColor:
-                              sizeUnit == 'm²' ? Colors.white : kActiveColor,
+                          sizeUnit == 'm²' ? Colors.white : kActiveColor,
                         ),
                         ButtonWithText(
                           onTap: () {
-                              sizeUnit = 'Acres';
+                            sizeUnit = 'Acres';
                           },
-                          size: size.width * .25,
+                          size: 100,
                           title: 'Acres',
                           bgColor: sizeUnit == 'Acres'
                               ? kActiveColor
                               : kInActiveColor,
                           fontColor:
-                              sizeUnit == 'Acres' ? Colors.white : kActiveColor,
+                          sizeUnit == 'Acres' ? Colors.white : kActiveColor,
                         ),
                         ButtonWithText(
                           onTap: () {
-                              sizeUnit = 'Hectares';
+                            sizeUnit = 'Hectares';
                           },
-                          size: size.width * .35,
+                          size: 100,
                           title: 'Hectares',
                           bgColor: sizeUnit == 'Hectares'
                               ? kActiveColor
@@ -526,9 +525,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       children: [
                         ButtonWithText(
                           onTap: () {
-                              construction = 'Any';
+                            construction = 'Any';
                           },
-                          size: size.width * .20,
+                          size: 100,
                           title: 'Any',
                           bgColor: construction == 'Any'
                               ? kActiveColor
@@ -539,9 +538,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                         ),
                         ButtonWithText(
                           onTap: () {
-                              construction = 'New';
+                            construction = 'New';
                           },
-                          size: size.width * .20,
+                          size: 100,
                           title: 'New',
                           bgColor: construction == 'New'
                               ? kActiveColor
@@ -552,9 +551,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                         ),
                         ButtonWithText(
                           onTap: () {
-                              construction = 'Established';
+                            construction = 'Established';
                           },
-                          size: size.width * .45,
+                          size: 100,
                           title: 'Established',
                           bgColor: construction == 'Established'
                               ? kActiveColor
@@ -605,7 +604,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                           ),
                           child: SizedBox(
                             height: 40,
-                            width: size.width * .7,
+                            width: 100,
                             child: const Center(
                               child: Text(
                                 'Pick Images',
@@ -657,7 +656,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                     TextButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue[200]!),
+                        MaterialStateProperty.all<Color>(Colors.blue[200]!),
                         alignment: Alignment.center,
                       ),
                       child: const SizedBox(
@@ -672,19 +671,19 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate() && _image != null) {
-                            landSize = landSizeController.text;
-                            keywords = keywordsController.text;
-                            address = addressController.text;
-                            // name = nameController.text;
-                            number = numberController.text;
-                            price = priceController.text;
-                            title = titleController.text;
+                          landSize = landSizeController.text;
+                          keywords = keywordsController.text;
+                          address = addressController.text;
+                          name = nameController.text;
+                          number = numberController.text;
+                          price = priceController.text;
+                          title = titleController.text;
 
-                            for (var url = 0; url < imageUrls.length; url++) {
-                              FirebaseStorage.instance.refFromURL(imageUrls[url]).delete();
-                            }
+                          for (var url = 0; url < imageUrls.length; url++) {
+                            FirebaseStorage.instance.refFromURL(imageUrls[url]).delete();
+                          }
 
-                            uploadFunction(_image!);
+                          uploadFunction(_image!);
                         } else {
                           showSnackBar('Please Update Images Also', const Duration(milliseconds: 1000));
                         }
