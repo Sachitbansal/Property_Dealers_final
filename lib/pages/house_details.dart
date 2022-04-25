@@ -8,6 +8,7 @@ import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/pages/update_prooperty.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../addHelper.dart';
@@ -56,9 +57,6 @@ class _HouseDetailsState extends State<HouseDetails> {
   @override
   void initState() {
     super.initState();
-
-
-
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseDetailsPageBanner();
     _sliderController = CarouselSliderController();
@@ -69,7 +67,6 @@ class _HouseDetailsState extends State<HouseDetails> {
 
     final String facility = widget.facilities;
     final List splits = facility.split(',');
-    print(widget.docId);
 
     void phoneCall() async {
       final url = 'tel:${widget.number}';
@@ -147,32 +144,64 @@ class _HouseDetailsState extends State<HouseDetails> {
               Positioned(
                 top: 50.0,
                 right: 20.0,
-                child: GestureDetector(
-                  onTap: () {
-                    deleteUser(widget.docId, widget.assets).whenComplete(() {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(const SnackBar(
-                        content: Text("Deleted"),
-                        duration:
-                        Duration(milliseconds: 1000),
-                      ));
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white70,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.black,
-                        size: 24,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        deleteUser(widget.docId, widget.assets).whenComplete(() {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Deleted"),
+                            duration:
+                            Duration(milliseconds: 1000),
+                          ));
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.black,
+                            size: 24,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 20,),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UpdateProperty(
+                              collection: widget.uid.toString(),
+                              id: widget.docId,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.black,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -422,20 +451,6 @@ class _HouseDetailsState extends State<HouseDetails> {
               ),
             ),
           ),
-          SizedBox(
-            child: Consumer<AddProvider>(builder: (context, adProvider, child) {
-              if (adProvider.isdetailsPageBannerLoaded) {
-                return SizedBox(
-                  height: adProvider.detailsPageBanner.size.height.toDouble(),
-                  child: AdWidget(
-                    ad: adProvider.detailsPageBanner,
-                  ),
-                );
-              } else {
-                return Container(height: 100, color: Colors.red[100],);
-              }
-            }),
-          )
         ],
       ),
     );

@@ -25,7 +25,6 @@ class _AddState extends State<Add> {
     addProvider.initialiseFullPageAdd();
   }
 
-
   MaterialStateProperty<Color> kActiveCardColour =
       MaterialStateProperty.all<Color>(Colors.blue[100]!);
   MaterialStateProperty<Color> kInactiveCardColour =
@@ -101,7 +100,7 @@ class _AddState extends State<Add> {
   void uploadFunction(List<XFile> images) async {
     setState(() {
       isLoading = true;
-    });
+      });
     for (int i = 0; i < images.length; i++) {
       var imgUrl = await uploadFile(images[i]);
       urls.add(imgUrl.toString());
@@ -166,7 +165,6 @@ class _AddState extends State<Add> {
         if (addProvider.isFullPageAddLoaded) {
           addProvider.fullPageAdd.show();
         }
-
         return true;
       },
 

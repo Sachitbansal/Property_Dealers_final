@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/pages/add.dart';
-import 'package:untitled/pages/update_prooperty.dart';
 import 'home.dart';
 import 'loginPage.dart';
 
@@ -275,18 +274,18 @@ class _HomePageState extends State<HomePage> {
                                               children: [
                                                 IconButton(
                                                   onPressed: () => {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            UpdateStudentPage(
-                                                          id: storedocs[i]
-                                                              ['id'],
-                                                          collection: widget.uid
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                    )
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   MaterialPageRoute(
+                                                    //     builder: (context) =>
+                                                    //         UpdateStudentPage(
+                                                    //       id: storedocs[i]
+                                                    //           ['id'],
+                                                    //       collection: widget.uid
+                                                    //           .toString(),
+                                                    //     ),
+                                                    //   ),
+                                                    // )
                                                   },
                                                   icon: const Icon(
                                                     Icons.edit,

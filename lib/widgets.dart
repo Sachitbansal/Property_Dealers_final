@@ -531,14 +531,14 @@ class NearbyHomes extends StatelessWidget {
                         (item) => Container(
 
                           //todo: uncommer after fixing
-                          // decoration: BoxDecoration(
-                          //   image: DecorationImage(
-                          //     fit: BoxFit.cover,
-                          //     image: NetworkImage(
-                          //       item.toString(),
-                          //     ),
-                          //   ),
-                          // ),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                item.toString(),
+                              ),
+                            ),
+                          ),
 
 
 

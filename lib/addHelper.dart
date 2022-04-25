@@ -43,7 +43,7 @@ class AddProvider with ChangeNotifier {
         }));
 
     await homePageBanner.load();
-    notifyListeners();
+    // notifyListeners();
   }
 
   void initialiseDetailsPageBanner() async {
@@ -63,7 +63,7 @@ class AddProvider with ChangeNotifier {
         }));
 
     await detailsPageBanner.load();
-    notifyListeners();
+    // notifyListeners();
   }
 
   void initialiseFullPageAdd() async {
@@ -84,6 +84,6 @@ class AddProvider with ChangeNotifier {
       ),
     );
 
-    notifyListeners();
+    // notifyListeners();
   }
 }

@@ -137,8 +137,6 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     onPressed: () {
-                      print(widget.uid);
-                      print('widget.uid');
                       showBottomSheet();
                     },
                   )
@@ -214,21 +212,21 @@ class _HomeState extends State<Home> {
                       );
               },
             ),
-            SizedBox(
-              child:
-                  Consumer<AddProvider>(builder: (context, adProvider, child) {
-                if (adProvider.isHomePageBannerLoaded) {
-                  return SizedBox(
-                    height: adProvider.homePageBanner.size.height.toDouble(),
-                    child: AdWidget(
-                      ad: adProvider.homePageBanner,
-                    ),
-                  );
-                } else {
-                  return Container(height: 100, color: Colors.red[100],);
-                }
-              }),
-            )
+            // SizedBox(
+            //   child:
+            //       Consumer<AddProvider>(builder: (context, adProvider, child) {
+            //     if (adProvider.isHomePageBannerLoaded) {
+            //       return SizedBox(
+            //         height: adProvider.homePageBanner.size.height.toDouble(),
+            //         child: AdWidget(
+            //           ad: adProvider.homePageBanner,
+            //         ),
+            //       );
+            //     } else {
+            //       return Container();
+            //     }
+            //   }),
+            // )
           ],
         ),
       ),
