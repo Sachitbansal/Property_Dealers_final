@@ -29,7 +29,8 @@ class _SearchBarDataState extends State<SearchBarData> {
         FirebaseFirestore.instance.collection(widget.uid.toString());
 
     final data = noticeCollection
-        .where("searchData", arrayContains: searchController.text).snapshots();
+        .where("searchData", arrayContains: searchController.text)
+        .snapshots();
 
     void showBottomSheet() {
       showModalBottomSheet(
@@ -62,33 +63,23 @@ class _SearchBarDataState extends State<SearchBarData> {
               TextFormField(
                 controller: searchController,
                 decoration: InputDecoration(
-                    labelText: 'Search For Properties',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        setState(() {
-
-                          final data = noticeCollection
-                              .where("searchData", arrayContains: searchController.text).snapshots();
-                        });
-                      },
-                    )),
-              ),
-              TextButton(
-                child: Text(
-                  "FILTER",
-                  style: GoogleFonts.play(
-                    color: const Color(0xfff63e3c),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                  labelText: 'Search For Properties',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      setState(() {
+                        final data = noticeCollection
+                            .where("searchData",
+                                arrayContains: searchController.text)
+                            .snapshots();
+                      });
+                    },
                   ),
                 ),
-                onPressed: () {
-                  showBottomSheet();
-                },
               ),
+              const SizedBox(height: 20,),
               SizedBox(
-                height: 200,
+                height: MediaQuery.of(context).size.height - 200,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: data,
                   builder: (BuildContext context,
@@ -103,7 +94,6 @@ class _SearchBarDataState extends State<SearchBarData> {
                     final data = snapshot.requireData;
 
                     return ListView.builder(
-                      reverse: true,
                       itemCount: data.size,
                       itemBuilder: (context, index) {
                         return Column(
