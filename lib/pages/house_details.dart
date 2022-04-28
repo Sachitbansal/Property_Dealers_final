@@ -48,8 +48,6 @@ class HouseDetails extends StatefulWidget {
 }
 
 class _HouseDetailsState extends State<HouseDetails> {
-
-
   @override
   void initState() {
     super.initState();
@@ -59,7 +57,6 @@ class _HouseDetailsState extends State<HouseDetails> {
 
   @override
   Widget build(BuildContext context) {
-
     final String facility = widget.facilities;
     final List splits = facility.split(',');
 
@@ -73,7 +70,7 @@ class _HouseDetailsState extends State<HouseDetails> {
     }
 
     CollectionReference collectionRef =
-    FirebaseFirestore.instance.collection(widget.uid);
+        FirebaseFirestore.instance.collection(widget.uid);
 
     Future<void> deleteUser(String id, List urls) async {
       collectionRef.doc(id).delete();
@@ -81,8 +78,48 @@ class _HouseDetailsState extends State<HouseDetails> {
       for (var url = 0; url < urls.length; url++) {
         await FirebaseStorage.instance.refFromURL(urls[url]).delete();
       }
-
     }
+
+    Future<void> _showMyDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Are you sure want to delete the property?'),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('DELETE', style: TextStyle(color: Colors.red),),
+                    onPressed: () {
+                      deleteUser(widget.docId, widget.assets).whenComplete(() {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("Deleted"),
+                          duration:
+                          Duration(milliseconds: 1000),
+                        ));
+                      });
+                    },
+                  ),
+                ],
+              ),
+
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -99,23 +136,23 @@ class _HouseDetailsState extends State<HouseDetails> {
                   items: widget.assets
                       .map(
                         (item) => CachedNetworkImage(
-                      imageUrl: item.toString(),
-                      errorWidget: (context, url, error) =>
-                      const Text("error"),
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: imageProvider,
+                          imageUrl: item.toString(),
+                          errorWidget: (context, url, error) =>
+                              const Text("error"),
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: imageProvider,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(
+                            backgroundColor: Colors.red,
                           ),
                         ),
-                      ),
-                      placeholder: (context, url) =>
-                      const CircularProgressIndicator(
-                        backgroundColor: Colors.red,
-                      ),
-                    ),
-                  )
+                      )
                       .toList(),
                 ),
               ),
@@ -149,17 +186,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        deleteUser(widget.docId, widget.assets).whenComplete(() {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text("Deleted"),
-                            duration:
-                            Duration(milliseconds: 1000),
-                          ));
-                        });
-                      },
+                      onTap: () => _showMyDialog(),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white70,
@@ -175,7 +202,9 @@ class _HouseDetailsState extends State<HouseDetails> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20,),
+                    const SizedBox(
+                      width: 20,
+                    ),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -184,6 +213,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                             builder: (context) => UpdateProperty(
                               collection: widget.uid.toString(),
                               id: widget.docId,
+                              imageUrls: widget.assets,
                             ),
                           ),
                         );
@@ -355,7 +385,9 @@ class _HouseDetailsState extends State<HouseDetails> {
                       children: [
                         for (var i = 0; i < splits.length; i++) ...[
                           _facilities(Icons.bubble_chart, "${splits[i]}"),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                         ]
                       ],
                     ),
