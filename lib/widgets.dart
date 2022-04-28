@@ -1,10 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_carousel_slider/carousel_slider.dart' as yo;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:untitled/pages/house_details.dart';
 
 class MyDivider extends StatelessWidget {
   @override
@@ -528,16 +527,24 @@ class NearbyHomes extends StatelessWidget {
                   ),
                   items: asset
                       .map(
-                        (item) => Container(
-                          //todo: uncommer after fixing
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                item.toString(),
+                        (item) => CachedNetworkImage(
+                          imageUrl: item.toString(),
+                          errorWidget: (context, url, error) =>
+                              const Text("error"),
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: imageProvider,
                               ),
                             ),
                           ),
+                          placeholder: (context, url) =>
+                              const Center(
+                                child: CircularProgressIndicator(
+                            backgroundColor: Colors.black,
+                          ),
+                              ),
                         ),
                       )
                       .toList(),
