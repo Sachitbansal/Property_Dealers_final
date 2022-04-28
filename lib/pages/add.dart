@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../addHelper.dart';
@@ -142,11 +143,15 @@ class _AddState extends State<Add> {
 
   Future<String> uploadFile(XFile images) async {
     final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    final File compressedFile = await FlutterNativeImage.compressImage(images.path,
+        quality: 90, percentage: 10);
+
     Reference reference = FirebaseStorage.instance
         .ref()
         .child(widget.collection.toString())
         .child("post_$imgId");
-    uploadTask = reference.putFile(File(images.path));
+    uploadTask = reference.putFile(compressedFile);
     await uploadTask?.whenComplete(() {
       setState(() {
         isLoading = false;
