@@ -60,24 +60,32 @@ class _SearchBarDataState extends State<SearchBarData> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              TextFormField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search For Properties',
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        final data = noticeCollection
-                            .where("searchData",
-                                arrayContains: searchController.text)
-                            .snapshots();
-                      });
-                    },
-                  ),
+              const SizedBox(height: 10,),
+              CustomTextField(
+                icon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      final data = noticeCollection
+                          .where("searchData",
+                          arrayContains: searchController.text)
+                          .snapshots();
+                    });
+                  },
                 ),
+                onChanged: (String query) {
+                  setState(() {
+                    final data = noticeCollection
+                        .where("searchData",
+                            arrayContains: searchController.text)
+                        .snapshots();
+                  });
+                },
+                titleController: searchController, labelText: 'Search',
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height - 200,
                 child: StreamBuilder<QuerySnapshot>(
@@ -88,7 +96,25 @@ class _SearchBarDataState extends State<SearchBarData> {
                       return const Text('Something went wrong');
                     }
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Text('Loading');
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            'Searching',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            height: 25,
+                            width: 25,
+                          )
+                        ],
+                      );
                     }
 
                     final data = snapshot.requireData;

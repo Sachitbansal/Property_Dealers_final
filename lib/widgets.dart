@@ -529,7 +529,6 @@ class NearbyHomes extends StatelessWidget {
                   items: asset
                       .map(
                         (item) => Container(
-
                           //todo: uncommer after fixing
                           decoration: BoxDecoration(
                             image: DecorationImage(
@@ -539,9 +538,6 @@ class NearbyHomes extends StatelessWidget {
                               ),
                             ),
                           ),
-
-
-
                         ),
                       )
                       .toList(),
@@ -633,22 +629,29 @@ class NearbyHomes extends StatelessWidget {
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key? key,
-    required this.titleController,
+    this.titleController,
     required this.labelText,
-    this.validator, this.keyboardType,
+    this.validator,
+    this.keyboardType,
+    this.onChanged,
+    this.icon,
   }) : super(key: key);
 
-  final TextEditingController titleController;
+  final TextEditingController? titleController;
   final String labelText;
+  final void Function(String)? onChanged;
   final TextInputType? keyboardType;
+  final Widget? icon;
   final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChanged,
       keyboardType: keyboardType,
       cursorColor: Colors.blue[300],
       decoration: InputDecoration(
+        suffixIcon: icon,
         isCollapsed: true,
         fillColor: Colors.blue[200]?.withOpacity(0.05),
         contentPadding:
@@ -706,7 +709,9 @@ class BuildProgress extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15,),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Text(
                     '${(100 * progress).roundToDouble()}%',
                     style: const TextStyle(color: Colors.black, fontSize: 20),
