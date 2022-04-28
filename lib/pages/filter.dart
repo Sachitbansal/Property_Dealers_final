@@ -15,8 +15,8 @@ class _FilterState extends State<Filter> {
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'Flat';
-  String rooms = 'Any';
-  String bathrooms = 'Any';
+  String rooms = 'Na';
+  String bathrooms = 'Na';
   String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
   double rangeLabelEnd = 1000.0;
@@ -36,10 +36,10 @@ class _FilterState extends State<Filter> {
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                      horizontal: 20),
+              padding: const EdgeInsets.symmetric(
+                      horizontal: 10),
               child: SizedBox(
-                width: size.width * 1.05,
+                width: 350,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -109,7 +109,7 @@ class _FilterState extends State<Filter> {
           ),
           Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: 20),
+                const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -166,9 +166,9 @@ class _FilterState extends State<Filter> {
                 rangeLabelEnd = newRange.end.roundToDouble();
               });
             },
-            min: 70,
+            min: 30,
             max: 1000,
-            divisions: 15,
+            divisions: 20,
             activeColor: kActiveColor,
             inactiveColor: Colors.grey[300],
           ),
@@ -176,13 +176,13 @@ class _FilterState extends State<Filter> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                r"$70k",
+                r"₹30k",
                 style: TextStyle(
                   fontSize: 14,
                 ),
               ),
               Text(
-                r"$1000k",
+                r"₹1000k",
                 style: TextStyle(
                   fontSize: 14,
                 ),
@@ -228,12 +228,12 @@ class _FilterState extends State<Filter> {
               buildOption(
                 onTap: () {
                   setState(() {
-                    rooms = '1234';
+                    rooms = 'Na';
                   });
                 },
-                text: "Any",
-                textColor: rooms == '1234' ? Colors.white : kActiveColor,
-                bgColor: rooms == '1234' ? kActiveColor : kInActiveColor,
+                text: "Na",
+                textColor: rooms == 'Na' ? Colors.white : kActiveColor,
+                bgColor: rooms == 'Na' ? kActiveColor : kInActiveColor,
               ),
             ],
           ),
@@ -274,14 +274,14 @@ class _FilterState extends State<Filter> {
                 bgColor: bathrooms == '3' ? kActiveColor : kInActiveColor,
               ),
               buildOption(
-                textColor: bathrooms == '4' ? Colors.white : kActiveColor,
+                textColor: bathrooms == 'Na' ? Colors.white : kActiveColor,
                 onTap: () {
                   setState(() {
-                    bathrooms = '4';
+                    bathrooms = 'Na';
                   });
                 },
-                text: "4",
-                bgColor: bathrooms == '4' ? kActiveColor : kInActiveColor,
+                text: "Na",
+                bgColor: bathrooms == 'Na' ? kActiveColor : kInActiveColor,
               ),
             ],
           ),
@@ -304,10 +304,13 @@ class _FilterState extends State<Filter> {
               ),
             ),
             onPressed: () {
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Search(
+                    priceEnd: rangeLabelEnd,
+                    priceStart: rangeLabelStart,
                     uid: widget.uid.toString(),
                     propertyType: propertyType,
                     rooms: rooms,

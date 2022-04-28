@@ -102,7 +102,7 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SearchBarData(),
+                              builder: (context) => SearchBarData(uid: widget.uid.toString(),),
                             ),
                           );
                         },
@@ -180,8 +180,8 @@ class _HomeState extends State<Home> {
                                 asset: storedocs[i]['images'],
                                 name: storedocs[i]['title'],
                                 location: storedocs[i]['address'],
-                                bedCount: storedocs[i]['bedRooms'][0],
-                                bathCount: storedocs[i]['bathRooms'][0],
+                                bedCount: storedocs[i]['bedRooms'],
+                                bathCount: storedocs[i]['bathRooms'],
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -193,13 +193,13 @@ class _HomeState extends State<Home> {
                                         facilities: storedocs[i]['keywords'],
                                         title: storedocs[i]['title'],
                                         address: storedocs[i]['address'],
-                                        bedRooms: storedocs[i]['bedRooms'][0],
-                                        bathRooms: storedocs[i]['bathRooms'][0],
-                                        price: storedocs[i]['Price'],
-                                        landSize: storedocs[i]['landSize'],
+                                        bedRooms: storedocs[i]['bedRooms'],
+                                        bathRooms: storedocs[i]['bathRooms'],
+                                        price: storedocs[i]['Price'].toString(),
+                                        landSize: storedocs[i]['landSize'].toString(),
                                         keywords: storedocs[i]['keywords'],
                                         name: storedocs[i]['name'],
-                                        number: storedocs[i]['number'],
+                                        number: storedocs[i]['number'].toString(),
                                         sizeUnit: storedocs[i]['sizeUnit'],
                                       ),
                                     ),

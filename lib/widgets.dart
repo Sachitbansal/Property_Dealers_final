@@ -382,7 +382,7 @@ class ButtonWithTextAndIcon extends StatelessWidget {
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(15.0)),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 15,
           ),
@@ -393,7 +393,7 @@ class ButtonWithTextAndIcon extends StatelessWidget {
                 color: textIconColor,
                 size: 30,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Text(
@@ -635,16 +635,18 @@ class CustomTextField extends StatelessWidget {
     Key? key,
     required this.titleController,
     required this.labelText,
-    this.validator,
+    this.validator, this.keyboardType,
   }) : super(key: key);
 
   final TextEditingController titleController;
   final String labelText;
+  final TextInputType? keyboardType;
   final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: keyboardType,
       cursorColor: Colors.blue[300],
       decoration: InputDecoration(
         isCollapsed: true,

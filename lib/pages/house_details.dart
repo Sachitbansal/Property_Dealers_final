@@ -10,7 +10,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/pages/update_prooperty.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../addHelper.dart';
 
 class HouseDetails extends StatefulWidget {

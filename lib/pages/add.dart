@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../addHelper.dart';
@@ -18,7 +18,6 @@ class Add extends StatefulWidget {
 }
 
 class _AddState extends State<Add> {
-
   @override
   void initState() {
     super.initState();
@@ -39,20 +38,20 @@ class _AddState extends State<Add> {
       'https://miro.medium.com/max/800/1*UL9RWkTUtJlyHW7kGm20hQ.png';
 
   late List buyRent = ['', 'Any'];
-  late List bedRooms = ['', 'None'];
-  late List bathRooms = ['', 'None'];
+  late String bedRooms = 'Na';
+  late String bathRooms = 'Na';
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String type = 'None';
 
-  late String landSize = 'None';
+  late int landSize = 0;
   late String keywords = 'None';
   late String address = 'None';
   late String title = 'None';
   late String name = 'None';
-  late String number = 'None';
+  late int number = 0;
 
-  late String price = 'None';
+  late int price = 0;
 
   final landSizeController = TextEditingController();
   final keywordsController = TextEditingController();
@@ -88,7 +87,7 @@ class _AddState extends State<Add> {
   UploadTask? uploadTask;
 
   Future imagePickerMethod() async {
-    final pick = await imagePicker.pickMultiImage();
+    final pick = await imagePicker.pickMultiImage(imageQuality: 30);
     setState(() {
       if (pick != null) {
         _image = pick;
@@ -101,7 +100,7 @@ class _AddState extends State<Add> {
   void uploadFunction(List<XFile> images) async {
     setState(() {
       isLoading = true;
-      });
+    });
     for (int i = 0; i < images.length; i++) {
       var imgUrl = await uploadFile(images[i]);
       urls.add(imgUrl.toString());
@@ -116,6 +115,21 @@ class _AddState extends State<Add> {
     CollectionReference students =
         FirebaseFirestore.instance.collection(widget.collection.toString());
     return students.add({
+      'searchData': [
+        buyRent[0].toLowerCase(),
+        bedRooms[0].toLowerCase(),
+        bathRooms[0].toLowerCase(),
+        sizeUnit.toLowerCase(),
+        construction.toLowerCase(),
+        landSize,
+        keywords.toLowerCase(),
+        address.toLowerCase(),
+        name.toLowerCase(),
+        number,
+        type.toLowerCase(),
+        price,
+        title.toLowerCase()
+      ],
       'buyRent': buyRent,
       'bedRooms': bedRooms,
       'bathRooms': bathRooms,
@@ -144,20 +158,16 @@ class _AddState extends State<Add> {
   Future<String> uploadFile(XFile images) async {
     final imgId = DateTime.now().millisecondsSinceEpoch.toString();
 
-    final File compressedFile = await FlutterNativeImage.compressImage(images.path,
-        quality: 90, percentage: 10);
-
     Reference reference = FirebaseStorage.instance
         .ref()
         .child(widget.collection.toString())
         .child("post_$imgId");
-    uploadTask = reference.putFile(compressedFile);
+    uploadTask = reference.putFile(File(images.path));
     await uploadTask?.whenComplete(() {
       setState(() {
         isLoading = false;
       });
     });
-    // print(await reference.getDownloadURL());
     return await reference.getDownloadURL();
   }
 
@@ -166,28 +176,26 @@ class _AddState extends State<Add> {
     final Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        AddProvider addProvider = Provider.of<AddProvider>(context, listen: false);
+        AddProvider addProvider =
+            Provider.of<AddProvider>(context, listen: false);
         if (addProvider.isFullPageAddLoaded) {
           addProvider.fullPageAdd.show();
         }
         return true;
       },
-
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add'),
           centerTitle: true,
         ),
-        body:
-        isLoading
+        body: isLoading
             ? Center(
                 child: BuildProgress(
                   width: size.width,
                   uploadTask: uploadTask,
                 ),
               )
-            :
-        SingleChildScrollView(
+            : SingleChildScrollView(
                 child: Form(
                   key: _formKey,
                   child: Padding(
@@ -264,8 +272,9 @@ class _AddState extends State<Add> {
                                   },
                                 );
                               },
-                              bgColor:
-                                  type == 'Flat' ? kActiveColor : kInActiveColor,
+                              bgColor: type == 'Flat'
+                                  ? kActiveColor
+                                  : kInActiveColor,
                               icon: Icons.apartment,
                             ),
                             ButtonWithTextAndIcon(
@@ -277,8 +286,9 @@ class _AddState extends State<Add> {
                                   type = 'House';
                                 });
                               },
-                              bgColor:
-                                  type == 'House' ? kActiveColor : kInActiveColor,
+                              bgColor: type == 'House'
+                                  ? kActiveColor
+                                  : kInActiveColor,
                               icon: Icons.house,
                             ),
                             ButtonWithTextAndIcon(
@@ -290,8 +300,9 @@ class _AddState extends State<Add> {
                                   type = 'Room';
                                 });
                               },
-                              bgColor:
-                                  type == 'Room' ? kActiveColor : kInActiveColor,
+                              bgColor: type == 'Room'
+                                  ? kActiveColor
+                                  : kInActiveColor,
                               icon: Icons.meeting_room,
                             ),
                             ButtonWithTextAndIcon(
@@ -303,8 +314,9 @@ class _AddState extends State<Add> {
                                   type = 'Land';
                                 });
                               },
-                              bgColor:
-                                  type == 'Land' ? kActiveColor : kInActiveColor,
+                              bgColor: type == 'Land'
+                                  ? kActiveColor
+                                  : kInActiveColor,
                               icon: Icons.meeting_room,
                             ),
                           ],
@@ -314,7 +326,8 @@ class _AddState extends State<Add> {
                         ),
                         CustomTextField(
                           titleController: priceController,
-                          labelText: '100000',
+                          keyboardType: TextInputType.number,
+                            labelText: '100000',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please Enter a desired price';
@@ -331,70 +344,70 @@ class _AddState extends State<Add> {
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bedRooms[0] = '1';
+                                  bedRooms = '1';
                                 });
                               },
                               text: "1",
-                              textColor: bedRooms[0] == '1'
+                              textColor: bedRooms == '1'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bedRooms[0] == '1'
+                              bgColor: bedRooms == '1'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bedRooms[0] = '2';
+                                  bedRooms = '2';
                                 });
                               },
                               text: "2",
-                              textColor: bedRooms[0] == '2'
+                              textColor: bedRooms == '2'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bedRooms[0] == '2'
+                              bgColor: bedRooms == '2'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bedRooms[0] = '3';
+                                  bedRooms = '3';
                                 });
                               },
                               text: "3",
-                              textColor: bedRooms[0] == '3'
+                              textColor: bedRooms == '3'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bedRooms[0] == '3'
+                              bgColor: bedRooms == '3'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bedRooms[0] = '4';
+                                  bedRooms = '4';
                                 });
                               },
                               text: "4",
-                              textColor: bedRooms[0] == '4'
+                              textColor: bedRooms == '4'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bedRooms[0] == '4'
+                              bgColor: bedRooms == '4'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bedRooms[0] = '4+';
+                                  bedRooms = 'Na';
                                 });
                               },
-                              text: "4+",
-                              textColor: bedRooms[0] == '4+'
+                              text: "Na",
+                              textColor: bedRooms == 'Na'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bedRooms[0] == '4+'
+                              bgColor: bedRooms == 'Na'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
@@ -409,70 +422,70 @@ class _AddState extends State<Add> {
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bathRooms[0] = '1';
+                                  bathRooms = '1';
                                 });
                               },
                               text: "1",
-                              textColor: bathRooms[0] == '1'
+                              textColor: bathRooms == '1'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bathRooms[0] == '1'
+                              bgColor: bathRooms == '1'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bathRooms[0] = '2';
+                                  bathRooms = '2';
                                 });
                               },
                               text: "2",
-                              textColor: bathRooms[0] == '2'
+                              textColor: bathRooms == '2'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bathRooms[0] == '2'
+                              bgColor: bathRooms == '2'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bathRooms[0] = '3';
+                                  bathRooms = '3';
                                 });
                               },
                               text: "3",
-                              textColor: bathRooms[0] == '3'
+                              textColor: bathRooms == '3'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bathRooms[0] == '3'
+                              bgColor: bathRooms == '3'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bathRooms[0] = '4';
+                                  bathRooms = '4';
                                 });
                               },
                               text: "4",
-                              textColor: bathRooms[0] == '4'
+                              textColor: bathRooms == '4'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bathRooms[0] == '4'
+                              bgColor: bathRooms == '4'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
                             buildOption(
                               onTap: () {
                                 setState(() {
-                                  bathRooms[0] = '4+';
+                                  bathRooms = 'Na';
                                 });
                               },
-                              text: "4+",
-                              textColor: bathRooms[0] == '4+'
+                              text: "Na",
+                              textColor: bathRooms == 'Na'
                                   ? Colors.white
                                   : kActiveColor,
-                              bgColor: bathRooms[0] == '4+'
+                              bgColor: bathRooms == 'Na'
                                   ? kActiveColor
                                   : kInActiveColor,
                             ),
@@ -482,6 +495,7 @@ class _AddState extends State<Add> {
                           title: 'Minimum Land size',
                         ),
                         CustomTextField(
+                          keyboardType: TextInputType.number,
                           titleController: landSizeController,
                           labelText: '500',
                           validator: (value) {
@@ -508,8 +522,9 @@ class _AddState extends State<Add> {
                               bgColor: sizeUnit == 'm²'
                                   ? kActiveColor
                                   : kInActiveColor,
-                              fontColor:
-                                  sizeUnit == 'm²' ? Colors.white : kActiveColor,
+                              fontColor: sizeUnit == 'm²'
+                                  ? Colors.white
+                                  : kActiveColor,
                             ),
                             ButtonWithText(
                               onTap: () {
@@ -630,8 +645,9 @@ class _AddState extends State<Add> {
                           children: [
                             TextButton(
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                    Colors.blue[200]!),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blue[200]!),
                                 alignment: Alignment.center,
                               ),
                               child: SizedBox(
@@ -673,6 +689,7 @@ class _AddState extends State<Add> {
                           title: 'Contact',
                         ),
                         CustomTextField(
+                          keyboardType: TextInputType.number,
                           titleController: numberController,
                           labelText: 'Contact',
                           validator: (value) {
@@ -697,8 +714,8 @@ class _AddState extends State<Add> {
                             child: Center(
                               child: Text(
                                 'Add',
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                             ),
                           ),
@@ -706,12 +723,12 @@ class _AddState extends State<Add> {
                             if (_formKey.currentState!.validate() &&
                                 _image != null) {
                               setState(() {
-                                landSize = landSizeController.text;
+                                landSize = int.parse(landSizeController.text);
                                 keywords = keywordsController.text;
                                 address = addressController.text;
                                 name = nameController.text;
-                                number = numberController.text;
-                                price = priceController.text;
+                                number = int.parse(numberController.text);
+                                price = int.parse(priceController.text);
                                 title = titleController.text;
                                 uploadFunction(_image!);
                               });

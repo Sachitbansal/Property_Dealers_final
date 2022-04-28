@@ -10,6 +10,8 @@ class Search extends StatefulWidget {
     required this.propertyType,
     required this.rooms,
     required this.buyOrRent,
+    required this.priceStart,
+    required this.priceEnd,
     required this.bathrooms,
   }) : super(key: key);
   final String? uid;
@@ -17,13 +19,21 @@ class Search extends StatefulWidget {
   String rooms = 'Any';
   String bathrooms = 'Any';
   String buyOrRent = 'Buy';
+  double priceStart = 100;
+  double priceEnd = 100;
 
   @override
   _SearchState createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
-  late Object? userMap;
+  final searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +43,10 @@ class _SearchState extends State<Search> {
     final data = noticeCollection
         .where("types", isEqualTo: widget.propertyType)
         .where("buyRent", arrayContainsAny: [widget.buyOrRent])
-        .where("bedRooms", isGreaterThanOrEqualTo: widget.rooms)
+        .where("Price", isGreaterThanOrEqualTo: widget.priceStart)
+        .where("Price", isLessThanOrEqualTo: widget.priceEnd)
         .where("bathRooms", isEqualTo: widget.bathrooms)
+        .where("bedRooms", isEqualTo: widget.rooms)
         .snapshots();
 
     return Scaffold(
@@ -47,9 +59,23 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              TextFormField(),
+              // TextFormField(
+              //   controller: searchController,
+              //   decoration: InputDecoration(
+              //       labelText: 'Search For Properties',
+              //       suffixIcon: IconButton(
+              //         icon: const Icon(Icons.search),
+              //         onPressed: () {
+              //           setState(() {
+              //             final data = noticeCollection
+              //                 .where("searchData", arrayContains: searchController.text).snapshots();
+              //           });
+              //         },
+              //       )),
+              //
+              // ),
               SizedBox(
-                height: 200,
+                height: MediaQuery.of(context).size.height,
                 child: StreamBuilder<QuerySnapshot>(
                     stream: data,
                     builder: (BuildContext context,
@@ -64,7 +90,6 @@ class _SearchState extends State<Search> {
                       final data = snapshot.requireData;
 
                       return ListView.builder(
-                        reverse: true,
                         itemCount: data.size,
                         itemBuilder: (context, index) {
                           return Column(
