@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
@@ -28,28 +26,9 @@ class _SearchBarDataState extends State<SearchBarData> {
     final CollectionReference noticeCollection =
         FirebaseFirestore.instance.collection(widget.uid.toString());
 
-    final data = noticeCollection
+    final data = FirebaseFirestore.instance.collection(widget.uid.toString())
         .where("searchData", arrayContains: searchController.text)
         .snapshots();
-
-    void showBottomSheet() {
-      showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-          ),
-          builder: (BuildContext context) {
-            return Wrap(
-              children: [
-                Filter(uid: widget.uid.toString()),
-              ],
-            );
-          });
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -60,19 +39,10 @@ class _SearchBarDataState extends State<SearchBarData> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               CustomTextField(
-                icon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    setState(() {
-                      final data = noticeCollection
-                          .where("searchData",
-                          arrayContains: searchController.text)
-                          .snapshots();
-                    });
-                  },
-                ),
                 onChanged: (String query) {
                   setState(() {
                     final data = noticeCollection
@@ -81,7 +51,8 @@ class _SearchBarDataState extends State<SearchBarData> {
                         .snapshots();
                   });
                 },
-                titleController: searchController, labelText: 'Search',
+                titleController: searchController,
+                labelText: 'Search',
               ),
               const SizedBox(
                 height: 20,
@@ -128,8 +99,8 @@ class _SearchBarDataState extends State<SearchBarData> {
                               asset: data.docs[index]['images'],
                               name: data.docs[index]['title'],
                               location: data.docs[index]['address'],
-                              bedCount: data.docs[index]['bedRooms'][0],
-                              bathCount: data.docs[index]['bathRooms'][0],
+                              bedCount: data.docs[index]['bedRooms'],
+                              bathCount: data.docs[index]['bathRooms'],
                               onTap: () {
                                 Navigator.push(
                                   context,
