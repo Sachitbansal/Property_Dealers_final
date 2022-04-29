@@ -1,14 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
+import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/pages/update_prooperty.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../addHelper.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class HouseDetails extends StatefulWidget {
   HouseDetails(
@@ -28,6 +30,7 @@ class HouseDetails extends StatefulWidget {
       required this.facilities,
       required this.assets,
       required this.isPublic,
+      this.enableChange,
       this.enableEdit})
       : super(key: key);
   final String title,
@@ -45,6 +48,7 @@ class HouseDetails extends StatefulWidget {
       bathRooms;
   final List assets;
   bool? enableEdit = true;
+  bool? enableChange = true;
   bool isPublic;
 
   @override
@@ -52,11 +56,15 @@ class HouseDetails extends StatefulWidget {
 }
 
 class _HouseDetailsState extends State<HouseDetails> {
+
+  late CarouselSliderController _sliderController;
+
   @override
   void initState() {
     super.initState();
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseDetailsPageBanner();
+    _sliderController = CarouselSliderController();
   }
 
   bool isPublic = false;
@@ -127,33 +135,24 @@ class _HouseDetailsState extends State<HouseDetails> {
             children: [
               SizedBox(
                 height: 350,
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    initialPage: 0,
-                    autoPlay: true,
-                    disableCenter: true,
-                  ),
-                  items: widget.assets
-                      .map(
-                        (item) => CachedNetworkImage(
-                          imageUrl: item.toString(),
-                          errorWidget: (context, url, error) =>
-                              const Text("error"),
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: imageProvider,
-                              ),
-                            ),
-                          ),
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(
-                            backgroundColor: Colors.red,
-                          ),
-                        ),
-                      )
-                      .toList(),
+                child: CarouselSlider.builder(
+                  unlimitedMode: true,
+                  controller: _sliderController,
+                  slideBuilder: (index) {
+                    return Image.network(
+                      widget.assets[index],
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  slideTransform: const ParallaxTransform(),
+                  slideIndicator: CircularSlideIndicator(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      indicatorBorderColor: Colors.white,
+                      currentIndicatorColor: Colors.white,
+                      indicatorBackgroundColor: Colors.transparent),
+                  itemCount: widget.assets.length,
+                  initialPage: 0,
+                  enableAutoSlider: true,
                 ),
               ),
               Positioned(
@@ -411,7 +410,8 @@ class _HouseDetailsState extends State<HouseDetails> {
               ),
             ),
           ),
-          Row(
+          if (widget.enableChange == false)
+            Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(

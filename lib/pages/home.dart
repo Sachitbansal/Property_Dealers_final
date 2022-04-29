@@ -72,7 +72,6 @@ class _HomeState extends State<Home> {
                             copyTo.add(value.data()),
                           },
                         );
-
                   },
                 ),
               ],
@@ -257,7 +256,8 @@ class _HomeState extends State<Home> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       HouseDetails(
-                                                        isPublic: storedocs[i]['isPublic'],
+                                                    isPublic: storedocs[i]
+                                                        ['isPublic'],
                                                     enableEdit: true,
                                                     uid: widget.uid.toString(),
                                                     docId: storedocs[i]['id'],
@@ -286,6 +286,8 @@ class _HomeState extends State<Home> {
                                                         .toString(),
                                                     sizeUnit: storedocs[i]
                                                         ['sizeUnit'],
+                                                          enableChange: false,
+                                                          // enableChange: true
                                                   ),
                                                 ),
                                               );
@@ -384,7 +386,8 @@ class _HomeState extends State<Home> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     HouseDetails(
-                                                      isPublic: storedocs[i]['isPublic'],
+                                                  isPublic: storedocs[i]
+                                                      ['isPublic'],
                                                   uid: widget.uid.toString(),
                                                   docId: storedocs[i]['id'],
                                                   assets: storedocs[i]
@@ -515,8 +518,12 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
                   Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(
-                      )));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
                 },
               ),
             ],

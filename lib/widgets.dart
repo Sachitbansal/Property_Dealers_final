@@ -1,11 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart' as yo;
+import 'package:untitled/pages/house_details.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class MyDivider extends StatelessWidget {
+  const MyDivider({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -31,6 +33,8 @@ class MyDivider extends StatelessWidget {
 }
 
 class OrDivider extends StatelessWidget {
+  const OrDivider({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -123,7 +127,7 @@ class RoundedButton extends StatelessWidget {
 
 class RoundedInputField extends StatelessWidget {
   RoundedInputField(
-      {this.label = '',
+      {Key? key, this.label = '',
       this.keyboardtype,
       this.controller,
       this.validator,
@@ -131,7 +135,7 @@ class RoundedInputField extends StatelessWidget {
       required this.obscureText,
       required this.onChanged,
       required this.suffixiIcon,
-      this.hint = ''});
+      this.hint = ''}) : super(key: key);
 
   final iconChoose;
   final suffixiIcon;
@@ -274,12 +278,12 @@ class InfoWidget extends StatelessWidget {
 }
 
 class ReusableCard extends StatelessWidget {
-  const ReusableCard(
-      {required this.colour, required this.cardChild, required this.onPress});
 
   final Color colour;
   final Widget cardChild;
   final void Function() onPress;
+
+  const ReusableCard({Key? key, required this.colour, required this.cardChild, required this.onPress}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -298,16 +302,18 @@ class ReusableCard extends StatelessWidget {
 }
 
 class PropertyType extends StatelessWidget {
-  const PropertyType(
-      {required this.name,
-      required this.icon,
-      required this.onTap,
-      required this.color});
-
   final String name;
   final IconData icon;
   final void Function() onTap;
   final Color color;
+
+  const PropertyType(
+      {Key? key,
+      required this.name,
+      required this.icon,
+      required this.onTap,
+      required this.color})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -341,8 +347,8 @@ class Select extends StatelessWidget {
   final void Function() onPressed;
   final String text;
 
-  const Select(
-      {required this.bgColor, required this.onPressed, required this.text});
+  const Select({Key? key, required this.bgColor, required this.onPressed, required this.text}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -465,7 +471,7 @@ class ButtonWithText extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 15,
           ),
@@ -527,24 +533,15 @@ class NearbyHomes extends StatelessWidget {
                   ),
                   items: asset
                       .map(
-                        (item) => CachedNetworkImage(
-                          imageUrl: item.toString(),
-                          errorWidget: (context, url, error) =>
-                              const Text("error"),
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: imageProvider,
+                        (item) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                item.toString()
                               ),
                             ),
                           ),
-                          placeholder: (context, url) =>
-                              const Center(
-                                child: CircularProgressIndicator(
-                            backgroundColor: Colors.black,
-                          ),
-                              ),
                         ),
                       )
                       .toList(),
@@ -566,7 +563,7 @@ class NearbyHomes extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Text(
@@ -576,19 +573,19 @@ class NearbyHomes extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Row(
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.king_bed,
                           color: Colors.grey,
                           size: 18,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(
@@ -600,17 +597,17 @@ class NearbyHomes extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.bathtub,
                           color: Colors.grey,
                           size: 16,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(
