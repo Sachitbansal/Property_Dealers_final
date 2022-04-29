@@ -11,7 +11,7 @@ import '../addHelper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HouseDetails extends StatefulWidget {
-  const HouseDetails(
+  HouseDetails(
       {Key? key,
       required this.title,
       required this.price,
@@ -26,7 +26,9 @@ class HouseDetails extends StatefulWidget {
       required this.uid,
       required this.docId,
       required this.facilities,
-      required this.assets})
+      required this.assets,
+      required this.isPublic,
+      this.enableEdit})
       : super(key: key);
   final String title,
       price,
@@ -42,6 +44,8 @@ class HouseDetails extends StatefulWidget {
       landSize,
       bathRooms;
   final List assets;
+  bool? enableEdit = true;
+  bool isPublic;
 
   @override
   _HouseDetailsState createState() => _HouseDetailsState();
@@ -54,6 +58,8 @@ class _HouseDetailsState extends State<HouseDetails> {
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseDetailsPageBanner();
   }
+
+  bool isPublic = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,13 +86,16 @@ class _HouseDetailsState extends State<HouseDetails> {
       }
     }
 
-    Future<void> _showMyDialog() async {
+    Future<void> myDialog(
+        {required String confirmDialog,
+        void Function()? onPressed,
+        required String proceedButton}) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Are you sure want to delete the property?'),
+            title: Text(confirmDialog),
             actions: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -98,22 +107,13 @@ class _HouseDetailsState extends State<HouseDetails> {
                     },
                   ),
                   TextButton(
-                    child: const Text('DELETE', style: TextStyle(color: Colors.red),),
-                    onPressed: () {
-                      deleteUser(widget.docId, widget.assets).whenComplete(() {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text("Deleted"),
-                          duration:
-                          Duration(milliseconds: 1000),
-                        ));
-                      });
-                    },
-                  ),
+                      child: Text(
+                        proceedButton,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      onPressed: onPressed),
                 ],
               ),
-
             ],
           );
         },
@@ -186,7 +186,21 @@ class _HouseDetailsState extends State<HouseDetails> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => _showMyDialog(),
+                      onTap: () => myDialog(
+                          confirmDialog:
+                              'Are you sure want to delete the property?',
+                          onPressed: () {
+                            deleteUser(widget.docId, widget.assets)
+                                .whenComplete(() {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Deleted"),
+                                duration: Duration(milliseconds: 1000),
+                              ));
+                            });
+                          },
+                          proceedButton: 'DELETE'),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white70,
@@ -205,34 +219,35 @@ class _HouseDetailsState extends State<HouseDetails> {
                     const SizedBox(
                       width: 20,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UpdateProperty(
-                              collection: widget.uid.toString(),
-                              id: widget.docId,
-                              imageUrls: widget.assets,
+                    if (widget.enableEdit == true)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateProperty(
+                                collection: widget.uid.toString(),
+                                id: widget.docId,
+                                imageUrls: widget.assets,
+                              ),
                             ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.black,
-                            size: 24,
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.black,
+                              size: 24,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -395,6 +410,91 @@ class _HouseDetailsState extends State<HouseDetails> {
                 ],
               ),
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  if (!widget.isPublic) {
+                    myDialog(
+                      confirmDialog:
+                          'Are you sure want to make the Property Public?',
+                      onPressed: () async {
+                        isPublic = true;
+                        DocumentReference copyTo =
+                            FirebaseFirestore.instance.collection('Public').doc(
+                                  widget.docId + widget.uid.toString(),
+                                );
+                        DocumentReference copyFrom = FirebaseFirestore.instance
+                            .collection(widget.uid.toString())
+                            .doc(widget.docId);
+
+                        copyFrom.get().then(
+                              (value) => {
+                                copyTo.set(value.data()),
+                              },
+                            );
+
+                        await collectionRef
+                            .doc(widget.docId)
+                            .update({'isPublic': true}).whenComplete(
+                          () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                      proceedButton: 'Make Public',
+                    );
+                  } else {
+                    myDialog(
+                      confirmDialog:
+                          'Are you sure want to make the Property Private?',
+                      proceedButton: 'Make Private',
+                      onPressed: () async {
+                        isPublic = false;
+                        await FirebaseFirestore.instance
+                            .collection('Public')
+                            .doc(
+                              widget.docId + widget.uid.toString(),
+                            )
+                            .delete();
+
+                        await collectionRef
+                            .doc(widget.docId)
+                            .update({'isPublic': false}).whenComplete(
+                          () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: widget.isPublic ? Colors.blue[50] : Colors.black26,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.public,
+                      color: widget.isPublic ? Colors.blue[800] : Colors.white,
+                      size: 35,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
           ),
           Container(
             color: const Color(0xfff7f7f9),

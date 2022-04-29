@@ -152,6 +152,7 @@ class _AddState extends State<Add> {
       'bedRooms': bedRooms,
       'bathRooms': bathRooms,
       'sizeUnit': sizeUnit,
+      'isPublic': false,
       'construction': construction,
       'landSize': landSize,
       'keywords': keywords,
