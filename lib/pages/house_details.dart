@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +9,11 @@ import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_prooperty.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../addHelper.dart';
+import '../dynamic_links.dart';
 
 class HouseDetails extends StatefulWidget {
   HouseDetails(
@@ -30,7 +33,7 @@ class HouseDetails extends StatefulWidget {
       required this.facilities,
       required this.assets,
       required this.isPublic,
-      this.enableChange,
+      required this.enableChange,
       this.enableEdit})
       : super(key: key);
   final String title,
@@ -48,7 +51,7 @@ class HouseDetails extends StatefulWidget {
       bathRooms;
   final List assets;
   bool? enableEdit = true;
-  bool? enableChange = true;
+  bool enableChange;
   bool isPublic;
 
   @override
@@ -56,7 +59,6 @@ class HouseDetails extends StatefulWidget {
 }
 
 class _HouseDetailsState extends State<HouseDetails> {
-
   late CarouselSliderController _sliderController;
 
   @override
@@ -410,84 +412,117 @@ class _HouseDetailsState extends State<HouseDetails> {
               ),
             ),
           ),
-          if (widget.enableChange == false)
-            Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: () {
-                  if (!widget.isPublic) {
-                    myDialog(
-                      confirmDialog:
-                          'Are you sure want to make the Property Public?',
-                      onPressed: () async {
-                        isPublic = true;
-                        DocumentReference copyTo =
-                            FirebaseFirestore.instance.collection('Public').doc(
-                                  widget.docId + widget.uid.toString(),
-                                );
-                        DocumentReference copyFrom = FirebaseFirestore.instance
-                            .collection(widget.uid.toString())
-                            .doc(widget.docId);
-
-                        copyFrom.get().then(
-                              (value) => {
-                                copyTo.set(value.data()),
-                              },
-                            );
-
-                        await collectionRef
-                            .doc(widget.docId)
-                            .update({'isPublic': true}).whenComplete(
-                          () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                      proceedButton: 'Make Public',
-                    );
-                  } else {
-                    myDialog(
-                      confirmDialog:
-                          'Are you sure want to make the Property Private?',
-                      proceedButton: 'Make Private',
-                      onPressed: () async {
-                        isPublic = false;
-                        await FirebaseFirestore.instance
-                            .collection('Public')
-                            .doc(
-                              widget.docId + widget.uid.toString(),
-                            )
-                            .delete();
-
-                        await collectionRef
-                            .doc(widget.docId)
-                            .update({'isPublic': false}).whenComplete(
-                          () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    );
-                  }
+                onTap: () async {
+                  String generatedDeepLink =
+                      await DynamicLinkServices.createDynamicLink(
+                          short: false,
+                          collectionId: widget.uid,
+                          docId: widget.docId,
+                        imageUrl: widget.assets[0],
+                        propertyTitle: widget.title
+                      );
+                  Share.share(generatedDeepLink);
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: widget.isPublic ? Colors.blue[50] : Colors.black26,
+                    color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
-                      Icons.public,
-                      color: widget.isPublic ? Colors.blue[800] : Colors.white,
+                      Icons.share,
+                      color: Colors.blue[800],
                       size: 35,
                     ),
                   ),
                 ),
               ),
+              const SizedBox(
+                width: 20,
+              ),
+              if (widget.enableChange == true)
+                GestureDetector(
+                  onTap: () {
+                    if (!widget.isPublic) {
+                      myDialog(
+                        confirmDialog:
+                            'Are you sure want to make the Property Public?',
+                        onPressed: () async {
+                          isPublic = true;
+                          DocumentReference copyTo = FirebaseFirestore.instance
+                              .collection('Public')
+                              .doc(
+                                widget.docId + widget.uid.toString(),
+                              );
+                          DocumentReference copyFrom = FirebaseFirestore
+                              .instance
+                              .collection(widget.uid.toString())
+                              .doc(widget.docId);
+
+                          copyFrom.get().then(
+                                (value) => {
+                                  copyTo.set(value.data()),
+                                },
+                              );
+
+                          await collectionRef
+                              .doc(widget.docId)
+                              .update({'isPublic': true}).whenComplete(
+                            () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        proceedButton: 'Make Public',
+                      );
+                    } else {
+                      myDialog(
+                        confirmDialog:
+                            'Are you sure want to make the Property Private?',
+                        proceedButton: 'Make Private',
+                        onPressed: () async {
+                          isPublic = false;
+                          await FirebaseFirestore.instance
+                              .collection('Public')
+                              .doc(
+                                widget.docId + widget.uid.toString(),
+                              )
+                              .delete();
+
+                          await collectionRef
+                              .doc(widget.docId)
+                              .update({'isPublic': false}).whenComplete(
+                            () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: widget.isPublic ? Colors.blue[50] : Colors.black26,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.public,
+                        color:
+                            widget.isPublic ? Colors.blue[800] : Colors.white,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                ),
               const SizedBox(
                 width: 20,
               )

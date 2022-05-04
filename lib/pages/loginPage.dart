@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Column(
                   children: [
-                    OrDivider(),
+                    const OrDivider(),
                     GestureDetector(
                       onTap: () async {
                         // Trigger the authentication flow

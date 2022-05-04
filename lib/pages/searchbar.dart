@@ -120,7 +120,7 @@ class _SearchBarDataState extends State<SearchBarData> {
                                       keywords: data.docs[index]['keywords'],
                                       name: data.docs[index]['name'],
                                       number: data.docs[index]['number'],
-                                      sizeUnit: data.docs[index]['sizeUnit'],
+                                      sizeUnit: data.docs[index]['sizeUnit'], enableChange: false,
                                     ),
                                   ),
                                 );

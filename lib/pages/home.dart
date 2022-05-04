@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/addHelper.dart';
+import 'package:untitled/dynamic_links.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
 import 'package:untitled/pages/searchbar.dart';
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
+    DynamicLinkServices.initialDynamicLink(context);
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseHomePageBanner();
   }
@@ -286,7 +287,7 @@ class _HomeState extends State<Home> {
                                                         .toString(),
                                                     sizeUnit: storedocs[i]
                                                         ['sizeUnit'],
-                                                          enableChange: false,
+                                                          enableChange: true,
                                                           // enableChange: true
                                                   ),
                                                 ),
@@ -386,6 +387,8 @@ class _HomeState extends State<Home> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     HouseDetails(
+                                                      enableEdit: false,
+                                                      enableChange: false,
                                                   isPublic: storedocs[i]
                                                       ['isPublic'],
                                                   uid: widget.uid.toString(),
