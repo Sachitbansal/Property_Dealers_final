@@ -127,7 +127,8 @@ class RoundedButton extends StatelessWidget {
 
 class RoundedInputField extends StatelessWidget {
   RoundedInputField(
-      {Key? key, this.label = '',
+      {Key? key,
+      this.label = '',
       this.keyboardtype,
       this.controller,
       this.validator,
@@ -135,7 +136,8 @@ class RoundedInputField extends StatelessWidget {
       required this.obscureText,
       required this.onChanged,
       required this.suffixiIcon,
-      this.hint = ''}) : super(key: key);
+      this.hint = ''})
+      : super(key: key);
 
   final iconChoose;
   final suffixiIcon;
@@ -278,12 +280,16 @@ class InfoWidget extends StatelessWidget {
 }
 
 class ReusableCard extends StatelessWidget {
-
   final Color colour;
   final Widget cardChild;
   final void Function() onPress;
 
-  const ReusableCard({Key? key, required this.colour, required this.cardChild, required this.onPress}) : super(key: key);
+  const ReusableCard(
+      {Key? key,
+      required this.colour,
+      required this.cardChild,
+      required this.onPress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -347,8 +353,12 @@ class Select extends StatelessWidget {
   final void Function() onPressed;
   final String text;
 
-  const Select({Key? key, required this.bgColor, required this.onPressed, required this.text}) : super(key: key);
-
+  const Select(
+      {Key? key,
+      required this.bgColor,
+      required this.onPressed,
+      required this.text})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -492,26 +502,31 @@ class ButtonWithText extends StatelessWidget {
 }
 
 class NearbyHomes extends StatelessWidget {
-  const NearbyHomes({
-    Key? key,
-    required this.asset,
-    required this.name,
-    required this.location,
-    required this.bedCount,
-    required this.bathCount,
-    required this.onTap,
-  }) : super(key: key);
+  const NearbyHomes(
+      {Key? key,
+      required this.asset,
+      required this.name,
+      required this.location,
+      required this.bedCount,
+      required this.share,
+      required this.bathCount,
+      required this.onTap,
+      required this.size})
+      : super(key: key);
   final List asset;
   final String name;
   final String location;
   final String bedCount;
   final String bathCount;
+  final Size size;
+  final void Function()? share;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(
+          horizontal: 0.05 * size.width, vertical: 0.025 * size.width),
       child: GestureDetector(
         onTap: onTap,
         child: Row(
@@ -522,7 +537,7 @@ class NearbyHomes extends StatelessWidget {
               width: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 2),
+                border: Border.all(color: Colors.black, width: .5),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
@@ -537,9 +552,7 @@ class NearbyHomes extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                item.toString()
-                              ),
+                              image: NetworkImage(item.toString()),
                             ),
                           ),
                         ),
@@ -548,81 +561,108 @@ class NearbyHomes extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 100,
+            SizedBox(
+              width: .1 * size.width,
             ),
             Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                        maxLines: 1,
+                        style: GoogleFonts.play(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        location,
+                        style: GoogleFonts.play(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.king_bed,
+                                color: Colors.blue[700],
+                                size: 18,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                bedCount,
+                                style: GoogleFonts.play(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.lightBlueAccent,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.bathtub,
+                                color: Colors.blue[700],
+                                size: 16,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                bathCount,
+                                style: GoogleFonts.play(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.lightBlueAccent,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Column(
               children: [
-                Text(
-                  name,
-                  style: GoogleFonts.play(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                IconButton(
+                  icon: const Icon(
+                    Icons.bookmark_border,
+                    color: Colors.lightBlueAccent,
                   ),
+                  onPressed: () {},
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  location,
-                  style: GoogleFonts.play(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.king_bed,
-                          color: Colors.grey,
-                          size: 18,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          bedCount,
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.bathtub,
-                          color: Colors.grey,
-                          size: 16,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          bathCount,
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                // const SizedBox(height: 8,),
+                IconButton(
+                  icon: const Icon(Icons.share),
+                  onPressed: share,
                 ),
               ],
-            )),
+            )
           ],
         ),
       ),

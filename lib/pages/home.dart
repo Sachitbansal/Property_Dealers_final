@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
 import 'package:untitled/dynamic_links.dart';
 import 'package:untitled/pages/add.dart';
@@ -111,13 +112,15 @@ class _HomeState extends State<Home> {
           });
     }
 
+    Size size = MediaQuery.of(context).size;
+
     return LoaderOverlay(
       child: Scaffold(
         body: SafeArea(
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -145,7 +148,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(.02 * size.width),
                         child: IconButton(
                           icon: const Icon(
                             Icons.search,
@@ -173,8 +176,8 @@ class _HomeState extends State<Home> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: .04 * size.width,
                         ),
                         child: Row(
                           children: [
@@ -221,10 +224,10 @@ class _HomeState extends State<Home> {
                             );
                           }
 
-                          final List storedocs = [];
+                          final List storeDocs = [];
                           snapshot.data!.docs.map((DocumentSnapshot document) {
                             Map a = document.data() as Map<String, dynamic>;
-                            storedocs.add(a);
+                            storeDocs.add(a);
                             a['id'] = document.id;
                             a['collection'] = document.reference;
                           }).toList();
@@ -238,18 +241,32 @@ class _HomeState extends State<Home> {
                                     physics: const BouncingScrollPhysics(),
                                     children: [
                                       for (var i = 0;
-                                          i < storedocs.length;
+                                          i < storeDocs.length;
                                           i++) ...[
                                         GestureDetector(
                                           onDoubleTap: () {
-                                            _showMyDialog(storedocs[i]['id']);
+                                            _showMyDialog(storeDocs[i]['id']);
                                           },
                                           child: NearbyHomes(
-                                            asset: storedocs[i]['images'],
-                                            name: storedocs[i]['title'],
-                                            location: storedocs[i]['address'],
-                                            bedCount: storedocs[i]['bedRooms'],
-                                            bathCount: storedocs[i]
+                                            share: () async {
+                                              String generatedDeepLink =
+                                              await DynamicLinkServices.createDynamicLink(
+                                                  short: false,
+                                                  collectionId: widget.uid.toString(),
+                                                  docId: storeDocs[i]['id'],
+                                                  imageUrl: storeDocs[i]
+                                                  ['images'][0],
+                                                  propertyTitle: storeDocs[i]
+                                                  ['title']
+                                              );
+                                              Share.share(generatedDeepLink);
+                                            },
+                                            size: size,
+                                            asset: storeDocs[i]['images'],
+                                            name: storeDocs[i]['title'],
+                                            location: storeDocs[i]['address'],
+                                            bedCount: storeDocs[i]['bedRooms'],
+                                            bathCount: storeDocs[i]
                                                 ['bathRooms'],
                                             onTap: () {
                                               Navigator.push(
@@ -257,38 +274,38 @@ class _HomeState extends State<Home> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       HouseDetails(
-                                                    isPublic: storedocs[i]
+                                                    isPublic: storeDocs[i]
                                                         ['isPublic'],
                                                     enableEdit: true,
                                                     uid: widget.uid.toString(),
-                                                    docId: storedocs[i]['id'],
-                                                    assets: storedocs[i]
+                                                    docId: storeDocs[i]['id'],
+                                                    assets: storeDocs[i]
                                                         ['images'],
-                                                    facilities: storedocs[i]
+                                                    facilities: storeDocs[i]
                                                         ['keywords'],
-                                                    title: storedocs[i]
+                                                    title: storeDocs[i]
                                                         ['title'],
-                                                    address: storedocs[i]
+                                                    address: storeDocs[i]
                                                         ['address'],
-                                                    bedRooms: storedocs[i]
+                                                    bedRooms: storeDocs[i]
                                                         ['bedRooms'],
-                                                    bathRooms: storedocs[i]
+                                                    bathRooms: storeDocs[i]
                                                         ['bathRooms'],
-                                                    price: storedocs[i]['Price']
+                                                    price: storeDocs[i]['Price']
                                                         .toString(),
-                                                    landSize: storedocs[i]
+                                                    landSize: storeDocs[i]
                                                             ['landSize']
                                                         .toString(),
-                                                    keywords: storedocs[i]
+                                                    keywords: storeDocs[i]
                                                         ['keywords'],
-                                                    name: storedocs[i]['name'],
-                                                    number: storedocs[i]
+                                                    name: storeDocs[i]['name'],
+                                                    number: storeDocs[i]
                                                             ['number']
                                                         .toString(),
-                                                    sizeUnit: storedocs[i]
+                                                    sizeUnit: storeDocs[i]
                                                         ['sizeUnit'],
-                                                          enableChange: true,
-                                                          // enableChange: true
+                                                    enableChange: true,
+                                                    // enableChange: true
                                                   ),
                                                 ),
                                               );
@@ -309,9 +326,7 @@ class _HomeState extends State<Home> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
                         child: Row(
                           children: [
                             Text(
@@ -357,10 +372,10 @@ class _HomeState extends State<Home> {
                             );
                           }
 
-                          final List storedocs = [];
+                          final List storeDocs = [];
                           snapshot.data!.docs.map((DocumentSnapshot document) {
                             Map a = document.data() as Map<String, dynamic>;
-                            storedocs.add(a);
+                            storeDocs.add(a);
                             a['id'] = document.id;
                           }).toList();
 
@@ -373,48 +388,62 @@ class _HomeState extends State<Home> {
                                     physics: const BouncingScrollPhysics(),
                                     children: [
                                       for (var i = 0;
-                                          i < storedocs.length;
+                                          i < storeDocs.length;
                                           i++) ...[
                                         NearbyHomes(
-                                          asset: storedocs[i]['images'],
-                                          name: storedocs[i]['title'],
-                                          location: storedocs[i]['address'],
-                                          bedCount: storedocs[i]['bedRooms'],
-                                          bathCount: storedocs[i]['bathRooms'],
+                                          share: () async {
+                                            String generatedDeepLink =
+                                            await DynamicLinkServices.createDynamicLink(
+                                                short: false,
+                                                collectionId: widget.uid.toString(),
+                                                docId: storeDocs[i]['id'],
+                                                imageUrl: storeDocs[i]
+                                                ['images'][0],
+                                                propertyTitle: storeDocs[i]
+                                                ['title']
+                                            );
+                                            Share.share(generatedDeepLink);
+                                          },
+                                          size: size,
+                                          asset: storeDocs[i]['images'],
+                                          name: storeDocs[i]['title'],
+                                          location: storeDocs[i]['address'],
+                                          bedCount: storeDocs[i]['bedRooms'],
+                                          bathCount: storeDocs[i]['bathRooms'],
                                           onTap: () {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     HouseDetails(
-                                                      enableEdit: false,
-                                                      enableChange: false,
-                                                  isPublic: storedocs[i]
+                                                  enableEdit: false,
+                                                  enableChange: false,
+                                                  isPublic: storeDocs[i]
                                                       ['isPublic'],
                                                   uid: widget.uid.toString(),
-                                                  docId: storedocs[i]['id'],
-                                                  assets: storedocs[i]
+                                                  docId: storeDocs[i]['id'],
+                                                  assets: storeDocs[i]
                                                       ['images'],
-                                                  facilities: storedocs[i]
+                                                  facilities: storeDocs[i]
                                                       ['keywords'],
-                                                  title: storedocs[i]['title'],
-                                                  address: storedocs[i]
+                                                  title: storeDocs[i]['title'],
+                                                  address: storeDocs[i]
                                                       ['address'],
-                                                  bedRooms: storedocs[i]
+                                                  bedRooms: storeDocs[i]
                                                       ['bedRooms'],
-                                                  bathRooms: storedocs[i]
+                                                  bathRooms: storeDocs[i]
                                                       ['bathRooms'],
-                                                  price: storedocs[i]['Price']
+                                                  price: storeDocs[i]['Price']
                                                       .toString(),
-                                                  landSize: storedocs[i]
+                                                  landSize: storeDocs[i]
                                                           ['landSize']
                                                       .toString(),
-                                                  keywords: storedocs[i]
+                                                  keywords: storeDocs[i]
                                                       ['keywords'],
-                                                  name: storedocs[i]['name'],
-                                                  number: storedocs[i]['number']
+                                                  name: storeDocs[i]['name'],
+                                                  number: storeDocs[i]['number']
                                                       .toString(),
-                                                  sizeUnit: storedocs[i]
+                                                  sizeUnit: storeDocs[i]
                                                       ['sizeUnit'],
                                                 ),
                                               ),
@@ -475,8 +504,8 @@ class _HomeState extends State<Home> {
 
         //todo: un comment after account approved
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
+          padding: EdgeInsets.symmetric(
+            horizontal: .08 * size.width,
             vertical: 20,
           ),
           child: Row(

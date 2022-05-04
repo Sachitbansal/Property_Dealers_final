@@ -75,7 +75,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       builder: (BuildContext context) {
         return AlertDialog(
           title:
-              const Text('Are you sure want to make changes to the property?'),
+          const Text('Are you sure want to make changes to the property?'),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -92,13 +92,14 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                     style: TextStyle(color: Colors.red),
                   ),
                   onPressed: () {
-                    for (var url = 0; url < widget.imageUrls.length; url++) {
-                      FirebaseStorage.instance
-                          .refFromURL(widget.imageUrls[url])
-                          .delete();
+                    if (_image != null ) {
+                      for (var url = 0; url < widget.imageUrls.length; url++) {
+                        FirebaseStorage.instance
+                            .refFromURL(widget.imageUrls[url])
+                            .delete();
+                      }
                     }
-
-                    uploadFunction(_image!);
+                    uploadFunction(_image);
                     setState(() {
                       isUpdating = true;
                     });
@@ -116,10 +117,12 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   List<XFile>? _image;
   final imagePicker = ImagePicker();
   List<String> downloadURL = [];
-  List<String> urls = [];
+  List urls = [];
   int uploadItem = 0;
   UploadTask? uploadTask;
   bool isPicked = false;
+
+  late List existingUrls;
 
   Future imagePickerMethod() async {
     final pick = await imagePicker.pickMultiImage(imageQuality: 30);
@@ -138,10 +141,16 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void uploadFunction(List<XFile> images) async {
-    for (int i = 0; i < images.length; i++) {
-      var imgUrl = await uploadFile(images[i]);
-      urls.add(imgUrl.toString());
+  void uploadFunction(List<XFile>? images) async {
+
+    if (images != null) {
+      for (int i = 0; i < images.length; i++) {
+        var imgUrl = await uploadFile(images[i]);
+        urls.add(imgUrl.toString());
+      }
+
+    } else {
+      urls = existingUrls;
     }
 
     updateProperty().whenComplete(() {
@@ -273,7 +282,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                     type = data['types'];
                     construction = data['construction'];
 
-                    final List imageUrls = data['images'];
+                    existingUrls = data['images'];
 
                     return Padding(
                       padding: const EdgeInsets.only(
@@ -781,15 +790,14 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                               // width: size.width * .8,
                               child: Center(
                                 child: Text(
-                                  'Add',
+                                  'Update',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20),
                                 ),
                               ),
                             ),
                             onPressed: () {
-                              if (_formKey.currentState!.validate() &&
-                                  _image != null) {
+                              if (_formKey.currentState!.validate()) {
                                 landSize = landSizeController.text;
                                 keywords = keywordsController.text;
                                 address = addressController.text;

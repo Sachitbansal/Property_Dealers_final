@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'house_details.dart';
 
@@ -49,6 +51,8 @@ class _SearchState extends State<Search> {
         .where("bedRooms", isEqualTo: widget.rooms)
         .snapshots();
 
+    final Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -95,11 +99,25 @@ class _SearchState extends State<Search> {
                           return Column(
                             children: [
                               NearbyHomes(
+                                size: size,
                                 asset: data.docs[index]['images'],
                                 name: data.docs[index]['title'],
                                 location: data.docs[index]['address'],
                                 bedCount: data.docs[index]['bedRooms'],
                                 bathCount: data.docs[index]['bathRooms'],
+                                share: () async {
+                                  String generatedDeepLink =
+                                  await DynamicLinkServices.createDynamicLink(
+                                      short: false,
+                                      collectionId: widget.uid.toString(),
+                                      docId: data.docs[index]['id'],
+                                      imageUrl: data.docs[index]
+                                      ['images'][0],
+                                      propertyTitle: data.docs[index]
+                                      ['title']
+                                  );
+                                  Share.share(generatedDeepLink);
+                                },
                                 onTap: () {
                                   Navigator.push(
                                     context,
