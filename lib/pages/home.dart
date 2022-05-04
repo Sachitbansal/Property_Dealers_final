@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
@@ -456,22 +457,19 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                )
-              // SizedBox(
-              //   child:
-              //       Consumer<AddProvider>(builder: (context, adProvider, child) {
-              //     if (adProvider.isHomePageBannerLoaded) {
-              //       return SizedBox(
-              //         height: adProvider.homePageBanner.size.height.toDouble(),
-              //         child: AdWidget(
-              //           ad: adProvider.homePageBanner,
-              //         ),
-              //       );
-              //     } else {
-              //       return Container();
-              //     }
-              //   }),
-              // )
+                ),
+              // Consumer<AddProvider>(builder: (context, adProvider, child) {
+              //   if (adProvider.isHomePageBannerLoaded) {
+              //     return SizedBox(
+              //       height: adProvider.homePageBanner.size.height.toDouble(),
+              //       child: AdWidget(
+              //         ad: adProvider.homePageBanner,
+              //       ),
+              //     );
+              //   } else {
+              //     return Container();
+              //   }
+              // }),
             ],
           ),
         ),

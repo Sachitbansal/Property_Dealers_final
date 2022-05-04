@@ -620,6 +620,21 @@ class _HouseDetailsState extends State<HouseDetails> {
               ),
             ),
           ),
+          // SizedBox(
+          //   child:
+          //   Consumer<AddProvider>(builder: (context, adProvider, child) {
+          //     if (adProvider.isDetailsPageBannerLoaded) {
+          //       return SizedBox(
+          //         height: adProvider.detailsPageBanner.size.height.toDouble(),
+          //         child: AdWidget(
+          //           ad: adProvider.detailsPageBanner,
+          //         ),
+          //       );
+          //     } else {
+          //       return Container();
+          //     }
+          //   }),
+          // )
         ],
       ),
     );

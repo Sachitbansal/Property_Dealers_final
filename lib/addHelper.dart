@@ -20,7 +20,7 @@ class AddProvider with ChangeNotifier {
   bool isHomePageBannerLoaded = false;
 
   late BannerAd detailsPageBanner;
-  bool isdetailsPageBannerLoaded = false;
+  bool isDetailsPageBannerLoaded = false;
 
   late InterstitialAd fullPageAdd;
   bool isFullPageAddLoaded = false;
@@ -53,13 +53,13 @@ class AddProvider with ChangeNotifier {
         request: const AdRequest(),
         listener: BannerAdListener(onAdLoaded: (ad) {
           print('Details Page add loaded');
-          isdetailsPageBannerLoaded = true;
+          isDetailsPageBannerLoaded = true;
         }, onAdClosed: (ad) {
           ad.dispose();
-          isdetailsPageBannerLoaded = false;
+          isDetailsPageBannerLoaded = false;
         }, onAdFailedToLoad: (ad, error) {
           print(error.toString());
-          isdetailsPageBannerLoaded = false;
+          isDetailsPageBannerLoaded = false;
         }));
 
     await detailsPageBanner.load();
