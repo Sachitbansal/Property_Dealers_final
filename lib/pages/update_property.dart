@@ -127,9 +127,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   Future imagePickerMethod() async {
     final pick = await imagePicker.pickMultiImage(imageQuality: 30);
     if (pick != null) {
-      setState(() {
-        isPicked = true;
-      });
       _image = pick;
     } else {
       showSnackBar("No File selected", const Duration(milliseconds: 400));
@@ -709,39 +706,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          if (isPicked)
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.blue,
-                                  width: 2,
-                                ),
-                              ),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: List.generate(_image!.length, (i) {
-                                    return Container(
-                                      height: 200,
-                                      width: 200,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: FileImage(
-                                            File(_image![i].path),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            )
-                          else
-                            Container(),
                           const SizedBox(
                             height: 8,
                           ),
