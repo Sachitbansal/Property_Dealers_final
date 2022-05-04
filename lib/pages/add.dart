@@ -218,12 +218,19 @@ class _AddState extends State<Add> {
           centerTitle: true,
         ),
         body: isLoading
-            ? Center(
+            ? Stack(
+          children: [
+            Container(
+              color: Colors.black12,
+              child: Center(
                 child: BuildProgress(
                   width: size.width,
                   uploadTask: uploadTask,
                 ),
-              )
+              ),
+            )
+          ],
+        )
             : SingleChildScrollView(
                 child: Form(
                   key: _formKey,
