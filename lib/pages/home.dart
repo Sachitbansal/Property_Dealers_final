@@ -249,7 +249,7 @@ class _HomeState extends State<Home> {
                                           child: NearbyHomes(
                                             share: () async {
                                               String generatedDeepLink =
-                                              await DynamicLinkServices.createDynamicLink(
+                                              await DynamicLinkServices.createPropertyShareLink(
                                                   short: false,
                                                   collectionId: widget.uid.toString(),
                                                   docId: storeDocs[i]['id'],
@@ -392,7 +392,7 @@ class _HomeState extends State<Home> {
                                         NearbyHomes(
                                           share: () async {
                                             String generatedDeepLink =
-                                            await DynamicLinkServices.createDynamicLink(
+                                            await DynamicLinkServices.createPropertyShareLink(
                                                 short: false,
                                                 collectionId: widget.uid.toString(),
                                                 docId: storeDocs[i]['id'],

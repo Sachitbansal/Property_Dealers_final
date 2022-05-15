@@ -424,7 +424,7 @@ class _HouseDetailsState extends State<HouseDetails> {
               GestureDetector(
                 onTap: () async {
                   String generatedDeepLink =
-                      await DynamicLinkServices.createDynamicLink(
+                      await DynamicLinkServices.createPropertyShareLink(
                           short: false,
                           collectionId: widget.uid,
                           docId: widget.docId,

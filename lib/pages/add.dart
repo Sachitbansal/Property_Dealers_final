@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../addHelper.dart';
+import 'package:share_plus/share_plus.dart';
+// import '../addHelper.dart';
+import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'dart:io';
 
@@ -21,8 +21,8 @@ class _AddState extends State<Add> {
   @override
   void initState() {
     super.initState();
-    AddProvider addProvider = Provider.of<AddProvider>(context, listen: false);
-    addProvider.initialiseFullPageAdd();
+    // AddProvider addProvider = Provider.of<AddProvider>(context, listen: false);
+    // addProvider.initialiseFullPageAdd();
   }
 
   MaterialStateProperty<Color> kActiveCardColour =
@@ -205,16 +205,32 @@ class _AddState extends State<Add> {
     final Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        AddProvider addProvider =
-            Provider.of<AddProvider>(context, listen: false);
-        if (addProvider.isFullPageAddLoaded) {
-          addProvider.fullPageAdd.show();
-        }
+        // AddProvider addProvider =
+        //     Provider.of<AddProvider>(context, listen: false);
+        // if (addProvider.isFullPageAddLoaded) {
+        //   addProvider.fullPageAdd.show();
+        // }
         return true;
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Add'),
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () async {
+                  String generatedDeepLink =
+                      await DynamicLinkServices.createAddPropertyFromCustomer(
+                      short: false,
+                      collectionId: widget.collection.toString(),
+                  );
+                  Share.share(generatedDeepLink);
+                },
+              )
+            ],
+          ),
           centerTitle: true,
         ),
         body: isLoading

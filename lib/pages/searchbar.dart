@@ -108,7 +108,7 @@ class _SearchBarDataState extends State<SearchBarData> {
                               bathCount: data.docs[index]['bathRooms'],
                               share: () async {
                                 String generatedDeepLink =
-                                await DynamicLinkServices.createDynamicLink(
+                                await DynamicLinkServices.createPropertyShareLink(
                                     short: false,
                                     collectionId: widget.uid.toString(),
                                     docId: data.docs[index]['id'],
