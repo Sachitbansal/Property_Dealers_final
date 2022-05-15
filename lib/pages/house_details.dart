@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,6 +90,13 @@ class _HouseDetailsState extends State<HouseDetails> {
     Future<void> deleteUser(String id, List urls) async {
       collectionRef.doc(id).delete();
 
+      if (widget.isPublic) {
+        FirebaseFirestore.instance
+            .collection("Public")
+            .doc(id + widget.uid)
+            .delete();
+      }
+
       for (var url = 0; url < urls.length; url++) {
         await FirebaseStorage.instance.refFromURL(urls[url]).delete();
       }
@@ -181,7 +187,8 @@ class _HouseDetailsState extends State<HouseDetails> {
                   ),
                 ),
               ),
-              Positioned(
+              if (widget.enableEdit == true)
+                Positioned(
                 top: 50.0,
                 right: 20.0,
                 child: Row(
@@ -220,35 +227,34 @@ class _HouseDetailsState extends State<HouseDetails> {
                     const SizedBox(
                       width: 20,
                     ),
-                    if (widget.enableEdit == true)
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UpdateProperty(
-                                collection: widget.uid.toString(),
-                                id: widget.docId,
-                                imageUrls: widget.assets,
-                              ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UpdateProperty(
+                              collection: widget.uid.toString(),
+                              id: widget.docId,
+                              imageUrls: widget.assets,
                             ),
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.black,
-                              size: 24,
-                            ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.black,
+                            size: 24,
                           ),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -422,9 +428,8 @@ class _HouseDetailsState extends State<HouseDetails> {
                           short: false,
                           collectionId: widget.uid,
                           docId: widget.docId,
-                        imageUrl: widget.assets[0],
-                        propertyTitle: widget.title
-                      );
+                          imageUrl: widget.assets[0],
+                          propertyTitle: widget.title);
                   Share.share(generatedDeepLink);
                 },
                 child: Container(
