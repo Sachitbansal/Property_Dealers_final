@@ -158,6 +158,34 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   }
 
   Future<void> updateProperty() async {
+    List varList = [
+      buyRent[0].toLowerCase(),
+      bedRooms,
+      bathRooms,
+      sizeUnit,
+      construction,
+      landSize.toString(),
+      name,
+      number.toString(),
+      type.toLowerCase(),
+      price.toString(),
+      title
+    ];
+    List finalData = [];
+    for (var i = 0; i < varList.length; i++) {
+      setSearchParam() {
+        List<String> caseSearchList = [];
+        String temp = "";
+        for (int index = 0; index < varList[i].length; index++) {
+          temp = temp + varList[i][index];
+          caseSearchList.add(temp);
+        }
+        return caseSearchList;
+      }
+
+      finalData.addAll(setSearchParam());
+    }
+
     CollectionReference students =
         FirebaseFirestore.instance.collection(widget.collection.toString());
 
