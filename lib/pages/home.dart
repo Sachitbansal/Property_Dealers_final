@@ -502,6 +502,8 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            isBookmarked: storeDocs[i]
+                                                            ['bookmark'],
                                                         isPublic: storeDocs[i]
                                                             ['isPublic'],
                                                         enableEdit: true,
@@ -649,7 +651,7 @@ class _HomeState extends State<Home> {
                                                       ['bookmark'],
                                                 }).whenComplete(() {
                                                   if (!storeDocs[i]
-                                                  ['bookmark']) {
+                                                      ['bookmark']) {
                                                     showSnackBar(
                                                       'Bookmark Added',
                                                       const Duration(
@@ -690,6 +692,8 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
+                                                          isBookmarked: storeDocs[i]
+                                                          ['bookmark'],
                                                       enableEdit: false,
                                                       enableChange: false,
                                                       isPublic: storeDocs[i]
@@ -835,7 +839,7 @@ class _HomeState extends State<Home> {
                                                         ['bookmark'],
                                                   }).whenComplete(() {
                                                     if (!storeDocs[i]
-                                                    ['bookmark']) {
+                                                        ['bookmark']) {
                                                       showSnackBar(
                                                         'Bookmark Added',
                                                         const Duration(
@@ -879,8 +883,10 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
-                                                        enableEdit: false,
-                                                        enableChange: false,
+                                                            isBookmarked: storeDocs[i]
+                                                            ['bookmark'],
+                                                        enableEdit: true,
+                                                        enableChange: true,
                                                         isPublic: storeDocs[i]
                                                             ['isPublic'],
                                                         uid: widget.uid

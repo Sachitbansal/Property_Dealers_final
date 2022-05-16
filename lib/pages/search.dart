@@ -141,6 +141,7 @@ class _SearchState extends State<Search> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
+                                        isBookmarked: data.docs[index]['bookmark'],
                                         isPublic: data.docs[index]['isPublic'],
                                         docId: data.docs[index]['id'],
                                         uid: widget.uid.toString(),
@@ -157,7 +158,8 @@ class _SearchState extends State<Search> {
                                         keywords: data.docs[index]['keywords'],
                                         name: data.docs[index]['name'],
                                         number: data.docs[index]['number'],
-                                        sizeUnit: data.docs[index]['sizeUnit'], enableChange: false,
+                                        sizeUnit: data.docs[index]['sizeUnit'],
+                                        enableChange: false,
                                       ),
                                     ),
                                   );
