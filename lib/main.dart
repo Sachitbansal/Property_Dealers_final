@@ -81,14 +81,14 @@ class _MyAppState extends State<MyApp> {
           }
           // once Completed, show your application
           if (snapshot.connectionState == ConnectionState.done) {
-
             return MaterialApp(
-              title: 'Flutter Firestore CRUD',
+              title: 'Property Stocks',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
               ),
               debugShowCheckedModeBanner: false,
-              home: FirebaseAuth.instance.currentUser == null && _connectivityResult != ConnectivityResult.none
+              home: FirebaseAuth.instance.currentUser == null &&
+                      _connectivityResult != ConnectivityResult.none
                   ? const LoginScreen()
                   : Home(
                       uid: FirebaseAuth.instance.currentUser?.uid,
