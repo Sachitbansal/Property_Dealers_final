@@ -51,6 +51,11 @@ class _SearchState extends State<Search> {
         .where("bedRooms", isEqualTo: widget.rooms)
         .snapshots();
 
+    showSnackBar(String snackText, Duration d) {
+      final snackBar = SnackBar(content: Text(snackText), duration: d);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -105,6 +110,19 @@ class _SearchState extends State<Search> {
                                 location: data.docs[index]['address'],
                                 bedCount: data.docs[index]['bedRooms'],
                                 bathCount: data.docs[index]['bathRooms'],
+                                bookmarkIcon: data.docs[index]['bookmark'],
+                                bookmarkFunction: () async {
+                                  CollectionReference students =
+                                  FirebaseFirestore.instance.collection(widget.uid.toString());
+
+                                  students.doc(data.docs[index]['id']).update({
+                                    'bookmark': !data.docs[index]['bookmark'],
+                                  }).whenComplete(() {
+                                    showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
+                                    setState((){});
+                                  });
+
+                                },
                                 share: () async {
                                   String generatedDeepLink =
                                   await DynamicLinkServices.createPropertyShareLink(

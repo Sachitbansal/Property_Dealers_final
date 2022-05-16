@@ -502,25 +502,26 @@ class ButtonWithText extends StatelessWidget {
 }
 
 class NearbyHomes extends StatelessWidget {
-  const NearbyHomes(
-      {Key? key,
-      required this.asset,
-      required this.name,
-      required this.location,
-      required this.bedCount,
-      required this.share,
-      required this.bathCount,
-      required this.onTap,
-      required this.size})
-      : super(key: key);
+  const NearbyHomes({
+    Key? key,
+    required this.asset,
+    required this.name,
+    required this.location,
+    required this.bedCount,
+    required this.share,
+    required this.bathCount,
+    required this.onTap,
+    required this.size,
+    required this.bookmarkFunction,
+    required this.bookmarkIcon,
+    this.usage,
+  }) : super(key: key);
   final List asset;
-  final String name;
-  final String location;
-  final String bedCount;
-  final String bathCount;
+  final String location, bedCount, name, bathCount;
+  final String? usage;
   final Size size;
-  final void Function()? share;
-  final void Function() onTap;
+  final bool bookmarkIcon;
+  final void Function()? share, onTap, bookmarkFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -649,14 +650,14 @@ class NearbyHomes extends StatelessWidget {
             ),
             Column(
               children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.bookmark_border,
-                    color: Colors.lightBlueAccent,
+                if (usage != 'public')
+                  IconButton(
+                    icon: Icon(
+                      bookmarkIcon ? Icons.bookmark : Icons.bookmark_border,
+                      color: Colors.lightBlueAccent,
+                    ),
+                    onPressed: bookmarkFunction,
                   ),
-                  onPressed: () {},
-                ),
-                // const SizedBox(height: 8,),
                 IconButton(
                   icon: const Icon(Icons.share),
                   onPressed: share,

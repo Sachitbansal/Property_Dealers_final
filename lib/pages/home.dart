@@ -14,7 +14,7 @@ import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
 
-enum Page { home, public }
+enum Page { home, public, bookmark}
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.uid}) : super(key: key);
@@ -110,6 +110,11 @@ class _HomeState extends State<Home> {
               ],
             );
           });
+    }
+
+    showSnackBar(String snackText, Duration d) {
+      final snackBar = SnackBar(content: Text(snackText), duration: d);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     Size size = MediaQuery.of(context).size;
@@ -247,6 +252,25 @@ class _HomeState extends State<Home> {
                                             _showMyDialog(storeDocs[i]['id']);
                                           },
                                           child: NearbyHomes(
+                                            size: size,
+                                            asset: storeDocs[i]['images'],
+                                            name: storeDocs[i]['title'],
+                                            location: storeDocs[i]['address'],
+                                            bedCount: storeDocs[i]['bedRooms'],
+                                            bathCount: storeDocs[i]
+                                                ['bathRooms'],
+                                            bookmarkIcon: storeDocs[i]['bookmark'],
+                                            bookmarkFunction: () async {
+                                              CollectionReference students =
+                                              FirebaseFirestore.instance.collection(widget.uid.toString());
+
+                                              students.doc(storeDocs[i]['id']).update({
+                                                'bookmark': !storeDocs[i]['bookmark'],
+                                              }).whenComplete(() {
+                                                showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
+                                                setState((){});
+                                              });
+                                            },
                                             share: () async {
                                               String generatedDeepLink =
                                               await DynamicLinkServices.createPropertyShareLink(
@@ -260,13 +284,6 @@ class _HomeState extends State<Home> {
                                               );
                                               Share.share(generatedDeepLink);
                                             },
-                                            size: size,
-                                            asset: storeDocs[i]['images'],
-                                            name: storeDocs[i]['title'],
-                                            location: storeDocs[i]['address'],
-                                            bedCount: storeDocs[i]['bedRooms'],
-                                            bathCount: storeDocs[i]
-                                                ['bathRooms'],
                                             onTap: () {
                                               Navigator.push(
                                                 context,
@@ -390,6 +407,26 @@ class _HomeState extends State<Home> {
                                           i < storeDocs.length;
                                           i++) ...[
                                         NearbyHomes(
+                                          usage: 'public',
+                                          size: size,
+                                          asset: storeDocs[i]['images'],
+                                          name: storeDocs[i]['title'],
+                                          location: storeDocs[i]['address'],
+                                          bedCount: storeDocs[i]['bedRooms'],
+                                          bathCount: storeDocs[i]['bathRooms'],
+                                          bookmarkIcon: storeDocs[i]['bookmark'],
+                                          bookmarkFunction: () async {
+                                            CollectionReference students =
+                                                FirebaseFirestore.instance.collection(widget.uid.toString());
+
+                                            students.doc(storeDocs[i]['id']).update({
+                                              'bookmark': !storeDocs[i]['bookmark'],
+                                            }).whenComplete(() {
+                                              showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
+                                              setState((){});
+                                            });
+
+                                          },
                                           share: () async {
                                             String generatedDeepLink =
                                             await DynamicLinkServices.createPropertyShareLink(
@@ -403,12 +440,6 @@ class _HomeState extends State<Home> {
                                             );
                                             Share.share(generatedDeepLink);
                                           },
-                                          size: size,
-                                          asset: storeDocs[i]['images'],
-                                          name: storeDocs[i]['title'],
-                                          location: storeDocs[i]['address'],
-                                          bedCount: storeDocs[i]['bedRooms'],
-                                          bathCount: storeDocs[i]['bathRooms'],
                                           onTap: () {
                                             Navigator.push(
                                               context,
@@ -453,6 +484,158 @@ class _HomeState extends State<Home> {
                                     ],
                                   ),
                                 );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              if (selectedPage == Page.bookmark)
+                Expanded(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Bookmarked Properties",
+                              style: GoogleFonts.play(
+                                color: const Color(0xff4d3a58),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const Spacer(),
+                            TextButton(
+                              child: Text(
+                                "FILTER",
+                                style: GoogleFonts.play(
+                                  color: const Color(0xfff63e3c),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                showBottomSheet();
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: homeProperties,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Something Went Wrong.'),
+                              ),
+                            );
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final List storeDocs = [];
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map a = document.data() as Map<String, dynamic>;
+                            storeDocs.add(a);
+                            a['id'] = document.id;
+                          }).toList();
+
+                          return isLoading
+                              ? const Center(
+                            child: Text('Loading'),
+                          )
+                              : Expanded(
+                            child: ListView(
+                              physics: const BouncingScrollPhysics(),
+                              children: [
+                                for (var i = 0;
+                                i < storeDocs.length;
+                                i++) ...[
+                                  if (storeDocs[i]['bookmark'])
+                                    NearbyHomes(
+                                    size: size,
+                                    asset: storeDocs[i]['images'],
+                                    name: storeDocs[i]['title'],
+                                    location: storeDocs[i]['address'],
+                                    bedCount: storeDocs[i]['bedRooms'],
+                                    bathCount: storeDocs[i]['bathRooms'],
+                                    bookmarkIcon: storeDocs[i]['bookmark'],
+                                    bookmarkFunction: () async {
+                                      CollectionReference students =
+                                      FirebaseFirestore.instance.collection(widget.uid.toString());
+
+                                      students.doc(storeDocs[i]['id']).update({
+                                        'bookmark': !storeDocs[i]['bookmark'],
+                                      }).whenComplete(() {
+                                        showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
+                                        setState((){});
+                                      });
+
+                                    },
+                                    share: () async {
+                                      String generatedDeepLink =
+                                      await DynamicLinkServices.createPropertyShareLink(
+                                          short: false,
+                                          collectionId: widget.uid.toString(),
+                                          docId: storeDocs[i]['id'],
+                                          imageUrl: storeDocs[i]
+                                          ['images'][0],
+                                          propertyTitle: storeDocs[i]
+                                          ['title']
+                                      );
+                                      Share.share(generatedDeepLink);
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              HouseDetails(
+                                                enableEdit: false,
+                                                enableChange: false,
+                                                isPublic: storeDocs[i]
+                                                ['isPublic'],
+                                                uid: widget.uid.toString(),
+                                                docId: storeDocs[i]['id'],
+                                                assets: storeDocs[i]
+                                                ['images'],
+                                                facilities: storeDocs[i]
+                                                ['keywords'],
+                                                title: storeDocs[i]['title'],
+                                                address: storeDocs[i]
+                                                ['address'],
+                                                bedRooms: storeDocs[i]
+                                                ['bedRooms'],
+                                                bathRooms: storeDocs[i]
+                                                ['bathRooms'],
+                                                price: storeDocs[i]['Price']
+                                                    .toString(),
+                                                landSize: storeDocs[i]
+                                                ['landSize']
+                                                    .toString(),
+                                                keywords: storeDocs[i]
+                                                ['keywords'],
+                                                name: storeDocs[i]['name'],
+                                                number: storeDocs[i]['number']
+                                                    .toString(),
+                                                sizeUnit: storeDocs[i]
+                                                ['sizeUnit'],
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ]
+                              ],
+                            ),
+                          );
                         },
                       ),
                     ],
@@ -509,8 +692,8 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               IconButton(
                 icon: Icon(
-                  Icons.home,
-                  size: selectedPage == Page.home ? 36 : 26,
+                  selectedPage == Page.home ? Icons.home : Icons.home_outlined,
+                  size: 28,
                   color: Colors.blueGrey,
                 ),
                 color: const Color(0xff442243),
@@ -522,8 +705,8 @@ class _HomeState extends State<Home> {
               ),
               IconButton(
                 icon: Icon(
-                  Icons.public,
-                  size: selectedPage == Page.public ? 36 : 26,
+                  selectedPage == Page.public ? Icons.person_pin_circle : Icons.person_pin_circle_outlined,
+                  size: 28,
                   color: Colors.blueGrey,
                 ),
                 onPressed: () {
@@ -532,10 +715,17 @@ class _HomeState extends State<Home> {
                   }
                 },
               ),
-              const Icon(
-                Icons.bookmark_border,
-                color: Colors.blueGrey,
-                size: 26,
+              IconButton(
+                icon: Icon(
+                  selectedPage == Page.bookmark ? Icons.bookmark : Icons.bookmark_border,
+                  size: 28,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: () {
+                  if (selectedPage != Page.bookmark) {
+                    setState(() => selectedPage = Page.bookmark);
+                  }
+                },
               ),
               IconButton(
                 icon: const Icon(
