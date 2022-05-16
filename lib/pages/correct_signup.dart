@@ -1,20 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import '../widgets.dart';
 import 'home_page.dart';
 
-class CorrectSignUp extends StatefulWidget {
-  const CorrectSignUp({Key? key}) : super(key: key);
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
-  _CorrectSignUpState createState() => _CorrectSignUpState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _CorrectSignUpState extends State<CorrectSignUp> {
+class _SignUpState extends State<SignUp> {
   bool passVisible = true;
   bool fPassVisible = true;
   late String email;

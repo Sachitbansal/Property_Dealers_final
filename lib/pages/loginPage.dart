@@ -137,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               .hasMatch(value)) {
                             return 'Please Enter a Valid Email';
                           }
+                          return null;
                         },
                       ),
                       SizedBox(
@@ -233,27 +234,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         final GoogleSignInAuthentication? googleAuth =
                             await googleUser?.authentication;
 
-                        auth.signInWithCredential(GoogleAuthProvider.credential(
-                          accessToken: googleAuth?.accessToken,
-                          idToken: googleAuth?.idToken,
-                        ));
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Logged in. Please click the button again to proceed'),
+                        auth
+                            .signInWithCredential(
+                          GoogleAuthProvider.credential(
+                            accessToken: googleAuth?.accessToken,
+                            idToken: googleAuth?.idToken,
                           ),
-                        );
-
-                        if (FirebaseAuth.instance.currentUser?.uid != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Home(
-                                uid: FirebaseAuth.instance.currentUser?.uid,
+                        )
+                            .whenComplete(
+                          () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Logged in'),
                               ),
-                            ),
-                          );
-                        }
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Home(
+                                  uid: FirebaseAuth.instance.currentUser?.uid,
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -272,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Image.network(
                                 'https://i.ibb.co/NK8qZhq/google.png',
@@ -284,7 +288,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.w500),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
                               const Opacity(
@@ -308,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () => Navigator.push(
                     context,
                     CustomPageRoute(
-                      child: const CorrectSignUp(),
+                      child: const SignUp(),
                     ),
                   ),
                   child: const Text(
