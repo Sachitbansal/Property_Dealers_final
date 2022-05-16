@@ -163,6 +163,7 @@ class _AddState extends State<Add> {
       'Price': price,
       'title': title,
       'images': urls,
+      'bookmark': false
     }).then(
       (value) => {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -4,7 +4,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
@@ -116,23 +115,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (_connectivityResult == ConnectivityResult.mobile) {
-      print('I am connected to a mobile network.');
-    } else if (_connectivityResult == ConnectivityResult.wifi) {
-      print('I am connected to a wifi network.');
-    } else if (_connectivityResult == ConnectivityResult.none) {
-      print('I am not connected to a network');
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => const NotConnected(
-      //     ),
-      //   ),
-      // );
-
-    }
-
     final Stream<QuerySnapshot> homeProperties = FirebaseFirestore.instance
         .collection(widget.uid.toString())
         .snapshots();
@@ -142,21 +124,24 @@ class _HomeState extends State<Home> {
 
     void showBottomSheet() {
       showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
           ),
-          builder: (BuildContext context) {
-            return Wrap(
+        ),
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Wrap(
               children: [
                 Filter(uid: widget.uid.toString()),
               ],
-            );
-          });
+            ),
+          );
+        },
+      );
     }
 
     showSnackBar(String snackText, Duration d) {
@@ -184,18 +169,19 @@ class _HomeState extends State<Home> {
                       children: [
                         RichText(
                           text: TextSpan(
-                              text: 'Find your\n',
-                              style: GoogleFonts.play(
-                                  color: Colors.grey, fontSize: 26),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Perfect Home',
-                                  style: GoogleFonts.play(
-                                      color: Colors.blue[300],
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w600),
-                                )
-                              ]),
+                            text: 'Find your\n',
+                            style: GoogleFonts.play(
+                                color: Colors.grey, fontSize: 26),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Perfect Home',
+                                style: GoogleFonts.play(
+                                    color: Colors.blue[300],
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
                         ),
                         Container(
                           decoration: BoxDecoration(

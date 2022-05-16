@@ -569,81 +569,86 @@ class NearbyHomes extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        maxLines: 1,
-                        style: GoogleFonts.play(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          maxLines: 2,
+                          style: GoogleFonts.play(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        location,
-                        style: GoogleFonts.play(
-                          color: Colors.grey,
-                          fontSize: 14,
+                        const SizedBox(
+                          height: 5,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.king_bed,
-                                color: Colors.blue[700],
-                                size: 18,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                bedCount,
-                                style: GoogleFonts.play(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.lightBlueAccent,
-                                  fontSize: 14,
+                        Text(
+                          location,
+                          softWrap: false,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.play(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.king_bed,
+                                  color: Colors.blue[700],
+                                  size: 18,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.bathtub,
-                                color: Colors.blue[700],
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                bathCount,
-                                style: GoogleFonts.play(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.lightBlueAccent,
-                                  fontSize: 14,
+                                const SizedBox(
+                                  width: 5,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                                Text(
+                                  bedCount,
+                                  style: GoogleFonts.play(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.lightBlueAccent,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.bathtub,
+                                  color: Colors.blue[700],
+                                  size: 16,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  bathCount,
+                                  style: GoogleFonts.play(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.lightBlueAccent,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

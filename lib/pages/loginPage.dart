@@ -278,10 +278,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'https://i.ibb.co/NK8qZhq/google.png',
                                 height: 32,
                               ),
-                              const Text(
-                                'Login with Google',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              const Expanded(
+                                child: Text(
+                                  'Login with Google',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.w500),
+                                ),
                               ),
                               const Opacity(
                                 opacity: 0,
