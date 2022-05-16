@@ -777,3 +777,83 @@ class BuildProgress extends StatelessWidget {
     );
   }
 }
+
+class ProfilePic extends StatelessWidget {
+  const ProfilePic({
+    Key? key, required this.url,
+  }) : super(key: key);
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 115,
+      width: 115,
+      child: Stack(
+        fit: StackFit.expand,
+        clipBehavior: Clip.none,
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(url),
+          ),
+          Positioned(
+            right: -16,
+            bottom: 0,
+            child: SizedBox(
+              height: 46,
+              width: 46,
+              child: CircleAvatar(
+                backgroundColor: Colors.grey[100],
+                child: const Icon(Icons.person),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ProfileMenu extends StatelessWidget {
+  const ProfileMenu({
+    Key? key,
+    required this.text,
+    required this.icon,
+    this.press,
+  }) : super(key: key);
+
+  final String text;
+  final IconData icon;
+  final void Function()? press;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          primary: Colors.blue[300],
+          padding: const EdgeInsets.all(20),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: const Color(0xFFF5F6F9),
+        ),
+        onPressed: press,
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: Colors.blue[300],
+              size: 22,
+            ),
+            const SizedBox(width: 20),
+            Expanded(child: Text(text, style: TextStyle(color: Colors.blue[300]),)),
+            const Icon(Icons.arrow_forward_ios),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

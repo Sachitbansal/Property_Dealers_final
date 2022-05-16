@@ -50,7 +50,6 @@ dependencies:
   share_plus: ^4.0.4
   connectivity_plus: ^2.3.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

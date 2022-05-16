@@ -10,12 +10,14 @@ import 'package:untitled/addHelper.dart';
 import 'package:untitled/dynamic_links.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
+import 'package:untitled/pages/profile.dart';
+import 'package:untitled/pages/reset_pass.dart';
 import 'package:untitled/pages/searchbar.dart';
 import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
 
-enum Page { home, public, bookmark }
+enum Page { home, public, bookmark, profile }
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.uid}) : super(key: key);
@@ -122,6 +124,11 @@ class _HomeState extends State<Home> {
     final Stream<QuerySnapshot> publicProperties =
         FirebaseFirestore.instance.collection('Public').snapshots();
 
+    final Stream<DocumentSnapshot> userData = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid.toString())
+        .snapshots();
+
     void showBottomSheet() {
       showModalBottomSheet(
         context: context,
@@ -215,6 +222,139 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
+                  if (selectedPage == Page.profile)
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: userData,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Something Went Wrong.'),
+                            ),
+                          );
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        final userDocument = snapshot.data;
+                        return Expanded(
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
+                                  children: [
+                                    ProfilePic(
+                                        url: userDocument!["profilePic"]),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      userDocument['name'],
+                                      style: const TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.blue[300],
+                                          padding: const EdgeInsets.all(20),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          backgroundColor:
+                                              const Color(0xFFF5F6F9),
+                                        ),
+                                        onPressed: () {},
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: const [
+                                            Text(
+                                              'Total Properties',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                            Text(
+                                              '20',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    ProfileMenu(
+                                      text: 'Edit Account Details',
+                                      icon: Icons.person,
+                                      press: () async {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProfilePage(
+                                              userdata: userDocument,
+                                              uid: widget.uid.toString(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    ProfileMenu(
+                                      text: 'Reset Password',
+                                      icon: Icons.security,
+                                      press: () async {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ResetPassword(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    ProfileMenu(
+                                      text: 'Signout',
+                                      icon: Icons.logout,
+                                      press: () async {
+                                        try {
+                                          await FirebaseAuth.instance.signOut();
+                                          showSnackBar(
+                                            'Logged out',
+                                            const Duration(milliseconds: 1000),
+                                          );
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginScreen(),
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          showSnackBar(
+                                            'Could not loggout because of $e',
+                                            const Duration(milliseconds: 1000),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+
                   if (selectedPage == Page.home)
                     Expanded(
                       child: Column(
@@ -854,14 +994,9 @@ class _HomeState extends State<Home> {
                       color: Colors.blueGrey,
                     ),
                     onPressed: () {
-                      FirebaseAuth.instance.signOut();
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
+                      if (selectedPage != Page.profile) {
+                        setState(() => selectedPage = Page.profile);
+                      }
                     },
                   ),
                 ],
