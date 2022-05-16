@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,7 +16,7 @@ import '../widgets.dart';
 import 'filter.dart';
 import 'house_details.dart';
 
-enum Page { home, public, bookmark}
+enum Page { home, public, bookmark }
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.uid}) : super(key: key);
@@ -30,13 +32,41 @@ class _HomeState extends State<Home> {
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'None';
   Page selectedPage = Page.home;
+  ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _streamSubscription;
+
+  Future<void> initConnectivity() async {
+    ConnectivityResult result = await _connectivity.checkConnectivity();
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionState(result);
+  }
+
+  Future<void> _updateConnectionState(ConnectivityResult result) async {
+    setState(() => _connectivityResult = result);
+  }
 
   @override
   void initState() {
     super.initState();
+
+    initConnectivity();
+    _streamSubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionState);
+
     DynamicLinkServices.initialDynamicLink(context);
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseHomePageBanner();
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _showMyDialog(String documentId) async {
@@ -86,6 +116,23 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (_connectivityResult == ConnectivityResult.mobile) {
+      print('I am connected to a mobile network.');
+    } else if (_connectivityResult == ConnectivityResult.wifi) {
+      print('I am connected to a wifi network.');
+    } else if (_connectivityResult == ConnectivityResult.none) {
+      print('I am not connected to a network');
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => const NotConnected(
+      //     ),
+      //   ),
+      // );
+
+    }
+
     final Stream<QuerySnapshot> homeProperties = FirebaseFirestore.instance
         .collection(widget.uid.toString())
         .snapshots();
@@ -119,634 +166,721 @@ class _HomeState extends State<Home> {
 
     Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                          text: 'Find your\n',
-                          style: GoogleFonts.play(
-                              color: Colors.grey, fontSize: 26),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'Perfect Home',
+    return _connectivityResult == ConnectivityResult.none
+        ? Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: Image.asset('assets/not_connected.jpg'),
+            ),
+          )
+        : Scaffold(
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                              text: 'Find your\n',
                               style: GoogleFonts.play(
-                                  color: Colors.blue[300],
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ]),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(15.0),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
+                                  color: Colors.grey, fontSize: 26),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: 'Perfect Home',
+                                  style: GoogleFonts.play(
+                                      color: Colors.blue[300],
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ]),
                         ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(.02 * size.width),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.search,
-                            size: 24.0,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(15.0),
+                            border: Border.all(
+                              color: Colors.grey[300]!,
+                            ),
                           ),
-                          color: Colors.black,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SearchBarData(
-                                  uid: widget.uid.toString(),
-                                ),
+                          child: Padding(
+                            padding: EdgeInsets.all(.02 * size.width),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.search,
+                                size: 24.0,
                               ),
-                            );
-                          },
+                              color: Colors.black,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchBarData(
+                                      uid: widget.uid.toString(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              if (selectedPage == Page.home)
-                Expanded(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: .04 * size.width,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Nearby Homes",
-                              style: GoogleFonts.play(
-                                color: const Color(0xff4d3a58),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const Spacer(),
-                            TextButton(
-                              child: Text(
-                                "FILTER",
-                                style: GoogleFonts.play(
-                                  color: const Color(0xfff63e3c),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              onPressed: () {
-                                showBottomSheet();
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: homeProperties,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Something Went Wrong.'),
-                              ),
-                            );
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          final List storeDocs = [];
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map a = document.data() as Map<String, dynamic>;
-                            storeDocs.add(a);
-                            a['id'] = document.id;
-                            a['collection'] = document.reference;
-                          }).toList();
-
-                          return isLoading
-                              ? const Center(
-                                  child: Text('Loading'),
-                                )
-                              : Expanded(
-                                  child: ListView(
-                                    physics: const BouncingScrollPhysics(),
-                                    children: [
-                                      for (var i = 0;
-                                          i < storeDocs.length;
-                                          i++) ...[
-                                        GestureDetector(
-                                          onDoubleTap: () {
-                                            _showMyDialog(storeDocs[i]['id']);
-                                          },
-                                          child: NearbyHomes(
-                                            size: size,
-                                            asset: storeDocs[i]['images'],
-                                            name: storeDocs[i]['title'],
-                                            location: storeDocs[i]['address'],
-                                            bedCount: storeDocs[i]['bedRooms'],
-                                            bathCount: storeDocs[i]
-                                                ['bathRooms'],
-                                            bookmarkIcon: storeDocs[i]['bookmark'],
-                                            bookmarkFunction: () async {
-                                              CollectionReference students =
-                                              FirebaseFirestore.instance.collection(widget.uid.toString());
-
-                                              students.doc(storeDocs[i]['id']).update({
-                                                'bookmark': !storeDocs[i]['bookmark'],
-                                              }).whenComplete(() {
-                                                showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
-                                                setState((){});
-                                              });
-                                            },
-                                            share: () async {
-                                              String generatedDeepLink =
-                                              await DynamicLinkServices.createPropertyShareLink(
-                                                  short: false,
-                                                  collectionId: widget.uid.toString(),
-                                                  docId: storeDocs[i]['id'],
-                                                  imageUrl: storeDocs[i]
-                                                  ['images'][0],
-                                                  propertyTitle: storeDocs[i]
-                                                  ['title']
-                                              );
-                                              Share.share(generatedDeepLink);
-                                            },
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HouseDetails(
-                                                    isPublic: storeDocs[i]
-                                                        ['isPublic'],
-                                                    enableEdit: true,
-                                                    uid: widget.uid.toString(),
-                                                    docId: storeDocs[i]['id'],
-                                                    assets: storeDocs[i]
-                                                        ['images'],
-                                                    facilities: storeDocs[i]
-                                                        ['keywords'],
-                                                    title: storeDocs[i]
-                                                        ['title'],
-                                                    address: storeDocs[i]
-                                                        ['address'],
-                                                    bedRooms: storeDocs[i]
-                                                        ['bedRooms'],
-                                                    bathRooms: storeDocs[i]
-                                                        ['bathRooms'],
-                                                    price: storeDocs[i]['Price']
-                                                        .toString(),
-                                                    landSize: storeDocs[i]
-                                                            ['landSize']
-                                                        .toString(),
-                                                    keywords: storeDocs[i]
-                                                        ['keywords'],
-                                                    name: storeDocs[i]['name'],
-                                                    number: storeDocs[i]
-                                                            ['number']
-                                                        .toString(),
-                                                    sizeUnit: storeDocs[i]
-                                                        ['sizeUnit'],
-                                                    enableChange: true,
-                                                    // enableChange: true
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ]
-                                    ],
-                                  ),
-                                );
-                        },
-                      ),
-                    ],
                   ),
-                ),
-              if (selectedPage == Page.public)
-                Expanded(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Public Properties",
-                              style: GoogleFonts.play(
-                                color: const Color(0xff4d3a58),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
+                  if (selectedPage == Page.home)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: .04 * size.width,
                             ),
-                            const Spacer(),
-                            TextButton(
-                              child: Text(
-                                "FILTER",
-                                style: GoogleFonts.play(
-                                  color: const Color(0xfff63e3c),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              onPressed: () {
-                                showBottomSheet();
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: publicProperties,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Something Went Wrong.'),
-                              ),
-                            );
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          final List storeDocs = [];
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map a = document.data() as Map<String, dynamic>;
-                            storeDocs.add(a);
-                            a['id'] = document.id;
-                          }).toList();
-
-                          return isLoading
-                              ? const Center(
-                                  child: Text('Loading'),
-                                )
-                              : Expanded(
-                                  child: ListView(
-                                    physics: const BouncingScrollPhysics(),
-                                    children: [
-                                      for (var i = 0;
-                                          i < storeDocs.length;
-                                          i++) ...[
-                                        NearbyHomes(
-                                          usage: 'public',
-                                          size: size,
-                                          asset: storeDocs[i]['images'],
-                                          name: storeDocs[i]['title'],
-                                          location: storeDocs[i]['address'],
-                                          bedCount: storeDocs[i]['bedRooms'],
-                                          bathCount: storeDocs[i]['bathRooms'],
-                                          bookmarkIcon: storeDocs[i]['bookmark'],
-                                          bookmarkFunction: () async {
-                                            CollectionReference students =
-                                                FirebaseFirestore.instance.collection(widget.uid.toString());
-
-                                            students.doc(storeDocs[i]['id']).update({
-                                              'bookmark': !storeDocs[i]['bookmark'],
-                                            }).whenComplete(() {
-                                              showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
-                                              setState((){});
-                                            });
-
-                                          },
-                                          share: () async {
-                                            String generatedDeepLink =
-                                            await DynamicLinkServices.createPropertyShareLink(
-                                                short: false,
-                                                collectionId: widget.uid.toString(),
-                                                docId: storeDocs[i]['id'],
-                                                imageUrl: storeDocs[i]
-                                                ['images'][0],
-                                                propertyTitle: storeDocs[i]
-                                                ['title']
-                                            );
-                                            Share.share(generatedDeepLink);
-                                          },
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HouseDetails(
-                                                  enableEdit: false,
-                                                  enableChange: false,
-                                                  isPublic: storeDocs[i]
-                                                      ['isPublic'],
-                                                  uid: widget.uid.toString(),
-                                                  docId: storeDocs[i]['id'],
-                                                  assets: storeDocs[i]
-                                                      ['images'],
-                                                  facilities: storeDocs[i]
-                                                      ['keywords'],
-                                                  title: storeDocs[i]['title'],
-                                                  address: storeDocs[i]
-                                                      ['address'],
-                                                  bedRooms: storeDocs[i]
-                                                      ['bedRooms'],
-                                                  bathRooms: storeDocs[i]
-                                                      ['bathRooms'],
-                                                  price: storeDocs[i]['Price']
-                                                      .toString(),
-                                                  landSize: storeDocs[i]
-                                                          ['landSize']
-                                                      .toString(),
-                                                  keywords: storeDocs[i]
-                                                      ['keywords'],
-                                                  name: storeDocs[i]['name'],
-                                                  number: storeDocs[i]['number']
-                                                      .toString(),
-                                                  sizeUnit: storeDocs[i]
-                                                      ['sizeUnit'],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]
-                                    ],
-                                  ),
-                                );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              if (selectedPage == Page.bookmark)
-                Expanded(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Bookmarked Properties",
-                              style: GoogleFonts.play(
-                                color: const Color(0xff4d3a58),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const Spacer(),
-                            TextButton(
-                              child: Text(
-                                "FILTER",
-                                style: GoogleFonts.play(
-                                  color: const Color(0xfff63e3c),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              onPressed: () {
-                                showBottomSheet();
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: homeProperties,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Something Went Wrong.'),
-                              ),
-                            );
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          final List storeDocs = [];
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map a = document.data() as Map<String, dynamic>;
-                            storeDocs.add(a);
-                            a['id'] = document.id;
-                          }).toList();
-
-                          return isLoading
-                              ? const Center(
-                            child: Text('Loading'),
-                          )
-                              : Expanded(
-                            child: ListView(
-                              physics: const BouncingScrollPhysics(),
+                            child: Row(
                               children: [
-                                for (var i = 0;
-                                i < storeDocs.length;
-                                i++) ...[
-                                  if (storeDocs[i]['bookmark'])
-                                    NearbyHomes(
-                                    size: size,
-                                    asset: storeDocs[i]['images'],
-                                    name: storeDocs[i]['title'],
-                                    location: storeDocs[i]['address'],
-                                    bedCount: storeDocs[i]['bedRooms'],
-                                    bathCount: storeDocs[i]['bathRooms'],
-                                    bookmarkIcon: storeDocs[i]['bookmark'],
-                                    bookmarkFunction: () async {
-                                      CollectionReference students =
-                                      FirebaseFirestore.instance.collection(widget.uid.toString());
-
-                                      students.doc(storeDocs[i]['id']).update({
-                                        'bookmark': !storeDocs[i]['bookmark'],
-                                      }).whenComplete(() {
-                                        showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
-                                        setState((){});
-                                      });
-
-                                    },
-                                    share: () async {
-                                      String generatedDeepLink =
-                                      await DynamicLinkServices.createPropertyShareLink(
-                                          short: false,
-                                          collectionId: widget.uid.toString(),
-                                          docId: storeDocs[i]['id'],
-                                          imageUrl: storeDocs[i]
-                                          ['images'][0],
-                                          propertyTitle: storeDocs[i]
-                                          ['title']
-                                      );
-                                      Share.share(generatedDeepLink);
-                                    },
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              HouseDetails(
-                                                enableEdit: false,
-                                                enableChange: false,
-                                                isPublic: storeDocs[i]
-                                                ['isPublic'],
-                                                uid: widget.uid.toString(),
-                                                docId: storeDocs[i]['id'],
-                                                assets: storeDocs[i]
-                                                ['images'],
-                                                facilities: storeDocs[i]
-                                                ['keywords'],
-                                                title: storeDocs[i]['title'],
-                                                address: storeDocs[i]
-                                                ['address'],
-                                                bedRooms: storeDocs[i]
-                                                ['bedRooms'],
-                                                bathRooms: storeDocs[i]
-                                                ['bathRooms'],
-                                                price: storeDocs[i]['Price']
-                                                    .toString(),
-                                                landSize: storeDocs[i]
-                                                ['landSize']
-                                                    .toString(),
-                                                keywords: storeDocs[i]
-                                                ['keywords'],
-                                                name: storeDocs[i]['name'],
-                                                number: storeDocs[i]['number']
-                                                    .toString(),
-                                                sizeUnit: storeDocs[i]
-                                                ['sizeUnit'],
-                                              ),
-                                        ),
-                                      );
-                                    },
+                                Text(
+                                  "Nearby Homes",
+                                  style: GoogleFonts.play(
+                                    color: const Color(0xff4d3a58),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
                                   ),
-                                ]
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  child: Text(
+                                    "FILTER",
+                                    style: GoogleFonts.play(
+                                      color: const Color(0xfff63e3c),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showBottomSheet();
+                                  },
+                                )
                               ],
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              // Consumer<AddProvider>(builder: (context, adProvider, child) {
-              //   if (adProvider.isHomePageBannerLoaded) {
-              //     return SizedBox(
-              //       height: adProvider.homePageBanner.size.height.toDouble(),
-              //       child: AdWidget(
-              //         ad: adProvider.homePageBanner,
-              //       ),
-              //     );
-              //   } else {
-              //     return Container();
-              //   }
-              // }),
-            ],
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: FloatingActionButton(
-            backgroundColor: Colors.blue[300],
-            shape: const RoundedRectangleBorder(),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Add(
-                    collection: widget.uid.toString(),
-                  ),
-                ),
-              );
-            },
-            tooltip: 'Increment',
-            child: const Icon(
-              Icons.add,
-              size: 26,
-            ),
-            elevation: 2.0,
-          ),
-        ),
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: homeProperties,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Something Went Wrong.'),
+                                  ),
+                                );
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
 
-        //todo: un comment after account approved
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: .08 * size.width,
-            vertical: 20,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  selectedPage == Page.home ? Icons.home : Icons.home_outlined,
-                  size: 28,
-                  color: Colors.blueGrey,
-                ),
-                color: const Color(0xff442243),
-                onPressed: () {
-                  if (selectedPage != Page.home) {
-                    setState(() => selectedPage = Page.home);
-                  }
-                },
+                              final List storeDocs = [];
+                              snapshot.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                Map a = document.data() as Map<String, dynamic>;
+                                storeDocs.add(a);
+                                a['id'] = document.id;
+                                a['collection'] = document.reference;
+                              }).toList();
+
+                              return isLoading
+                                  ? const Center(
+                                      child: Text('Loading'),
+                                    )
+                                  : Expanded(
+                                      child: ListView(
+                                        physics: const BouncingScrollPhysics(),
+                                        children: [
+                                          for (var i = 0;
+                                              i < storeDocs.length;
+                                              i++) ...[
+                                            GestureDetector(
+                                              onDoubleTap: () {
+                                                _showMyDialog(
+                                                    storeDocs[i]['id']);
+                                              },
+                                              child: NearbyHomes(
+                                                size: size,
+                                                asset: storeDocs[i]['images'],
+                                                name: storeDocs[i]['title'],
+                                                location: storeDocs[i]
+                                                    ['address'],
+                                                bedCount: storeDocs[i]
+                                                    ['bedRooms'],
+                                                bathCount: storeDocs[i]
+                                                    ['bathRooms'],
+                                                bookmarkIcon: storeDocs[i]
+                                                    ['bookmark'],
+                                                bookmarkFunction: () async {
+                                                  CollectionReference students =
+                                                      FirebaseFirestore.instance
+                                                          .collection(widget.uid
+                                                              .toString());
+
+                                                  students
+                                                      .doc(storeDocs[i]['id'])
+                                                      .update({
+                                                    'bookmark': !storeDocs[i]
+                                                        ['bookmark'],
+                                                  }).whenComplete(() {
+                                                    showSnackBar(
+                                                        'Bookmarked',
+                                                        const Duration(
+                                                            milliseconds:
+                                                                1000));
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                share: () async {
+                                                  String generatedDeepLink =
+                                                      await DynamicLinkServices
+                                                          .createPropertyShareLink(
+                                                              short: false,
+                                                              collectionId: widget
+                                                                  .uid
+                                                                  .toString(),
+                                                              docId:
+                                                                  storeDocs[i]
+                                                                      ['id'],
+                                                              imageUrl: storeDocs[
+                                                                      i]
+                                                                  ['images'][0],
+                                                              propertyTitle:
+                                                                  storeDocs[i][
+                                                                      'title']);
+                                                  Share.share(
+                                                      generatedDeepLink);
+                                                },
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HouseDetails(
+                                                        isPublic: storeDocs[i]
+                                                            ['isPublic'],
+                                                        enableEdit: true,
+                                                        uid: widget.uid
+                                                            .toString(),
+                                                        docId: storeDocs[i]
+                                                            ['id'],
+                                                        assets: storeDocs[i]
+                                                            ['images'],
+                                                        facilities: storeDocs[i]
+                                                            ['keywords'],
+                                                        title: storeDocs[i]
+                                                            ['title'],
+                                                        address: storeDocs[i]
+                                                            ['address'],
+                                                        bedRooms: storeDocs[i]
+                                                            ['bedRooms'],
+                                                        bathRooms: storeDocs[i]
+                                                            ['bathRooms'],
+                                                        price: storeDocs[i]
+                                                                ['Price']
+                                                            .toString(),
+                                                        landSize: storeDocs[i]
+                                                                ['landSize']
+                                                            .toString(),
+                                                        keywords: storeDocs[i]
+                                                            ['keywords'],
+                                                        name: storeDocs[i]
+                                                            ['name'],
+                                                        number: storeDocs[i]
+                                                                ['number']
+                                                            .toString(),
+                                                        sizeUnit: storeDocs[i]
+                                                            ['sizeUnit'],
+                                                        enableChange: true,
+                                                        // enableChange: true
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ]
+                                        ],
+                                      ),
+                                    );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (selectedPage == Page.public)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: .04 * size.width),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Public Properties",
+                                  style: GoogleFonts.play(
+                                    color: const Color(0xff4d3a58),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  child: Text(
+                                    "FILTER",
+                                    style: GoogleFonts.play(
+                                      color: const Color(0xfff63e3c),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showBottomSheet();
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: publicProperties,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Something Went Wrong.'),
+                                  ),
+                                );
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+
+                              final List storeDocs = [];
+                              snapshot.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                Map a = document.data() as Map<String, dynamic>;
+                                storeDocs.add(a);
+                                a['id'] = document.id;
+                              }).toList();
+
+                              return isLoading
+                                  ? const Center(
+                                      child: Text('Loading'),
+                                    )
+                                  : Expanded(
+                                      child: ListView(
+                                        physics: const BouncingScrollPhysics(),
+                                        children: [
+                                          for (var i = 0;
+                                              i < storeDocs.length;
+                                              i++) ...[
+                                            NearbyHomes(
+                                              usage: 'public',
+                                              size: size,
+                                              asset: storeDocs[i]['images'],
+                                              name: storeDocs[i]['title'],
+                                              location: storeDocs[i]['address'],
+                                              bedCount: storeDocs[i]
+                                                  ['bedRooms'],
+                                              bathCount: storeDocs[i]
+                                                  ['bathRooms'],
+                                              bookmarkIcon: storeDocs[i]
+                                                  ['bookmark'],
+                                              bookmarkFunction: () async {
+                                                CollectionReference students =
+                                                    FirebaseFirestore.instance
+                                                        .collection(widget.uid
+                                                            .toString());
+
+                                                students
+                                                    .doc(storeDocs[i]['id'])
+                                                    .update({
+                                                  'bookmark': !storeDocs[i]
+                                                      ['bookmark'],
+                                                }).whenComplete(() {
+                                                  showSnackBar(
+                                                      'Bookmarked',
+                                                      const Duration(
+                                                          milliseconds: 1000));
+                                                  setState(() {});
+                                                });
+                                              },
+                                              share: () async {
+                                                String generatedDeepLink =
+                                                    await DynamicLinkServices
+                                                        .createPropertyShareLink(
+                                                            short: false,
+                                                            collectionId: widget
+                                                                .uid
+                                                                .toString(),
+                                                            docId: storeDocs[i]
+                                                                ['id'],
+                                                            imageUrl: storeDocs[
+                                                                i]['images'][0],
+                                                            propertyTitle:
+                                                                storeDocs[i]
+                                                                    ['title']);
+                                                Share.share(generatedDeepLink);
+                                              },
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HouseDetails(
+                                                      enableEdit: false,
+                                                      enableChange: false,
+                                                      isPublic: storeDocs[i]
+                                                          ['isPublic'],
+                                                      uid:
+                                                          widget.uid.toString(),
+                                                      docId: storeDocs[i]['id'],
+                                                      assets: storeDocs[i]
+                                                          ['images'],
+                                                      facilities: storeDocs[i]
+                                                          ['keywords'],
+                                                      title: storeDocs[i]
+                                                          ['title'],
+                                                      address: storeDocs[i]
+                                                          ['address'],
+                                                      bedRooms: storeDocs[i]
+                                                          ['bedRooms'],
+                                                      bathRooms: storeDocs[i]
+                                                          ['bathRooms'],
+                                                      price: storeDocs[i]
+                                                              ['Price']
+                                                          .toString(),
+                                                      landSize: storeDocs[i]
+                                                              ['landSize']
+                                                          .toString(),
+                                                      keywords: storeDocs[i]
+                                                          ['keywords'],
+                                                      name: storeDocs[i]
+                                                          ['name'],
+                                                      number: storeDocs[i]
+                                                              ['number']
+                                                          .toString(),
+                                                      sizeUnit: storeDocs[i]
+                                                          ['sizeUnit'],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ]
+                                        ],
+                                      ),
+                                    );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (selectedPage == Page.bookmark)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: .04 * size.width),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Bookmarked Properties",
+                                  style: GoogleFonts.play(
+                                    color: const Color(0xff4d3a58),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  child: Text(
+                                    "FILTER",
+                                    style: GoogleFonts.play(
+                                      color: const Color(0xfff63e3c),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showBottomSheet();
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: homeProperties,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Something Went Wrong.'),
+                                  ),
+                                );
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+
+                              final List storeDocs = [];
+                              snapshot.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                Map a = document.data() as Map<String, dynamic>;
+                                storeDocs.add(a);
+                                a['id'] = document.id;
+                              }).toList();
+
+                              return isLoading
+                                  ? const Center(
+                                      child: Text('Loading'),
+                                    )
+                                  : Expanded(
+                                      child: ListView(
+                                        physics: const BouncingScrollPhysics(),
+                                        children: [
+                                          for (var i = 0;
+                                              i < storeDocs.length;
+                                              i++) ...[
+                                            if (storeDocs[i]['bookmark'])
+                                              NearbyHomes(
+                                                size: size,
+                                                asset: storeDocs[i]['images'],
+                                                name: storeDocs[i]['title'],
+                                                location: storeDocs[i]
+                                                    ['address'],
+                                                bedCount: storeDocs[i]
+                                                    ['bedRooms'],
+                                                bathCount: storeDocs[i]
+                                                    ['bathRooms'],
+                                                bookmarkIcon: storeDocs[i]
+                                                    ['bookmark'],
+                                                bookmarkFunction: () async {
+                                                  CollectionReference students =
+                                                      FirebaseFirestore.instance
+                                                          .collection(widget.uid
+                                                              .toString());
+
+                                                  students
+                                                      .doc(storeDocs[i]['id'])
+                                                      .update({
+                                                    'bookmark': !storeDocs[i]
+                                                        ['bookmark'],
+                                                  }).whenComplete(() {
+                                                    showSnackBar(
+                                                        'Bookmarked',
+                                                        const Duration(
+                                                            milliseconds:
+                                                                1000));
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                share: () async {
+                                                  String generatedDeepLink =
+                                                      await DynamicLinkServices
+                                                          .createPropertyShareLink(
+                                                              short: false,
+                                                              collectionId: widget
+                                                                  .uid
+                                                                  .toString(),
+                                                              docId:
+                                                                  storeDocs[i]
+                                                                      ['id'],
+                                                              imageUrl: storeDocs[
+                                                                      i]
+                                                                  ['images'][0],
+                                                              propertyTitle:
+                                                                  storeDocs[i][
+                                                                      'title']);
+                                                  Share.share(
+                                                      generatedDeepLink);
+                                                },
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HouseDetails(
+                                                        enableEdit: false,
+                                                        enableChange: false,
+                                                        isPublic: storeDocs[i]
+                                                            ['isPublic'],
+                                                        uid: widget.uid
+                                                            .toString(),
+                                                        docId: storeDocs[i]
+                                                            ['id'],
+                                                        assets: storeDocs[i]
+                                                            ['images'],
+                                                        facilities: storeDocs[i]
+                                                            ['keywords'],
+                                                        title: storeDocs[i]
+                                                            ['title'],
+                                                        address: storeDocs[i]
+                                                            ['address'],
+                                                        bedRooms: storeDocs[i]
+                                                            ['bedRooms'],
+                                                        bathRooms: storeDocs[i]
+                                                            ['bathRooms'],
+                                                        price: storeDocs[i]
+                                                                ['Price']
+                                                            .toString(),
+                                                        landSize: storeDocs[i]
+                                                                ['landSize']
+                                                            .toString(),
+                                                        keywords: storeDocs[i]
+                                                            ['keywords'],
+                                                        name: storeDocs[i]
+                                                            ['name'],
+                                                        number: storeDocs[i]
+                                                                ['number']
+                                                            .toString(),
+                                                        sizeUnit: storeDocs[i]
+                                                            ['sizeUnit'],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          ]
+                                        ],
+                                      ),
+                                    );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  // Consumer<AddProvider>(builder: (context, adProvider, child) {
+                  //   if (adProvider.isHomePageBannerLoaded) {
+                  //     return SizedBox(
+                  //       height: adProvider.homePageBanner.size.height.toDouble(),
+                  //       child: AdWidget(
+                  //         ad: adProvider.homePageBanner,
+                  //       ),
+                  //     );
+                  //   } else {
+                  //     return Container();
+                  //   }
+                  // }),
+                ],
               ),
-              IconButton(
-                icon: Icon(
-                  selectedPage == Page.public ? Icons.person_pin_circle : Icons.person_pin_circle_outlined,
-                  size: 28,
-                  color: Colors.blueGrey,
-                ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: FloatingActionButton(
+                backgroundColor: Colors.blue[300],
+                shape: const RoundedRectangleBorder(),
                 onPressed: () {
-                  if (selectedPage != Page.public) {
-                    setState(() => selectedPage = Page.public);
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  selectedPage == Page.bookmark ? Icons.bookmark : Icons.bookmark_border,
-                  size: 28,
-                  color: Colors.blueGrey,
-                ),
-                onPressed: () {
-                  if (selectedPage != Page.bookmark) {
-                    setState(() => selectedPage = Page.bookmark);
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.person_outline,
-                  size: 26,
-                  color: Colors.blueGrey,
-                ),
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
+                      builder: (context) => Add(
+                        collection: widget.uid.toString(),
+                      ),
                     ),
                   );
                 },
+                tooltip: 'Increment',
+                child: const Icon(
+                  Icons.add,
+                  size: 26,
+                ),
+                elevation: 2.0,
               ),
-            ],
-          ),
-        ),
-      );
+            ),
+
+            //todo: un comment after account approved
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: .08 * size.width,
+                vertical: 20,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      selectedPage == Page.home
+                          ? Icons.home
+                          : Icons.home_outlined,
+                      size: 28,
+                      color: Colors.blueGrey,
+                    ),
+                    color: const Color(0xff442243),
+                    onPressed: () {
+                      if (selectedPage != Page.home) {
+                        setState(() => selectedPage = Page.home);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      selectedPage == Page.public
+                          ? Icons.person_pin_circle
+                          : Icons.person_pin_circle_outlined,
+                      size: 28,
+                      color: Colors.blueGrey,
+                    ),
+                    onPressed: () {
+                      if (selectedPage != Page.public) {
+                        setState(() => selectedPage = Page.public);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      selectedPage == Page.bookmark
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                      size: 28,
+                      color: Colors.blueGrey,
+                    ),
+                    onPressed: () {
+                      if (selectedPage != Page.bookmark) {
+                        setState(() => selectedPage = Page.bookmark);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.person_outline,
+                      size: 26,
+                      color: Colors.blueGrey,
+                    ),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 }

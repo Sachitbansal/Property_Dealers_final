@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,16 +26,37 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   late StreamSubscription<User?> user;
+  ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _streamSubscription;
+
+  Future<void> initConnectivity() async {
+    ConnectivityResult result = await _connectivity.checkConnectivity();
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionState(result);
+  }
+
+  Future<void> _updateConnectionState(ConnectivityResult result) async {
+    setState(() => _connectivityResult = result);
+  }
 
   @override
   void initState() {
     super.initState();
+    initConnectivity();
+    _streamSubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionState);
     user = FirebaseAuth.instance.authStateChanges().listen((user) {});
   }
 
   @override
   void dispose() {
     user.cancel();
+    _streamSubscription.cancel();
     super.dispose();
   }
 
@@ -66,7 +88,7 @@ class _MyAppState extends State<MyApp> {
                 primarySwatch: Colors.blue,
               ),
               debugShowCheckedModeBanner: false,
-              home: FirebaseAuth.instance.currentUser == null
+              home: FirebaseAuth.instance.currentUser == null && _connectivityResult != ConnectivityResult.none
                   ? const LoginScreen()
                   : Home(
                       uid: FirebaseAuth.instance.currentUser?.uid,
