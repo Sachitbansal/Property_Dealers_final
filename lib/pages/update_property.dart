@@ -190,6 +190,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
         FirebaseFirestore.instance.collection(widget.collection.toString());
 
     students.doc(widget.id).update({
+      'searchData': finalData,
       'buyRent': buyRent,
       'bedRooms': bedRooms,
       'bathRooms': bathRooms,

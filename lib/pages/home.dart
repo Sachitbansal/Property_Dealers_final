@@ -457,11 +457,22 @@ class _HomeState extends State<Home> {
                                                     'bookmark': !storeDocs[i]
                                                         ['bookmark'],
                                                   }).whenComplete(() {
-                                                    showSnackBar(
-                                                        'Bookmarked',
+                                                    if (!storeDocs[i]
+                                                    ['bookmark']) {
+                                                      showSnackBar(
+                                                        'Bookmark Added',
                                                         const Duration(
-                                                            milliseconds:
-                                                                1000));
+                                                          milliseconds: 1000,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      showSnackBar(
+                                                        'Bookmark Removed',
+                                                        const Duration(
+                                                          milliseconds: 1000,
+                                                        ),
+                                                      );
+                                                    }
                                                     setState(() {});
                                                   });
                                                 },
