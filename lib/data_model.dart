@@ -34,14 +34,14 @@ class Property {
     required this.bathRooms,
     required this.images,
     required this.name,
-    required this.isPublic,
-    required this.bookmark,
+    this.isPublic,
+    this.bookmark,
     this.facilities,
     this.docId,
   });
   final String? docId, facilities;
   final List images, buyRent;
-  bool isPublic, bookmark;
+  bool? isPublic, bookmark;
 
   Map<String, dynamic> toMap() {
     return {
@@ -100,10 +100,6 @@ class DatabaseServices {
         .collection(collectionId.toString())
         .doc(propertyData.docId)
         .update(propertyData.toMap());
-  }
-
-  Future<void> deleteProperty(String documentId) async {
-    await _db.collection(collectionId.toString()).doc(documentId).delete();
   }
 
   Future<List<Property>> retrieveProperties() async {

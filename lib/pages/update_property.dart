@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../data_model.dart';
 import '../widgets.dart';
 import 'dart:io';
 
@@ -48,6 +49,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
   late List existingUrls = [];
   late bool isPublic = false;
+  late bool bookmark = false;
 
   final landSizeController = TextEditingController();
   final keywordsController = TextEditingController();
@@ -188,27 +190,28 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       finalData.addAll(setSearchParam());
     }
 
-    CollectionReference students =
-        FirebaseFirestore.instance.collection(widget.collection.toString());
+    Property property = Property(
+      title: titleController.text,
+      Price: priceController.text,
+      address: addressController.text,
+      bedRooms: bedRooms,
+      number: numberController.text,
+      construction: construction,
+      types: type,
+      keywords: keywordsController.text,
+      sizeUnit: sizeUnit,
+      landSize: landSizeController.text,
+      other: otherController.text,
+      buyRent: buyRent,
+      bathRooms: bathRooms,
+      images: urls,
+      name: nameController.text,
+      docId: widget.id,
+      isPublic: isPublic,
+      bookmark: bookmark
+    );
 
-    students.doc(widget.id).update({
-      'searchData': finalData,
-      'buyRent': buyRent,
-      'bedRooms': bedRooms,
-      'bathRooms': bathRooms,
-      'other': other,
-      'sizeUnit': sizeUnit,
-      'construction': construction,
-      'landSize': int.parse(landSize),
-      'keywords': keywords,
-      'address': address,
-      'name': nameController.text,
-      'number': int.parse(number),
-      'types': type,
-      'Price': int.parse(price),
-      'title': title,
-      'images': urls,
-    }).then((value) {
+    await DatabaseServices().updateProperty(property).then((value) {
       showSnackBar(
         'Updated Private Data',
         const Duration(milliseconds: 1000),
@@ -350,6 +353,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
                     existingUrls = data['images'];
                     isPublic = data['isPublic'];
+                    bookmark = data['bookmark'];
 
                     return Padding(
                       padding: const EdgeInsets.only(
@@ -840,19 +844,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                landSize = landSizeController.text;
-                                keywords = keywordsController.text;
-                                address = addressController.text;
-                                name = nameController.text;
-                                number = numberController.text;
-                                price = priceController.text;
-                                title = titleController.text;
-                                other = otherController.text;
-
                                 _showMyDialog();
-                              } else {
-                                showSnackBar('Please Update Images Also',
-                                    const Duration(milliseconds: 1000));
                               }
                             },
                           ),
