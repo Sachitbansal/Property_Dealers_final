@@ -39,6 +39,7 @@ class Property {
     this.facilities,
     this.docId,
   });
+
   final String? docId, facilities;
   final List images, buyRent;
   bool? isPublic, bookmark;
@@ -104,7 +105,7 @@ class DatabaseServices {
 
   Future<List<Property>> retrieveProperties() async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
-    await _db.collection(collectionId.toString()).get();
+        await _db.collection(collectionId.toString()).get();
     return snapshot.docs
         .map((docSnapshot) => Property.fromDocumentSnapshot(docSnapshot))
         .toList();
