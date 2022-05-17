@@ -34,7 +34,10 @@ class HouseDetails extends StatefulWidget {
     required this.isPublic,
     required this.enableChange,
     required this.isBookmarked,
-    this.enableEdit, required this.buyRent, required this.constructionStatus, required this.type,
+    this.enableEdit,
+    required this.buyRent,
+    required this.constructionStatus,
+    required this.type,
   }) : super(key: key);
   final String title,
       price,
@@ -91,7 +94,6 @@ class _HouseDetailsState extends State<HouseDetails> {
         throw 'Could not launch $url';
       }
     }
-
 
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection(widget.uid);
@@ -153,127 +155,268 @@ class _HouseDetailsState extends State<HouseDetails> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: [Stack(
-                  children: [
-                    SizedBox(
-                      height: size.height * .5 - 82.5,
-                      child: CarouselSlider.builder(
-                        unlimitedMode: true,
-                        controller: _sliderController,
-                        slideBuilder: (index) {
-                          return Image.network(
-                            widget.assets[index],
-                            fit: BoxFit.cover,
-                          );
-                        },
-                        slideTransform: const ParallaxTransform(),
-                        slideIndicator: CircularSlideIndicator(
-                            padding: const EdgeInsets.only(bottom: 32),
-                            indicatorBorderColor: Colors.white,
-                            currentIndicatorColor: Colors.white,
-                            indicatorBackgroundColor: Colors.transparent),
-                        itemCount: widget.assets.length,
-                        initialPage: 0,
-                        enableAutoSlider: true,
-                      ),
-                    ),
-                    Positioned(
-                      top: 50.0,
-                      left: 20.0,
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.black,
-                              size: 24,
-                            ),
-                          ),
+                children: [
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: size.height * .5 - 82.5,
+                        child: CarouselSlider.builder(
+                          unlimitedMode: true,
+                          controller: _sliderController,
+                          slideBuilder: (index) {
+                            return Image.network(
+                              widget.assets[index],
+                              fit: BoxFit.cover,
+                            );
+                          },
+                          slideTransform: const ParallaxTransform(),
+                          slideIndicator: CircularSlideIndicator(
+                              padding: const EdgeInsets.only(bottom: 32),
+                              indicatorBorderColor: Colors.white,
+                              currentIndicatorColor: Colors.white,
+                              indicatorBackgroundColor: Colors.transparent),
+                          itemCount: widget.assets.length,
+                          initialPage: 0,
+                          enableAutoSlider: true,
                         ),
                       ),
-                    ),
-                    if (widget.enableEdit == true)
                       Positioned(
                         top: 50.0,
-                        right: 20.0,
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => myDialog(
-                                  confirmDialog:
-                                  'Are you sure want to delete the property?',
-                                  onPressed: () {
-                                    deleteUser(widget.docId, widget.assets)
-                                        .whenComplete(() {
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text("Deleted"),
-                                        duration: Duration(milliseconds: 1000),
-                                      ));
-                                    });
-                                  },
-                                  proceedButton: 'DELETE'),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white70,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.black,
-                                    size: 24,
-                                  ),
-                                ),
+                        left: 20.0,
+                        child: GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white70,
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Colors.black,
+                                size: 24,
                               ),
                             ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UpdateProperty(
-                                      collection: widget.uid.toString(),
-                                      id: widget.docId,
-                                      imageUrls: widget.assets,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white70,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.black,
-                                    size: 24,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                  ],
-                ),
+                      if (widget.enableEdit == true)
+                        Positioned(
+                          top: 50.0,
+                          right: 20.0,
+                          child: Row(
+                            children: [
+                              //Make Public Button
+                              GestureDetector(
+                                onTap: () {
+                                  if (!widget.isPublic) {
+                                    myDialog(
+                                      confirmDialog:
+                                      'Are you sure want to make the Property Public?',
+                                      onPressed: () async {
+                                        isPublic = true;
+                                        DocumentReference copyTo =
+                                        FirebaseFirestore.instance
+                                            .collection('Public')
+                                            .doc(
+                                          widget.docId +
+                                              widget.uid.toString(),
+                                        );
+                                        DocumentReference copyFrom =
+                                        FirebaseFirestore.instance
+                                            .collection(widget.uid.toString())
+                                            .doc(widget.docId);
+
+                                        copyFrom.get().then(
+                                              (value) => {
+                                            copyTo.set(value.data()),
+                                          },
+                                        );
+
+                                        await collectionRef
+                                            .doc(widget.docId)
+                                            .update(
+                                            {'isPublic': true}).whenComplete(
+                                              () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                        );
+                                      },
+                                      proceedButton: 'Make Public',
+                                    );
+                                  } else {
+                                    myDialog(
+                                      confirmDialog:
+                                      'Are you sure want to make the Property Private?',
+                                      proceedButton: 'Make Private',
+                                      onPressed: () async {
+                                        isPublic = false;
+                                        await FirebaseFirestore.instance
+                                            .collection('Public')
+                                            .doc(
+                                          widget.docId +
+                                              widget.uid.toString(),
+                                        )
+                                            .delete();
+
+                                        await collectionRef
+                                            .doc(widget.docId)
+                                            .update(
+                                            {'isPublic': false}).whenComplete(
+                                              () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.public,
+                                      color: widget.isPublic
+                                          ? Colors.blue[800]
+                                          : Colors.black,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              //Delete Button
+                              GestureDetector(
+                                onTap: () => myDialog(
+                                    confirmDialog:
+                                        'Are you sure want to delete the property?',
+                                    onPressed: () {
+                                      deleteUser(widget.docId, widget.assets)
+                                          .whenComplete(
+                                        () {
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text("Deleted"),
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    proceedButton: 'DELETE'),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.black,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              //Bookmark Button
+                              GestureDetector(
+                                onTap: () {
+                                  collectionRef.doc(widget.docId).update({
+                                    'bookmark': !widget.isBookmarked,
+                                  }).whenComplete(() {
+                                    if (!widget.isBookmarked) {
+                                      showSnackBar(
+                                        'Bookmark Added',
+                                        const Duration(
+                                          milliseconds: 1000,
+                                        ),
+                                      );
+                                    } else {
+                                      showSnackBar(
+                                        'Bookmark Removed',
+                                        const Duration(
+                                          milliseconds: 1000,
+                                        ),
+                                      );
+                                    }
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                        widget.isBookmarked
+                                            ? Icons.bookmark
+                                            : Icons.bookmark_border,
+                                      color: widget.isBookmarked
+                                    ? Colors.blue[800]
+                                      : Colors.black,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              //Update Property
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateProperty(
+                                        collection: widget.uid.toString(),
+                                        id: widget.docId,
+                                        imageUrls: widget.assets,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.black,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -329,9 +472,12 @@ class _HouseDetailsState extends State<HouseDetails> {
                             children: [
                               _facilities(Icons.king_bed, widget.bedRooms),
                               _facilities(Icons.bathtub, widget.bathRooms),
-                              _facilities(Icons.crop_square, "${widget.landSize} ${widget.sizeUnit}"),
-                              _facilities(Icons.monetization_on_outlined, widget.buyRent),
-                              _facilities(Icons.construction, widget.constructionStatus),
+                              _facilities(Icons.crop_square,
+                                  "${widget.landSize} ${widget.sizeUnit}"),
+                              _facilities(Icons.monetization_on_outlined,
+                                  widget.buyRent),
+                              _facilities(Icons.construction,
+                                  widget.constructionStatus),
                               _facilities(Icons.house_outlined, widget.type),
                             ],
                           ),
@@ -355,7 +501,8 @@ class _HouseDetailsState extends State<HouseDetails> {
                           child: Row(
                             children: [
                               for (var i = 0; i < splits.length; i++) ...[
-                                _facilities(Icons.circle_outlined, "${splits[i]}"),
+                                _facilities(
+                                    Icons.circle_outlined, "${splits[i]}"),
                                 const SizedBox(
                                   width: 10,
                                 ),
@@ -402,182 +549,51 @@ class _HouseDetailsState extends State<HouseDetails> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15,),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   SizedBox(
                     height: 60,
-                    child: SingleChildScrollView(
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              String generatedDeepLink =
-                              await DynamicLinkServices.createPropertyShareLink(
-                                  short: false,
-                                  collectionId: widget.uid,
-                                  docId: widget.docId,
-                                  imageUrl: widget.assets[0],
-                                  propertyTitle: widget.title);
-                              Share.share(generatedDeepLink);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blue[50],
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.share,
-                                  color: Colors.blue[800],
-                                  size: 35,
-                                ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            String generatedDeepLink =
+                                await DynamicLinkServices
+                                    .createPropertyShareLink(
+                                        short: false,
+                                        collectionId: widget.uid,
+                                        docId: widget.docId,
+                                        imageUrl: widget.assets[0],
+                                        propertyTitle: widget.title);
+                            Share.share(generatedDeepLink);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.share,
+                                color: Colors.blue[800],
+                                size: 25,
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          if (widget.enableChange == true)
-                            GestureDetector(
-                              onTap: () {
-                                if (!widget.isPublic) {
-                                  myDialog(
-                                    confirmDialog:
-                                    'Are you sure want to make the Property Public?',
-                                    onPressed: () async {
-                                      isPublic = true;
-                                      DocumentReference copyTo = FirebaseFirestore
-                                          .instance
-                                          .collection('Public')
-                                          .doc(
-                                        widget.docId + widget.uid.toString(),
-                                      );
-                                      DocumentReference copyFrom = FirebaseFirestore
-                                          .instance
-                                          .collection(widget.uid.toString())
-                                          .doc(widget.docId);
-
-                                      copyFrom.get().then(
-                                            (value) => {
-                                          copyTo.set(value.data()),
-                                        },
-                                      );
-
-                                      await collectionRef
-                                          .doc(widget.docId)
-                                          .update({'isPublic': true}).whenComplete(
-                                            () {
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                      );
-                                    },
-                                    proceedButton: 'Make Public',
-                                  );
-                                } else {
-                                  myDialog(
-                                    confirmDialog:
-                                    'Are you sure want to make the Property Private?',
-                                    proceedButton: 'Make Private',
-                                    onPressed: () async {
-                                      isPublic = false;
-                                      await FirebaseFirestore.instance
-                                          .collection('Public')
-                                          .doc(
-                                        widget.docId + widget.uid.toString(),
-                                      )
-                                          .delete();
-
-                                      await collectionRef
-                                          .doc(widget.docId)
-                                          .update({'isPublic': false}).whenComplete(
-                                            () {
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color:
-                                  widget.isPublic ? Colors.blue[50] : Colors.black26,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.public,
-                                    color:
-                                    widget.isPublic ? Colors.blue[800] : Colors.white,
-                                    size: 35,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (widget.enableChange == true)
-                            const SizedBox(
-                              width: 20,
-                            ),
-                          widget.enableChange == true ? GestureDetector(
-                            onTap: () {
-                              collectionRef
-                                  .doc(widget.docId)
-                                  .update({
-                                'bookmark': !widget.isBookmarked,
-                              }).whenComplete(() {
-                                if (!widget.isBookmarked) {
-                                  showSnackBar(
-                                    'Bookmark Added',
-                                    const Duration(
-                                      milliseconds: 1000,
-                                    ),
-                                  );
-                                } else {
-                                  showSnackBar(
-                                    'Bookmark Removed',
-                                    const Duration(
-                                      milliseconds: 1000,
-                                    ),
-                                  );
-                                }
-                                Navigator.pop(context);
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: widget.isBookmarked ? Colors.blue[50] : Colors.black26,
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  widget.isBookmarked
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_border,
-                                  color:
-                                  widget.isBookmarked ? Colors.blue[800] : Colors.white,
-                                  size: 35,
-                                ),
-                              ),
-                            ),
-                          ) : Container(),
-                          const SizedBox(
-                            width: 20,
-                          )
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 15,),],
+                ],
               ),
             ),
           ),
@@ -675,8 +691,7 @@ class _HouseDetailsState extends State<HouseDetails> {
             ),
           ),
           SizedBox(
-            child:
-            Consumer<AddProvider>(builder: (context, adProvider, child) {
+            child: Consumer<AddProvider>(builder: (context, adProvider, child) {
               if (adProvider.isDetailsPageBannerLoaded) {
                 return SizedBox(
                   height: adProvider.detailsPageBanner.size.height.toDouble(),
@@ -706,7 +721,7 @@ class _HouseDetailsState extends State<HouseDetails> {
         ),
         child: Row(
           children: [
-             Icon(
+            Icon(
               icon,
               color: Colors.black,
               size: 16,
