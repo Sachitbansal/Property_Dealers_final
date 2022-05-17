@@ -65,37 +65,23 @@ class DynamicLinkServices {
               .collection(collectionId)
               .doc(docId)
               .get()
-              .then((snapshot) {
-            return Navigator.push(context,
-                MaterialPageRoute(builder: (context) {
-              return HouseDetails(
-                other: snapshot.data()!
-                ['other'],
-                type: snapshot.data()!['types'],
-                constructionStatus: snapshot.data()!
-                ['construction'],
-                buyRent: snapshot.data()!['buyRent'][0],
-                isBookmarked: snapshot.data()!['bookmark'],
-                isPublic: snapshot.data()!['isPublic'],
-                uid: collectionId,
-                docId: docId,
-                assets: snapshot.data()!['images'],
-                facilities: snapshot.data()!['keywords'],
-                title: snapshot.data()!['title'],
-                address: snapshot.data()!['address'],
-                bedRooms: snapshot.data()!['bedRooms'],
-                bathRooms: snapshot.data()!['bathRooms'],
-                price: snapshot.data()!['Price'].toString(),
-                landSize: snapshot.data()!['landSize'].toString(),
-                keywords: snapshot.data()!['keywords'],
-                name: snapshot.data()!['name'],
-                number: snapshot.data()!['number'].toString(),
-                sizeUnit: snapshot.data()!['sizeUnit'],
-                enableChange: false,
-                enableEdit: false,
+              .then(
+            (snapshot) {
+              return Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return HouseDetails(
+                      enableChange: false,
+                      enableEdit: false,
+                      uid: collectionId,
+                      docId: docId,
+                    );
+                  },
+                ),
               );
-            }));
-          });
+            },
+          );
         } else {
           String collectionId = deepLink.queryParameters['colid'].toString();
           Navigator.push(
@@ -122,37 +108,24 @@ class DynamicLinkServices {
           .collection(collectionId)
           .doc(docId)
           .get()
-          .then((snapshot) {
-        return Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return HouseDetails(
-            other: snapshot.data()!
-            ['other'],
-            type: snapshot.data()!['types'],
-            constructionStatus: snapshot.data()!
-            ['construction'],
-            isBookmarked: snapshot.data()!['bookmark'],
-            isPublic: snapshot.data()!['isPublic'],
-            uid: collectionId,
-            docId: docId,
-            buyRent: snapshot.data()!['buyRent'][0],
-            assets: snapshot.data()!['images'],
-            facilities: snapshot.data()!['keywords'],
-            title: snapshot.data()!['title'],
-            address: snapshot.data()!['address'],
-            bedRooms: snapshot.data()!['bedRooms'],
-            bathRooms: snapshot.data()!['bathRooms'],
-            price: snapshot.data()!['Price'].toString(),
-            landSize: snapshot.data()!['landSize'].toString(),
-            keywords: snapshot.data()!['keywords'],
-            name: snapshot.data()!['name'],
-            number: snapshot.data()!['number'].toString(),
-            sizeUnit: snapshot.data()!['sizeUnit'],
-            enableChange: false,
-            enableEdit: false,
-            // enableChange: true
+          .then(
+        (snapshot) {
+          return Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return HouseDetails(
+                  uid: collectionId,
+                  docId: docId,
+                  enableChange: false,
+                  enableEdit: false,
+                  // enableChange: true
+                );
+              },
+            ),
           );
-        }));
-      });
+        },
+      );
     } else {
       String collectionId = deepLink.queryParameters['colid'].toString();
 
@@ -165,7 +138,6 @@ class DynamicLinkServices {
         ),
       );
     }
-
   }
 
   static Future<String> createAddPropertyFromCustomer({

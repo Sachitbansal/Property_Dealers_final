@@ -27,7 +27,8 @@ class _SearchBarDataState extends State<SearchBarData> {
     final CollectionReference noticeCollection =
         FirebaseFirestore.instance.collection(widget.uid.toString());
 
-    final data = FirebaseFirestore.instance.collection(widget.uid.toString())
+    final data = FirebaseFirestore.instance
+        .collection(widget.uid.toString())
         .where("searchData", arrayContains: searchController.text)
         .snapshots();
 
@@ -97,8 +98,7 @@ class _SearchBarDataState extends State<SearchBarData> {
                     }
 
                     final List storeDocs = [];
-                    snapshot.data!.docs
-                        .map((DocumentSnapshot document) {
+                    snapshot.data!.docs.map((DocumentSnapshot document) {
                       Map a = document.data() as Map<String, dynamic>;
                       storeDocs.add(a);
                       a['id'] = document.id;
@@ -108,35 +108,24 @@ class _SearchBarDataState extends State<SearchBarData> {
                     return ListView(
                       physics: const BouncingScrollPhysics(),
                       children: [
-                        for (var i = 0;
-                        i < storeDocs.length;
-                        i++) ...[
+                        for (var i = 0; i < storeDocs.length; i++) ...[
                           NearbyHomes(
                             size: size,
                             asset: storeDocs[i]['images'],
                             name: storeDocs[i]['title'],
-                            location: storeDocs[i]
-                            ['address'],
-                            bedCount: storeDocs[i]
-                            ['bedRooms'],
-                            bathCount: storeDocs[i]
-                            ['bathRooms'],
-                            bookmarkIcon: storeDocs[i]
-                            ['bookmark'],
+                            location: storeDocs[i]['address'],
+                            bedCount: storeDocs[i]['bedRooms'],
+                            bathCount: storeDocs[i]['bathRooms'],
+                            bookmarkIcon: storeDocs[i]['bookmark'],
                             bookmarkFunction: () async {
-                              CollectionReference students =
-                              FirebaseFirestore.instance
-                                  .collection(widget.uid
-                                  .toString());
+                              CollectionReference students = FirebaseFirestore
+                                  .instance
+                                  .collection(widget.uid.toString());
 
-                              students
-                                  .doc(storeDocs[i]['id'])
-                                  .update({
-                                'bookmark': !storeDocs[i]
-                                ['bookmark'],
+                              students.doc(storeDocs[i]['id']).update({
+                                'bookmark': !storeDocs[i]['bookmark'],
                               }).whenComplete(() {
-                                if (!storeDocs[i]
-                                ['bookmark']) {
+                                if (!storeDocs[i]['bookmark']) {
                                   showSnackBar(
                                     'Bookmark Added',
                                     const Duration(
@@ -156,77 +145,25 @@ class _SearchBarDataState extends State<SearchBarData> {
                             },
                             share: () async {
                               String generatedDeepLink =
-                              await DynamicLinkServices
-                                  .createPropertyShareLink(
-                                  short: false,
-                                  collectionId: widget
-                                      .uid
-                                      .toString(),
-                                  docId:
-                                  storeDocs[i]
-                                  ['id'],
-                                  imageUrl: storeDocs[
-                                  i]
-                                  ['images'][0],
-                                  propertyTitle:
-                                  storeDocs[i][
-                                  'title']);
-                              Share.share(
-                                  generatedDeepLink);
+                                  await DynamicLinkServices
+                                      .createPropertyShareLink(
+                                          short: false,
+                                          collectionId: widget.uid.toString(),
+                                          docId: storeDocs[i]['id'],
+                                          imageUrl: storeDocs[i]['images'][0],
+                                          propertyTitle: storeDocs[i]['title']);
+                              Share.share(generatedDeepLink);
                             },
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      HouseDetails(
-                                        other: storeDocs[i]
-                                        ['other'],
-                                        type: storeDocs[i]
-                                        ['types'],
-                                        constructionStatus: storeDocs[i]
-                                        ['construction'],
-                                        buyRent: storeDocs[i]
-                                        ['buyRent'][0],
-                                        isBookmarked: storeDocs[i]
-                                        ['bookmark'],
-                                        isPublic: storeDocs[i]
-                                        ['isPublic'],
-                                        enableEdit: true,
-                                        uid: widget.uid
-                                            .toString(),
-                                        docId: storeDocs[i]
-                                        ['id'],
-                                        assets: storeDocs[i]
-                                        ['images'],
-                                        facilities: storeDocs[i]
-                                        ['keywords'],
-                                        title: storeDocs[i]
-                                        ['title'],
-                                        address: storeDocs[i]
-                                        ['address'],
-                                        bedRooms: storeDocs[i]
-                                        ['bedRooms'],
-                                        bathRooms: storeDocs[i]
-                                        ['bathRooms'],
-                                        price: storeDocs[i]
-                                        ['Price']
-                                            .toString(),
-                                        landSize: storeDocs[i]
-                                        ['landSize']
-                                            .toString(),
-                                        keywords: storeDocs[i]
-                                        ['keywords'],
-                                        name: storeDocs[i]
-                                        ['name'],
-                                        number: storeDocs[i]
-                                        ['number']
-                                            .toString(),
-                                        sizeUnit: storeDocs[i]
-                                        ['sizeUnit'],
-                                        enableChange: true,
-                                        // enableChange: true
-                                      ),
+                                  builder: (context) => HouseDetails(
+                                    enableEdit: true,
+                                    uid: widget.uid.toString(),
+                                    docId: storeDocs[i],
+                                    enableChange: true,
+                                  ),
                                 ),
                               );
                             },

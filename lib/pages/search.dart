@@ -143,32 +143,9 @@ class _SearchState extends State<Search> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
-                                        other: data.docs[index]
-                                        ['other'],
-                                        type: data.docs[index]['types'],
-                                        constructionStatus: data.docs[index]
-                                            ['construction'],
-                                        buyRent: data.docs[index]['buyRent'][0],
-                                        isBookmarked: data.docs[index]
-                                            ['bookmark'],
-                                        isPublic: data.docs[index]['isPublic'],
+                                        enableChange: false,
                                         docId: data.docs[index]['id'],
                                         uid: widget.uid.toString(),
-                                        title: data.docs[index]['title'],
-                                        facilities: data.docs[index]
-                                            ['keywords'],
-                                        assets: data.docs[index]['images'],
-                                        address: data.docs[index]['address'],
-                                        bedRooms: data.docs[index]['bedRooms'],
-                                        bathRooms: data.docs[index]
-                                            ['bathRooms'],
-                                        price: data.docs[index]['Price'],
-                                        landSize: data.docs[index]['landSize'],
-                                        keywords: data.docs[index]['keywords'],
-                                        name: data.docs[index]['name'],
-                                        number: data.docs[index]['number'],
-                                        sizeUnit: data.docs[index]['sizeUnit'],
-                                        enableChange: false,
                                       ),
                                     ),
                                   );

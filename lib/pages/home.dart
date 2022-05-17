@@ -8,6 +8,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
+import 'package:untitled/data_model.dart';
 import 'package:untitled/dynamic_links.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
@@ -52,9 +53,13 @@ class _HomeState extends State<Home> {
     setState(() => _connectivityResult = result);
   }
 
+  Future<List<Property>>? propertyList;
+  List<Property>? retrievedPropertyList;
+
   @override
   void initState() {
     super.initState();
+    _initRetrieval();
 
     initConnectivity();
     _streamSubscription =
@@ -63,6 +68,11 @@ class _HomeState extends State<Home> {
     DynamicLinkServices.initialDynamicLink(context);
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseHomePageBanner();
+  }
+
+  Future<void> _initRetrieval() async {
+    propertyList = DatabaseServices().retrieveProperties();
+    retrievedPropertyList = await DatabaseServices().retrieveProperties();
   }
 
   @override
@@ -310,7 +320,6 @@ class _HomeState extends State<Home> {
                         );
                       },
                     ),
-
                   if (selectedPage == Page.home)
                     Expanded(
                       child: Column(
@@ -346,6 +355,159 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
+                          // FutureBuilder(
+                          //   future: propertyList,
+                          //   builder: (BuildContext context,
+                          //       AsyncSnapshot<List<Property>> snapshot) {
+                          //     if (snapshot.hasError) {
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         const SnackBar(
+                          //           content: Text('Something Went Wrong.'),
+                          //         ),
+                          //       );
+                          //     }
+                          //     if (snapshot.connectionState ==
+                          //         ConnectionState.waiting) {
+                          //       return const Center(
+                          //         child: CircularProgressIndicator(),
+                          //       );
+                          //     }
+                          //
+                          //     return ListView.separated(
+                          //         itemCount: retrievedPropertyList!.length,
+                          //         separatorBuilder: (context, index) =>
+                          //             const SizedBox(
+                          //               height: 10,
+                          //             ),
+                          //         itemBuilder: (context, i) {
+                          //           return isLoading
+                          //               ? const Center(
+                          //                   child: Text('Loading'),
+                          //                 )
+                          //               : Expanded(
+                          //                   child: NearbyHomes(
+                          //                     size: size,
+                          //                     asset: retrievedPropertyList![i]
+                          //                         .images,
+                          //                     name: retrievedPropertyList![i]
+                          //                         .name,
+                          //                     location:
+                          //                         retrievedPropertyList![i]
+                          //                             .address,
+                          //                     bedCount:
+                          //                         retrievedPropertyList![i]
+                          //                             .bedRooms,
+                          //                     bathCount: retrievedPropertyList![i].bathRooms,
+                          //                     bookmarkIcon: retrievedPropertyList![i].bookmark.to,
+                          //                     bookmarkFunction: () async {
+                          //                       CollectionReference students =
+                          //                           FirebaseFirestore.instance
+                          //                               .collection(widget.uid
+                          //                                   .toString());
+                          //
+                          //                       students
+                          //                           .doc(storeDocs[i]['id'])
+                          //                           .update({
+                          //                         'bookmark': !storeDocs[i]
+                          //                             ['bookmark'],
+                          //                       }).whenComplete(() {
+                          //                         if (!storeDocs[i]
+                          //                             ['bookmark']) {
+                          //                           showSnackBar(
+                          //                             'Bookmark Added',
+                          //                             const Duration(
+                          //                               milliseconds: 1000,
+                          //                             ),
+                          //                           );
+                          //                         } else {
+                          //                           showSnackBar(
+                          //                             'Bookmark Removed',
+                          //                             const Duration(
+                          //                               milliseconds: 1000,
+                          //                             ),
+                          //                           );
+                          //                         }
+                          //                         setState(() {});
+                          //                       });
+                          //                     },
+                          //                     share: () async {
+                          //                       String generatedDeepLink =
+                          //                           await DynamicLinkServices
+                          //                               .createPropertyShareLink(
+                          //                                   short: false,
+                          //                                   collectionId: widget
+                          //                                       .uid
+                          //                                       .toString(),
+                          //                                   docId: storeDocs[i]
+                          //                                       ['id'],
+                          //                                   imageUrl: storeDocs[
+                          //                                       i]['images'][0],
+                          //                                   propertyTitle:
+                          //                                       storeDocs[i]
+                          //                                           ['title']);
+                          //                       Share.share(generatedDeepLink);
+                          //                     },
+                          //                     onTap: () {
+                          //                       Navigator.push(
+                          //                         context,
+                          //                         MaterialPageRoute(
+                          //                           builder: (context) =>
+                          //                               HouseDetails(
+                          //                             other: storeDocs[i]
+                          //                                 ['other'],
+                          //                             type: storeDocs[i]
+                          //                                 ['types'],
+                          //                             constructionStatus:
+                          //                                 storeDocs[i]
+                          //                                     ['construction'],
+                          //                             buyRent: storeDocs[i]
+                          //                                 ['buyRent'][0],
+                          //                             isBookmarked: storeDocs[i]
+                          //                                 ['bookmark'],
+                          //                             isPublic: storeDocs[i]
+                          //                                 ['isPublic'],
+                          //                             enableEdit: true,
+                          //                             uid:
+                          //                                 widget.uid.toString(),
+                          //                             docId: storeDocs[i]['id'],
+                          //                             assets: storeDocs[i]
+                          //                                 ['images'],
+                          //                             facilities: storeDocs[i]
+                          //                                 ['keywords'],
+                          //                             title: storeDocs[i]
+                          //                                 ['title'],
+                          //                             address: storeDocs[i]
+                          //                                 ['address'],
+                          //                             bedRooms: storeDocs[i]
+                          //                                 ['bedRooms'],
+                          //                             bathRooms: storeDocs[i]
+                          //                                 ['bathRooms'],
+                          //                             price: storeDocs[i]
+                          //                                     ['Price']
+                          //                                 .toString(),
+                          //                             landSize: storeDocs[i]
+                          //                                     ['landSize']
+                          //                                 .toString(),
+                          //                             keywords: storeDocs[i]
+                          //                                 ['keywords'],
+                          //                             name: storeDocs[i]
+                          //                                 ['name'],
+                          //                             number: storeDocs[i]
+                          //                                     ['number']
+                          //                                 .toString(),
+                          //                             sizeUnit: storeDocs[i]
+                          //                                 ['sizeUnit'],
+                          //                             enableChange: true,
+                          //                             // enableChange: true
+                          //                           ),
+                          //                         ),
+                          //                       );
+                          //                     },
+                          //                   ),
+                          //                 );
+                          //         });
+                          //   },
+                          // ),
                           StreamBuilder<QuerySnapshot>(
                             stream: homeProperties,
                             builder: (BuildContext context,
@@ -388,8 +550,7 @@ class _HomeState extends State<Home> {
                                               size: size,
                                               asset: storeDocs[i]['images'],
                                               name: storeDocs[i]['title'],
-                                              location: storeDocs[i]
-                                                  ['address'],
+                                              location: storeDocs[i]['address'],
                                               bedCount: storeDocs[i]
                                                   ['bedRooms'],
                                               bathCount: storeDocs[i]
@@ -435,17 +596,14 @@ class _HomeState extends State<Home> {
                                                             collectionId: widget
                                                                 .uid
                                                                 .toString(),
-                                                            docId:
-                                                                storeDocs[i]
-                                                                    ['id'],
+                                                            docId: storeDocs[i]
+                                                                ['id'],
                                                             imageUrl: storeDocs[
-                                                                    i]
-                                                                ['images'][0],
+                                                                i]['images'][0],
                                                             propertyTitle:
-                                                                storeDocs[i][
-                                                                    'title']);
-                                                Share.share(
-                                                    generatedDeepLink);
+                                                                storeDocs[i]
+                                                                    ['title']);
+                                                Share.share(generatedDeepLink);
                                               },
                                               onTap: () {
                                                 Navigator.push(
@@ -453,50 +611,10 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
-                                                          other: storeDocs[i]
-                                                          ['other'],
-                                                          type: storeDocs[i]
-                                                          ['types'],
-                                                          constructionStatus: storeDocs[i]
-                                                          ['construction'],
-                                                          buyRent: storeDocs[i]
-                                                          ['buyRent'][0],
-                                                          isBookmarked: storeDocs[i]
-                                                          ['bookmark'],
-                                                      isPublic: storeDocs[i]
-                                                          ['isPublic'],
                                                       enableEdit: true,
-                                                      uid: widget.uid
-                                                          .toString(),
-                                                      docId: storeDocs[i]
-                                                          ['id'],
-                                                      assets: storeDocs[i]
-                                                          ['images'],
-                                                      facilities: storeDocs[i]
-                                                          ['keywords'],
-                                                      title: storeDocs[i]
-                                                          ['title'],
-                                                      address: storeDocs[i]
-                                                          ['address'],
-                                                      bedRooms: storeDocs[i]
-                                                          ['bedRooms'],
-                                                      bathRooms: storeDocs[i]
-                                                          ['bathRooms'],
-                                                      price: storeDocs[i]
-                                                              ['Price']
-                                                          .toString(),
-                                                      landSize: storeDocs[i]
-                                                              ['landSize']
-                                                          .toString(),
-                                                      keywords: storeDocs[i]
-                                                          ['keywords'],
-                                                      name: storeDocs[i]
-                                                          ['name'],
-                                                      number: storeDocs[i]
-                                                              ['number']
-                                                          .toString(),
-                                                      sizeUnit: storeDocs[i]
-                                                          ['sizeUnit'],
+                                                      uid:
+                                                          widget.uid.toString(),
+                                                      docId: storeDocs[i]['id'],
                                                       enableChange: true,
                                                       // enableChange: true
                                                     ),
@@ -650,50 +768,11 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
-                                                          other: storeDocs[i]
-                                                          ['other'],
-                                                          type: storeDocs[i]
-                                                          ['types'],
-                                                          constructionStatus: storeDocs[i]
-                                                          ['construction'],
-                                                          buyRent: storeDocs[i]
-                                                          ['buyRent'][0],
-                                                          isBookmarked: storeDocs[i]
-                                                          ['bookmark'],
                                                       enableEdit: false,
                                                       enableChange: false,
-                                                      isPublic: storeDocs[i]
-                                                          ['isPublic'],
                                                       uid:
                                                           widget.uid.toString(),
                                                       docId: storeDocs[i]['id'],
-                                                      assets: storeDocs[i]
-                                                          ['images'],
-                                                      facilities: storeDocs[i]
-                                                          ['keywords'],
-                                                      title: storeDocs[i]
-                                                          ['title'],
-                                                      address: storeDocs[i]
-                                                          ['address'],
-                                                      bedRooms: storeDocs[i]
-                                                          ['bedRooms'],
-                                                      bathRooms: storeDocs[i]
-                                                          ['bathRooms'],
-                                                      price: storeDocs[i]
-                                                              ['Price']
-                                                          .toString(),
-                                                      landSize: storeDocs[i]
-                                                              ['landSize']
-                                                          .toString(),
-                                                      keywords: storeDocs[i]
-                                                          ['keywords'],
-                                                      name: storeDocs[i]
-                                                          ['name'],
-                                                      number: storeDocs[i]
-                                                              ['number']
-                                                          .toString(),
-                                                      sizeUnit: storeDocs[i]
-                                                          ['sizeUnit'],
                                                     ),
                                                   ),
                                                 );
@@ -849,50 +928,12 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
-                                                            type: storeDocs[i]
-                                                            ['types'],other: storeDocs[i]
-                                                            ['other'],
-                                                            constructionStatus: storeDocs[i]
-                                                            ['construction'],
-                                                            buyRent: storeDocs[i]
-                                                            ['buyRent'][0],
-                                                            isBookmarked: storeDocs[i]
-                                                            ['bookmark'],
                                                         enableEdit: true,
                                                         enableChange: true,
-                                                        isPublic: storeDocs[i]
-                                                            ['isPublic'],
                                                         uid: widget.uid
                                                             .toString(),
                                                         docId: storeDocs[i]
                                                             ['id'],
-                                                        assets: storeDocs[i]
-                                                            ['images'],
-                                                        facilities: storeDocs[i]
-                                                            ['keywords'],
-                                                        title: storeDocs[i]
-                                                            ['title'],
-                                                        address: storeDocs[i]
-                                                            ['address'],
-                                                        bedRooms: storeDocs[i]
-                                                            ['bedRooms'],
-                                                        bathRooms: storeDocs[i]
-                                                            ['bathRooms'],
-                                                        price: storeDocs[i]
-                                                                ['Price']
-                                                            .toString(),
-                                                        landSize: storeDocs[i]
-                                                                ['landSize']
-                                                            .toString(),
-                                                        keywords: storeDocs[i]
-                                                            ['keywords'],
-                                                        name: storeDocs[i]
-                                                            ['name'],
-                                                        number: storeDocs[i]
-                                                                ['number']
-                                                            .toString(),
-                                                        sizeUnit: storeDocs[i]
-                                                            ['sizeUnit'],
                                                       ),
                                                     ),
                                                   );
@@ -910,7 +951,8 @@ class _HomeState extends State<Home> {
                   Consumer<AddProvider>(builder: (context, adProvider, child) {
                     if (adProvider.isHomePageBannerLoaded) {
                       return SizedBox(
-                        height: adProvider.homePageBanner.size.height.toDouble(),
+                        height:
+                            adProvider.homePageBanner.size.height.toDouble(),
                         child: AdWidget(
                           ad: adProvider.homePageBanner,
                         ),

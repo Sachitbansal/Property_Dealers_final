@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,54 +13,20 @@ import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_property.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../addHelper.dart';
+import '../data_model.dart';
 import '../dynamic_links.dart';
 
 class HouseDetails extends StatefulWidget {
   HouseDetails({
     Key? key,
-    required this.title,
-    required this.price,
-    required this.address,
-    required this.bedRooms,
-    required this.bathRooms,
-    required this.landSize,
-    required this.sizeUnit,
-    required this.keywords,
-    required this.name,
-    required this.number,
     required this.uid,
     required this.docId,
-    required this.facilities,
-    required this.assets,
-    required this.isPublic,
     required this.enableChange,
-    required this.isBookmarked,
-    required this.buyRent,
-    required this.constructionStatus,
-    required this.type,
-    required this.other,
     this.enableEdit,
   }) : super(key: key);
-  final String title,
-      price,
-      facilities,
-      address,
-      bedRooms,
-      docId,
-      number,
-      constructionStatus,
-      type,
-      name,
-      keywords,
-      uid,
-      sizeUnit,
-      landSize,
-      other,
-      buyRent,
-      bathRooms;
-  final List assets;
+  final String docId, uid;
   bool? enableEdit = true;
-  bool enableChange, isPublic, isBookmarked;
+  bool enableChange;
 
   @override
   _HouseDetailsState createState() => _HouseDetailsState();
@@ -67,13 +34,20 @@ class HouseDetails extends StatefulWidget {
 
 class _HouseDetailsState extends State<HouseDetails> {
   late CarouselSliderController _sliderController;
+  late List<Property> retrievedPropertyList;
+  final String? collectionId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
+    _initRetrieval();
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseDetailsPageBanner();
     _sliderController = CarouselSliderController();
+  }
+
+  Future<void> _initRetrieval() async {
+    retrievedPropertyList = await DatabaseServices().retrieveProperties();
   }
 
   bool isPublic = false;
@@ -85,11 +59,8 @@ class _HouseDetailsState extends State<HouseDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final String facility = widget.facilities;
-    final List splits = facility.split(',');
-
-    void phoneCall() async {
-      final url = 'tel:${widget.number}';
+    void phoneCall(String phoneNumber) async {
+      final url = 'tel:$phoneNumber';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
@@ -100,10 +71,10 @@ class _HouseDetailsState extends State<HouseDetails> {
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection(widget.uid);
 
-    Future<void> deleteUser(String id, List urls) async {
+    Future<void> deleteUser(String id, List urls, bool isPublic) async {
       collectionRef.doc(id).delete();
 
-      if (widget.isPublic) {
+      if (isPublic) {
         FirebaseFirestore.instance
             .collection("Public")
             .doc(id + widget.uid)
@@ -152,253 +123,64 @@ class _HouseDetailsState extends State<HouseDetails> {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: size.height * .5 - 82.5,
-                        child: CarouselSlider.builder(
-                          unlimitedMode: true,
-                          controller: _sliderController,
-                          slideBuilder: (index) {
-                            return Image.network(
-                              widget.assets[index],
-                              fit: BoxFit.cover,
-                            );
-                          },
-                          slideTransform: const ParallaxTransform(),
-                          slideIndicator: CircularSlideIndicator(
-                              padding: const EdgeInsets.only(bottom: 32),
-                              indicatorBorderColor: Colors.white,
-                              currentIndicatorColor: Colors.white,
-                              indicatorBackgroundColor: Colors.transparent),
-                          itemCount: widget.assets.length,
-                          initialPage: 0,
-                          enableAutoSlider: true,
-                        ),
-                      ),
-                      Positioned(
-                        top: 50.0,
-                        left: 20.0,
-                        child: GestureDetector(
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white70,
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: Colors.black,
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (widget.enableEdit == true)
-                        Positioned(
-                          top: 50.0,
-                          right: 20.0,
-                          child: Row(
-                            children: [
-                              //Make Public Button
-                              GestureDetector(
-                                onTap: () {
-                                  if (!widget.isPublic) {
-                                    myDialog(
-                                      confirmDialog:
-                                      'Are you sure want to make the Property Public?',
-                                      onPressed: () async {
-                                        isPublic = true;
-                                        DocumentReference copyTo =
-                                        FirebaseFirestore.instance
-                                            .collection('Public')
-                                            .doc(
-                                          widget.docId +
-                                              widget.uid.toString(),
-                                        );
-                                        DocumentReference copyFrom =
-                                        FirebaseFirestore.instance
-                                            .collection(widget.uid.toString())
-                                            .doc(widget.docId);
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection(collectionId.toString())
+              .doc(widget.docId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Something Went Wrong.'),
+                ),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-                                        copyFrom.get().then(
-                                              (value) => {
-                                            copyTo.set(value.data()),
-                                          },
-                                        );
-
-                                        await collectionRef
-                                            .doc(widget.docId)
-                                            .update(
-                                            {'isPublic': true}).whenComplete(
-                                              () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                        );
-                                      },
-                                      proceedButton: 'Make Public',
-                                    );
-                                  } else {
-                                    myDialog(
-                                      confirmDialog:
-                                      'Are you sure want to make the Property Private?',
-                                      proceedButton: 'Make Private',
-                                      onPressed: () async {
-                                        isPublic = false;
-                                        await FirebaseFirestore.instance
-                                            .collection('Public')
-                                            .doc(
-                                          widget.docId +
-                                              widget.uid.toString(),
-                                        )
-                                            .delete();
-
-                                        await collectionRef
-                                            .doc(widget.docId)
-                                            .update(
-                                            {'isPublic': false}).whenComplete(
-                                              () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.public,
-                                      color: widget.isPublic
-                                          ? Colors.blue[800]
-                                          : Colors.black,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              //Delete Button
-                              GestureDetector(
-                                onTap: () => myDialog(
-                                    confirmDialog:
-                                        'Are you sure want to delete the property?',
-                                    onPressed: () {
-                                      deleteUser(widget.docId, widget.assets)
-                                          .whenComplete(
-                                        () {
-                                          Navigator.pop(context);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text("Deleted"),
-                                              duration:
-                                                  Duration(milliseconds: 1000),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    proceedButton: 'DELETE'),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.black,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              //Bookmark Button
-                              GestureDetector(
-                                onTap: () {
-                                  collectionRef.doc(widget.docId).update({
-                                    'bookmark': !widget.isBookmarked,
-                                  }).whenComplete(() {
-                                    if (!widget.isBookmarked) {
-                                      showSnackBar(
-                                        'Bookmark Added',
-                                        const Duration(
-                                          milliseconds: 1000,
-                                        ),
-                                      );
-                                    } else {
-                                      showSnackBar(
-                                        'Bookmark Removed',
-                                        const Duration(
-                                          milliseconds: 1000,
-                                        ),
-                                      );
-                                    }
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(
-                                        widget.isBookmarked
-                                            ? Icons.bookmark
-                                            : Icons.bookmark_border,
-                                      color: widget.isBookmarked
-                                    ? Colors.blue[800]
-                                      : Colors.black,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              //Update Property
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UpdateProperty(
-                                        collection: widget.uid.toString(),
-                                        id: widget.docId,
-                                        imageUrls: widget.assets,
-                                      ),
-                                    ),
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            SizedBox(
+                              height: size.height * .5 - 82.5,
+                              child: CarouselSlider.builder(
+                                unlimitedMode: true,
+                                controller: _sliderController,
+                                slideBuilder: (index) {
+                                  return Image.network(
+                                    snapshot.data!['images'][index],
+                                    fit: BoxFit.cover,
                                   );
                                 },
+                                slideTransform: const ParallaxTransform(),
+                                slideIndicator: CircularSlideIndicator(
+                                    padding: const EdgeInsets.only(bottom: 32),
+                                    indicatorBorderColor: Colors.white,
+                                    currentIndicatorColor: Colors.white,
+                                    indicatorBackgroundColor:
+                                        Colors.transparent),
+                                itemCount: snapshot.data!['images'].length,
+                                initialPage: 0,
+                                enableAutoSlider: true,
+                              ),
+                            ),
+                            Positioned(
+                              top: 50.0,
+                              left: 20.0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                  Navigator.pop(context);
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.white70,
@@ -407,307 +189,545 @@ class _HouseDetailsState extends State<HouseDetails> {
                                   child: const Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Icon(
-                                      Icons.edit,
+                                      Icons.arrow_back,
                                       color: Colors.black,
                                       size: 24,
                                     ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  widget.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.play(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                  ),
+                            ),
+                            if (widget.enableEdit == true)
+                              Positioned(
+                                top: 50.0,
+                                right: 20.0,
+                                child: Row(
+                                  children: [
+                                    //Make Public Button
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (!snapshot.data!['isPublic']) {
+                                          myDialog(
+                                            confirmDialog:
+                                                'Are you sure want to make the Property Public?',
+                                            onPressed: () async {
+                                              isPublic = true;
+                                              DocumentReference copyTo =
+                                                  FirebaseFirestore.instance
+                                                      .collection('Public')
+                                                      .doc(
+                                                        widget.docId +
+                                                            widget.uid
+                                                                .toString(),
+                                                      );
+                                              DocumentReference copyFrom =
+                                                  FirebaseFirestore.instance
+                                                      .collection(
+                                                          widget.uid.toString())
+                                                      .doc(widget.docId);
+
+                                              copyFrom.get().then(
+                                                    (value) => {
+                                                      copyTo.set(value.data()),
+                                                    },
+                                                  );
+
+                                              await collectionRef
+                                                  .doc(widget.docId)
+                                                  .update({
+                                                'isPublic': true
+                                              }).whenComplete(
+                                                () {
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                              );
+                                            },
+                                            proceedButton: 'Make Public',
+                                          );
+                                        } else {
+                                          myDialog(
+                                            confirmDialog:
+                                                'Are you sure want to make the Property Private?',
+                                            proceedButton: 'Make Private',
+                                            onPressed: () async {
+                                              isPublic = false;
+                                              await FirebaseFirestore.instance
+                                                  .collection('Public')
+                                                  .doc(
+                                                    widget.docId +
+                                                        widget.uid.toString(),
+                                                  )
+                                                  .delete();
+
+                                              await collectionRef
+                                                  .doc(widget.docId)
+                                                  .update({
+                                                'isPublic': false
+                                              }).whenComplete(
+                                                () {
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white70,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.public,
+                                            color: snapshot.data!['isPublic']
+                                                ? Colors.blue[800]
+                                                : Colors.black,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    //Delete Button
+                                    GestureDetector(
+                                      onTap: () => myDialog(
+                                          confirmDialog:
+                                              'Are you sure want to delete the property?',
+                                          onPressed: () {
+                                            deleteUser(
+                                                    widget.docId,
+                                                    snapshot.data!['images'],
+                                                    snapshot.data!['isPublic'])
+                                                .whenComplete(
+                                              () {
+                                                Navigator.pop(context);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text("Deleted"),
+                                                    duration: Duration(
+                                                      milliseconds: 1000,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          proceedButton: 'DELETE'),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white70,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.black,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    //Bookmark Button
+                                    GestureDetector(
+                                      onTap: () {
+                                        collectionRef.doc(widget.docId).update({
+                                          'bookmark':
+                                              !snapshot.data!['bookmark'],
+                                        }).whenComplete(() {
+                                          if (!snapshot.data!['bookmark']) {
+                                            showSnackBar(
+                                              'Bookmark Added',
+                                              const Duration(
+                                                milliseconds: 1000,
+                                              ),
+                                            );
+                                          } else {
+                                            showSnackBar(
+                                              'Bookmark Removed',
+                                              const Duration(
+                                                milliseconds: 1000,
+                                              ),
+                                            );
+                                          }
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white70,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            snapshot.data!['bookmark']
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_border,
+                                            color: snapshot.data!['bookmark']
+                                                ? Colors.blue[800]
+                                                : Colors.black,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    //Update Property
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateProperty(
+                                              collection: widget.uid.toString(),
+                                              id: widget.docId,
+                                              imageUrls:
+                                                  snapshot.data!['images'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white70,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.black,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 30),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data!['title'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.play(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      '₹${snapshot.data!['Price']}',
+                                      style: GoogleFonts.play(
+                                        color: const Color(0xfff63e3c),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               Text(
-                                '₹${widget.price}',
+                                snapshot.data!['address'],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.play(
-                                  color: const Color(0xfff63e3c),
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _facilities(Icons.king_bed,
+                                        snapshot.data!['bedRooms']),
+                                    _facilities(Icons.bathtub,
+                                        snapshot.data!['bathRooms']),
+                                    _facilities(Icons.crop_square,
+                                        "${snapshot.data!['landSize']} ${snapshot.data!['sizeUnit']}"),
+                                    _facilities(Icons.monetization_on_outlined,
+                                        snapshot.data!['buyRent'][0]),
+                                    _facilities(Icons.construction,
+                                        snapshot.data!['construction']),
+                                    _facilities(Icons.house_outlined,
+                                        snapshot.data!['types']),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "Facilities",
+                                style: GoogleFonts.play(
+                                  color: Colors.black,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          widget.address,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.play(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              _facilities(Icons.king_bed, widget.bedRooms),
-                              _facilities(Icons.bathtub, widget.bathRooms),
-                              _facilities(Icons.crop_square,
-                                  "${widget.landSize} ${widget.sizeUnit}"),
-                              _facilities(Icons.monetization_on_outlined,
-                                  widget.buyRent),
-                              _facilities(Icons.construction,
-                                  widget.constructionStatus),
-                              _facilities(Icons.house_outlined, widget.type),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Facilities",
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              for (var i = 0; i < splits.length; i++) ...[
-                                _facilities(
-                                    Icons.circle_outlined, "${splits[i]}"),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                              ]
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          widget.keywords,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.play(
-                            color: Colors.black87,
-                            letterSpacing: 1.0,
-                            wordSpacing: 2.0,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Other Information",
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          widget.other,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.play(
-                            color: Colors.black87,
-                            letterSpacing: 1.0,
-                            wordSpacing: 2.0,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            String generatedDeepLink =
-                                await DynamicLinkServices
-                                    .createPropertyShareLink(
-                                        short: false,
-                                        collectionId: widget.uid,
-                                        docId: widget.docId,
-                                        imageUrl: widget.assets[0],
-                                        propertyTitle: widget.title);
-                            Share.share(generatedDeepLink);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.blue[50],
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.share,
-                                color: Colors.blue[800],
-                                size: 25,
+                              const SizedBox(
+                                height: 5,
                               ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    for (var i = 0;
+                                        i <
+                                            snapshot.data!['keywords']
+                                                .split(',')
+                                                .length;
+                                        i++) ...[
+                                      _facilities(Icons.circle_outlined,
+                                          "${snapshot.data!['keywords'].split(',')[i]}"),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                    ]
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                snapshot.data!['keywords'],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.play(
+                                  color: Colors.black87,
+                                  letterSpacing: 1.0,
+                                  wordSpacing: 2.0,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "Other Information",
+                                style: GoogleFonts.play(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                snapshot.data!['other'],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.play(
+                                  color: Colors.black87,
+                                  letterSpacing: 1.0,
+                                  wordSpacing: 2.0,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height: 60,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  String generatedDeepLink =
+                                      await DynamicLinkServices
+                                          .createPropertyShareLink(
+                                              short: false,
+                                              collectionId: widget.uid,
+                                              docId: widget.docId,
+                                              imageUrl: snapshot.data!['images']
+                                                  [0],
+                                              propertyTitle:
+                                                  snapshot.data!['title']);
+                                  Share.share(generatedDeepLink);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.share,
+                                      color: Colors.blue[800],
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 90,
+                  color: const Color(0xfff7f7f9),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            "https://img.freepik.com/free-photo/happy-african-american-child-boy-smiling_263368-10.jpg?size=664&ext=jpg&ga=GA1.2.740930980.1616477634",
+                            height: 50,
+                            width: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data!['name'],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.play(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                snapshot.data!['number'].toString(),
+                                maxLines: 1,
+                                style: GoogleFonts.play(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.phone,
+                                size: 22,
+                              ),
+                              color: Colors.green,
+                              onPressed: () =>
+                                  phoneCall(snapshot.data!['number']),
                             ),
                           ),
                         ),
                         const SizedBox(
                           width: 20,
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 90,
-            color: const Color(0xfff7f7f9),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.network(
-                      "https://img.freepik.com/free-photo/happy-african-american-child-boy-smiling_263368-10.jpg?size=664&ext=jpg&ga=GA1.2.740930980.1616477634",
-                      height: 50,
-                      width: 50,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.play(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          widget.number,
-                          maxLines: 1,
-                          style: GoogleFonts.play(
-                            color: Colors.grey,
-                            fontSize: 14,
+                        Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.message,
+                                size: 22,
+                              ),
+                              color: const Color(0xfff63e3c),
+                              onPressed: () async {
+                                await launch(
+                                    'https://api.whatsapp.com/send/?phone=91${snapshot.data!['number']}&text&app_absent=0');
+                              },
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.phone,
-                          size: 22,
+                ),
+                SizedBox(
+                  child: Consumer<AddProvider>(
+                      builder: (context, adProvider, child) {
+                    if (adProvider.isDetailsPageBannerLoaded) {
+                      return SizedBox(
+                        height:
+                            adProvider.detailsPageBanner.size.height.toDouble(),
+                        child: AdWidget(
+                          ad: adProvider.detailsPageBanner,
                         ),
-                        color: Colors.green,
-                        onPressed: phoneCall,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.message,
-                          size: 22,
-                        ),
-                        color: const Color(0xfff63e3c),
-                        onPressed: () async {
-                          await launch(
-                              'https://api.whatsapp.com/send/?phone=91${widget.number}&text&app_absent=0');
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            child: Consumer<AddProvider>(builder: (context, adProvider, child) {
-              if (adProvider.isDetailsPageBannerLoaded) {
-                return SizedBox(
-                  height: adProvider.detailsPageBanner.size.height.toDouble(),
-                  child: AdWidget(
-                    ad: adProvider.detailsPageBanner,
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            }),
-          )
-        ],
-      ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
+                )
+              ],
+            );
+          }),
     );
   }
 
