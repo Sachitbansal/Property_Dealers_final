@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
@@ -68,51 +69,6 @@ class _HomeState extends State<Home> {
   void dispose() {
     _streamSubscription.cancel();
     super.dispose();
-  }
-
-  Future<void> _showMyDialog(String documentId) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Are you sure want to make the Property Public?'),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text(
-                    'Make Public',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    CollectionReference copyTo =
-                        FirebaseFirestore.instance.collection('Public');
-                    DocumentReference copyFrom = FirebaseFirestore.instance
-                        .collection(widget.uid.toString())
-                        .doc(documentId);
-
-                    copyFrom.get().then(
-                          (value) => {
-                            copyTo.add(value.data()),
-                          },
-                        );
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -428,131 +384,125 @@ class _HomeState extends State<Home> {
                                           for (var i = 0;
                                               i < storeDocs.length;
                                               i++) ...[
-                                            GestureDetector(
-                                              onDoubleTap: () {
-                                                _showMyDialog(
-                                                    storeDocs[i]['id']);
-                                              },
-                                              child: NearbyHomes(
-                                                size: size,
-                                                asset: storeDocs[i]['images'],
-                                                name: storeDocs[i]['title'],
-                                                location: storeDocs[i]
-                                                    ['address'],
-                                                bedCount: storeDocs[i]
-                                                    ['bedRooms'],
-                                                bathCount: storeDocs[i]
-                                                    ['bathRooms'],
-                                                bookmarkIcon: storeDocs[i]
-                                                    ['bookmark'],
-                                                bookmarkFunction: () async {
-                                                  CollectionReference students =
-                                                      FirebaseFirestore.instance
-                                                          .collection(widget.uid
-                                                              .toString());
+                                            NearbyHomes(
+                                              size: size,
+                                              asset: storeDocs[i]['images'],
+                                              name: storeDocs[i]['title'],
+                                              location: storeDocs[i]
+                                                  ['address'],
+                                              bedCount: storeDocs[i]
+                                                  ['bedRooms'],
+                                              bathCount: storeDocs[i]
+                                                  ['bathRooms'],
+                                              bookmarkIcon: storeDocs[i]
+                                                  ['bookmark'],
+                                              bookmarkFunction: () async {
+                                                CollectionReference students =
+                                                    FirebaseFirestore.instance
+                                                        .collection(widget.uid
+                                                            .toString());
 
-                                                  students
-                                                      .doc(storeDocs[i]['id'])
-                                                      .update({
-                                                    'bookmark': !storeDocs[i]
-                                                        ['bookmark'],
-                                                  }).whenComplete(() {
-                                                    if (!storeDocs[i]
-                                                        ['bookmark']) {
-                                                      showSnackBar(
-                                                        'Bookmark Added',
-                                                        const Duration(
-                                                          milliseconds: 1000,
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      showSnackBar(
-                                                        'Bookmark Removed',
-                                                        const Duration(
-                                                          milliseconds: 1000,
-                                                        ),
-                                                      );
-                                                    }
-                                                    setState(() {});
-                                                  });
-                                                },
-                                                share: () async {
-                                                  String generatedDeepLink =
-                                                      await DynamicLinkServices
-                                                          .createPropertyShareLink(
-                                                              short: false,
-                                                              collectionId: widget
-                                                                  .uid
-                                                                  .toString(),
-                                                              docId:
-                                                                  storeDocs[i]
-                                                                      ['id'],
-                                                              imageUrl: storeDocs[
-                                                                      i]
-                                                                  ['images'][0],
-                                                              propertyTitle:
-                                                                  storeDocs[i][
-                                                                      'title']);
-                                                  Share.share(
-                                                      generatedDeepLink);
-                                                },
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          HouseDetails(
-                                                            other: storeDocs[i]
-                                                            ['other'],
-                                                            type: storeDocs[i]
-                                                            ['types'],
-                                                            constructionStatus: storeDocs[i]
-                                                            ['construction'],
-                                                            buyRent: storeDocs[i]
-                                                            ['buyRent'][0],
-                                                            isBookmarked: storeDocs[i]
-                                                            ['bookmark'],
-                                                        isPublic: storeDocs[i]
-                                                            ['isPublic'],
-                                                        enableEdit: true,
-                                                        uid: widget.uid
-                                                            .toString(),
-                                                        docId: storeDocs[i]
-                                                            ['id'],
-                                                        assets: storeDocs[i]
-                                                            ['images'],
-                                                        facilities: storeDocs[i]
-                                                            ['keywords'],
-                                                        title: storeDocs[i]
-                                                            ['title'],
-                                                        address: storeDocs[i]
-                                                            ['address'],
-                                                        bedRooms: storeDocs[i]
-                                                            ['bedRooms'],
-                                                        bathRooms: storeDocs[i]
-                                                            ['bathRooms'],
-                                                        price: storeDocs[i]
-                                                                ['Price']
-                                                            .toString(),
-                                                        landSize: storeDocs[i]
-                                                                ['landSize']
-                                                            .toString(),
-                                                        keywords: storeDocs[i]
-                                                            ['keywords'],
-                                                        name: storeDocs[i]
-                                                            ['name'],
-                                                        number: storeDocs[i]
-                                                                ['number']
-                                                            .toString(),
-                                                        sizeUnit: storeDocs[i]
-                                                            ['sizeUnit'],
-                                                        enableChange: true,
-                                                        // enableChange: true
+                                                students
+                                                    .doc(storeDocs[i]['id'])
+                                                    .update({
+                                                  'bookmark': !storeDocs[i]
+                                                      ['bookmark'],
+                                                }).whenComplete(() {
+                                                  if (!storeDocs[i]
+                                                      ['bookmark']) {
+                                                    showSnackBar(
+                                                      'Bookmark Added',
+                                                      const Duration(
+                                                        milliseconds: 1000,
                                                       ),
+                                                    );
+                                                  } else {
+                                                    showSnackBar(
+                                                      'Bookmark Removed',
+                                                      const Duration(
+                                                        milliseconds: 1000,
+                                                      ),
+                                                    );
+                                                  }
+                                                  setState(() {});
+                                                });
+                                              },
+                                              share: () async {
+                                                String generatedDeepLink =
+                                                    await DynamicLinkServices
+                                                        .createPropertyShareLink(
+                                                            short: false,
+                                                            collectionId: widget
+                                                                .uid
+                                                                .toString(),
+                                                            docId:
+                                                                storeDocs[i]
+                                                                    ['id'],
+                                                            imageUrl: storeDocs[
+                                                                    i]
+                                                                ['images'][0],
+                                                            propertyTitle:
+                                                                storeDocs[i][
+                                                                    'title']);
+                                                Share.share(
+                                                    generatedDeepLink);
+                                              },
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HouseDetails(
+                                                          other: storeDocs[i]
+                                                          ['other'],
+                                                          type: storeDocs[i]
+                                                          ['types'],
+                                                          constructionStatus: storeDocs[i]
+                                                          ['construction'],
+                                                          buyRent: storeDocs[i]
+                                                          ['buyRent'][0],
+                                                          isBookmarked: storeDocs[i]
+                                                          ['bookmark'],
+                                                      isPublic: storeDocs[i]
+                                                          ['isPublic'],
+                                                      enableEdit: true,
+                                                      uid: widget.uid
+                                                          .toString(),
+                                                      docId: storeDocs[i]
+                                                          ['id'],
+                                                      assets: storeDocs[i]
+                                                          ['images'],
+                                                      facilities: storeDocs[i]
+                                                          ['keywords'],
+                                                      title: storeDocs[i]
+                                                          ['title'],
+                                                      address: storeDocs[i]
+                                                          ['address'],
+                                                      bedRooms: storeDocs[i]
+                                                          ['bedRooms'],
+                                                      bathRooms: storeDocs[i]
+                                                          ['bathRooms'],
+                                                      price: storeDocs[i]
+                                                              ['Price']
+                                                          .toString(),
+                                                      landSize: storeDocs[i]
+                                                              ['landSize']
+                                                          .toString(),
+                                                      keywords: storeDocs[i]
+                                                          ['keywords'],
+                                                      name: storeDocs[i]
+                                                          ['name'],
+                                                      number: storeDocs[i]
+                                                              ['number']
+                                                          .toString(),
+                                                      sizeUnit: storeDocs[i]
+                                                          ['sizeUnit'],
+                                                      enableChange: true,
+                                                      // enableChange: true
                                                     ),
-                                                  );
-                                                },
-                                              ),
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ]
                                         ],
@@ -957,18 +907,18 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                     ),
-                  // Consumer<AddProvider>(builder: (context, adProvider, child) {
-                  //   if (adProvider.isHomePageBannerLoaded) {
-                  //     return SizedBox(
-                  //       height: adProvider.homePageBanner.size.height.toDouble(),
-                  //       child: AdWidget(
-                  //         ad: adProvider.homePageBanner,
-                  //       ),
-                  //     );
-                  //   } else {
-                  //     return Container();
-                  //   }
-                  // }),
+                  Consumer<AddProvider>(builder: (context, adProvider, child) {
+                    if (adProvider.isHomePageBannerLoaded) {
+                      return SizedBox(
+                        height: adProvider.homePageBanner.size.height.toDouble(),
+                        child: AdWidget(
+                          ad: adProvider.homePageBanner,
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                 ],
               ),
             ),

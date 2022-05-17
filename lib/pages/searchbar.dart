@@ -96,81 +96,143 @@ class _SearchBarDataState extends State<SearchBarData> {
                       );
                     }
 
-                    final data = snapshot.requireData;
+                    final List storeDocs = [];
+                    snapshot.data!.docs
+                        .map((DocumentSnapshot document) {
+                      Map a = document.data() as Map<String, dynamic>;
+                      storeDocs.add(a);
+                      a['id'] = document.id;
+                      a['collection'] = document.reference;
+                    }).toList();
 
-                    return ListView.builder(
-                      itemCount: data.size,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            NearbyHomes(
-                              size: size,
-                              asset: data.docs[index]['images'],
-                              name: data.docs[index]['title'],
-                              location: data.docs[index]['address'],
-                              bedCount: data.docs[index]['bedRooms'],
-                              bathCount: data.docs[index]['bathRooms'],
-                              bookmarkIcon: data.docs[index]['bookmark'],
-                              bookmarkFunction: () async {
-                                CollectionReference students =
-                                FirebaseFirestore.instance.collection(widget.uid.toString());
+                    return ListView(
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        for (var i = 0;
+                        i < storeDocs.length;
+                        i++) ...[
+                          NearbyHomes(
+                            size: size,
+                            asset: storeDocs[i]['images'],
+                            name: storeDocs[i]['title'],
+                            location: storeDocs[i]
+                            ['address'],
+                            bedCount: storeDocs[i]
+                            ['bedRooms'],
+                            bathCount: storeDocs[i]
+                            ['bathRooms'],
+                            bookmarkIcon: storeDocs[i]
+                            ['bookmark'],
+                            bookmarkFunction: () async {
+                              CollectionReference students =
+                              FirebaseFirestore.instance
+                                  .collection(widget.uid
+                                  .toString());
 
-                                students.doc(data.docs[index]['id']).update({
-                                  'bookmark': !data.docs[index]['bookmark'],
-                                }).whenComplete(() {
-                                  showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
-                                  setState((){});
-                                });
-
-                              },
-                              share: () async {
-                                String generatedDeepLink =
-                                await DynamicLinkServices.createPropertyShareLink(
-                                    short: false,
-                                    collectionId: widget.uid.toString(),
-                                    docId: data.docs[index]['id'],
-                                    imageUrl: data.docs[index]
-                                    ['images'][0],
-                                    propertyTitle: data.docs[index]
-                                    ['title']
-                                );
-                                Share.share(generatedDeepLink);
-                              },
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HouseDetails(
-                                      other: data.docs[index]
-                                      ['other'],
-                                      type: data.docs[index]['types'],
-                                      constructionStatus: data.docs[index]
-                                      ['construction'],
-                                      buyRent: data.docs[index]['buyRent'][0],
-                                      isBookmarked: data.docs[index]['bookmark'],
-                                      docId: data.docs[index]['id'],
-                                      isPublic: data.docs[index]['isPublic'],
-                                      uid: widget.uid.toString(),
-                                      title: data.docs[index]['title'],
-                                      facilities: data.docs[index]['keywords'],
-                                      assets: data.docs[index]['images'],
-                                      address: data.docs[index]['address'],
-                                      bedRooms: data.docs[index]['bedRooms'],
-                                      bathRooms: data.docs[index]['bathRooms'],
-                                      price: data.docs[index]['Price'],
-                                      landSize: data.docs[index]['landSize'],
-                                      keywords: data.docs[index]['keywords'],
-                                      name: data.docs[index]['name'],
-                                      number: data.docs[index]['number'],
-                                      sizeUnit: data.docs[index]['sizeUnit'], enableChange: false,
+                              students
+                                  .doc(storeDocs[i]['id'])
+                                  .update({
+                                'bookmark': !storeDocs[i]
+                                ['bookmark'],
+                              }).whenComplete(() {
+                                if (!storeDocs[i]
+                                ['bookmark']) {
+                                  showSnackBar(
+                                    'Bookmark Added',
+                                    const Duration(
+                                      milliseconds: 1000,
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                                  );
+                                } else {
+                                  showSnackBar(
+                                    'Bookmark Removed',
+                                    const Duration(
+                                      milliseconds: 1000,
+                                    ),
+                                  );
+                                }
+                                setState(() {});
+                              });
+                            },
+                            share: () async {
+                              String generatedDeepLink =
+                              await DynamicLinkServices
+                                  .createPropertyShareLink(
+                                  short: false,
+                                  collectionId: widget
+                                      .uid
+                                      .toString(),
+                                  docId:
+                                  storeDocs[i]
+                                  ['id'],
+                                  imageUrl: storeDocs[
+                                  i]
+                                  ['images'][0],
+                                  propertyTitle:
+                                  storeDocs[i][
+                                  'title']);
+                              Share.share(
+                                  generatedDeepLink);
+                            },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      HouseDetails(
+                                        other: storeDocs[i]
+                                        ['other'],
+                                        type: storeDocs[i]
+                                        ['types'],
+                                        constructionStatus: storeDocs[i]
+                                        ['construction'],
+                                        buyRent: storeDocs[i]
+                                        ['buyRent'][0],
+                                        isBookmarked: storeDocs[i]
+                                        ['bookmark'],
+                                        isPublic: storeDocs[i]
+                                        ['isPublic'],
+                                        enableEdit: true,
+                                        uid: widget.uid
+                                            .toString(),
+                                        docId: storeDocs[i]
+                                        ['id'],
+                                        assets: storeDocs[i]
+                                        ['images'],
+                                        facilities: storeDocs[i]
+                                        ['keywords'],
+                                        title: storeDocs[i]
+                                        ['title'],
+                                        address: storeDocs[i]
+                                        ['address'],
+                                        bedRooms: storeDocs[i]
+                                        ['bedRooms'],
+                                        bathRooms: storeDocs[i]
+                                        ['bathRooms'],
+                                        price: storeDocs[i]
+                                        ['Price']
+                                            .toString(),
+                                        landSize: storeDocs[i]
+                                        ['landSize']
+                                            .toString(),
+                                        keywords: storeDocs[i]
+                                        ['keywords'],
+                                        name: storeDocs[i]
+                                        ['name'],
+                                        number: storeDocs[i]
+                                        ['number']
+                                            .toString(),
+                                        sizeUnit: storeDocs[i]
+                                        ['sizeUnit'],
+                                        enableChange: true,
+                                        // enableChange: true
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ]
+                      ],
                     );
                   },
                 ),
