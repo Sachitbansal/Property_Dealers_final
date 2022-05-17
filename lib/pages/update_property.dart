@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets.dart';
 import 'dart:io';
-// import 'package:sizer/sizer.dart';
 
 class UpdateProperty extends StatefulWidget {
   const UpdateProperty(
@@ -42,6 +41,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   late String address = 'None';
   late String title = 'None';
   late String name = 'None';
+  late String other = 'None';
   late String landSize = '0';
   late String number = '0';
   late String price = '0';
@@ -56,11 +56,13 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   final numberController = TextEditingController();
   final titleController = TextEditingController();
   final priceController = TextEditingController();
+  final otherController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
     landSizeController.dispose();
+    otherController.dispose();
     keywordsController.dispose();
     addressController.dispose();
     numberController.dispose();
@@ -194,6 +196,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'buyRent': buyRent,
       'bedRooms': bedRooms,
       'bathRooms': bathRooms,
+      'other': other,
       'sizeUnit': sizeUnit,
       'construction': construction,
       'landSize': int.parse(landSize),
@@ -245,7 +248,8 @@ class _UpdatePropertyState extends State<UpdateProperty> {
         Navigator.pop(context);
       }
     }).catchError(
-      (error) => print("Failed to update user: $error"),
+      (error) => showSnackBar(
+          'Failed to Update: $error', const Duration(milliseconds: 1000)),
     );
   }
 
@@ -318,7 +322,8 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                       .get(),
                   builder: (_, snapshot) {
                     if (snapshot.hasError) {
-                      print('Something Went Wrong');
+                      showSnackBar('Something Went Wrong',
+                          const Duration(milliseconds: 1000));
                     }
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -334,6 +339,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                     numberController.text = data['number'].toString();
                     titleController.text = data['title'];
                     priceController.text = data['Price'].toString();
+                    otherController.text = data['other'].toString();
 
                     buyRent = data['buyRent'];
                     bedRooms = data['bedRooms'];
@@ -743,6 +749,14 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                             },
                           ),
                           const FilterTitle(
+                            title: 'Additional Information',
+                          ),
+                          CustomTextField(
+                              maxLines: 4,
+                              titleController: otherController,
+                              labelText: 'Information',
+                              validator: (value) => null),
+                          const FilterTitle(
                             title: 'Upload Images',
                           ),
                           Row(
@@ -833,6 +847,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 number = numberController.text;
                                 price = priceController.text;
                                 title = titleController.text;
+                                other = otherController.text;
 
                                 _showMyDialog();
                               } else {

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 // import '../addHelper.dart';
+import '../addHelper.dart';
 import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'dart:io';
@@ -49,6 +50,7 @@ class _AddState extends State<Add> {
   late String address = 'None';
   late String title = 'None';
   late String name = 'None';
+  late String other = 'None';
   late int number = 0;
 
   late int price = 0;
@@ -60,6 +62,7 @@ class _AddState extends State<Add> {
   final numberController = TextEditingController();
   final titleController = TextEditingController();
   final priceController = TextEditingController();
+  final otherController = TextEditingController();
 
   @override
   void dispose() {
@@ -68,6 +71,7 @@ class _AddState extends State<Add> {
     keywordsController.dispose();
     addressController.dispose();
     numberController.dispose();
+    otherController.dispose();
     titleController.dispose();
     priceController.dispose();
     super.dispose();
@@ -163,6 +167,7 @@ class _AddState extends State<Add> {
       'Price': price,
       'title': title,
       'images': urls,
+      'other': other,
       'bookmark': false
     }).then(
       (value) => {
@@ -206,11 +211,11 @@ class _AddState extends State<Add> {
     final Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        // AddProvider addProvider =
-        //     Provider.of<AddProvider>(context, listen: false);
-        // if (addProvider.isFullPageAddLoaded) {
-        //   addProvider.fullPageAdd.show();
-        // }
+        AddProvider addProvider =
+            Provider.of<AddProvider>(context, listen: false);
+        if (addProvider.isFullPageAddLoaded) {
+          addProvider.fullPageAdd.show();
+        }
         return true;
       },
       child: Scaffold(
@@ -687,6 +692,15 @@ class _AddState extends State<Add> {
                           },
                         ),
                         const FilterTitle(
+                          title: 'Additional Information',
+                        ),
+                        CustomTextField(
+                          maxLines: 4,
+                          titleController: otherController,
+                          labelText: 'Information',
+                          validator: (value) => null
+                        ),
+                        const FilterTitle(
                           title: 'Upload Images',
                         ),
                         Row(
@@ -813,6 +827,7 @@ class _AddState extends State<Add> {
                                 number = int.parse(numberController.text);
                                 price = int.parse(priceController.text);
                                 title = titleController.text.toLowerCase();
+                                other = otherController.text.toLowerCase();
                                 uploadFunction(_image!);
                               });
                             }

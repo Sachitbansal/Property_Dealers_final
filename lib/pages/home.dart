@@ -502,6 +502,8 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            other: storeDocs[i]
+                                                            ['other'],
                                                             type: storeDocs[i]
                                                             ['types'],
                                                             constructionStatus: storeDocs[i]
@@ -698,6 +700,8 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
+                                                          other: storeDocs[i]
+                                                          ['other'],
                                                           type: storeDocs[i]
                                                           ['types'],
                                                           constructionStatus: storeDocs[i]
@@ -896,7 +900,8 @@ class _HomeState extends State<Home> {
                                                       builder: (context) =>
                                                           HouseDetails(
                                                             type: storeDocs[i]
-                                                            ['types'],
+                                                            ['types'],other: storeDocs[i]
+                                                            ['other'],
                                                             constructionStatus: storeDocs[i]
                                                             ['construction'],
                                                             buyRent: storeDocs[i]

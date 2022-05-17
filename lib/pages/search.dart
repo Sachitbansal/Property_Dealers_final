@@ -143,6 +143,8 @@ class _SearchState extends State<Search> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
+                                        other: data.docs[index]
+                                        ['other'],
                                         type: data.docs[index]['types'],
                                         constructionStatus: data.docs[index]
                                             ['construction'],

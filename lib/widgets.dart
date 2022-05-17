@@ -684,7 +684,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.onChanged,
-    this.icon,
+    this.icon, this.maxLines,
   }) : super(key: key);
 
   final TextEditingController? titleController;
@@ -692,11 +692,13 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final TextInputType? keyboardType;
   final Widget? icon;
+  final int? maxLines;
   final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
       onChanged: onChanged,
       keyboardType: keyboardType,
       cursorColor: Colors.blue[300],

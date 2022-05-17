@@ -34,10 +34,11 @@ class HouseDetails extends StatefulWidget {
     required this.isPublic,
     required this.enableChange,
     required this.isBookmarked,
-    this.enableEdit,
     required this.buyRent,
     required this.constructionStatus,
     required this.type,
+    required this.other,
+    this.enableEdit,
   }) : super(key: key);
   final String title,
       price,
@@ -53,6 +54,7 @@ class HouseDetails extends StatefulWidget {
       uid,
       sizeUnit,
       landSize,
+      other,
       buyRent,
       bathRooms;
   final List assets;
@@ -536,7 +538,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                           ),
                         ),
                         Text(
-                          widget.keywords,
+                          widget.other,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.play(

@@ -69,6 +69,8 @@ class DynamicLinkServices {
             return Navigator.push(context,
                 MaterialPageRoute(builder: (context) {
               return HouseDetails(
+                other: snapshot.data()!
+                ['other'],
                 type: snapshot.data()!['types'],
                 constructionStatus: snapshot.data()!
                 ['construction'],
@@ -123,6 +125,8 @@ class DynamicLinkServices {
           .then((snapshot) {
         return Navigator.push(context, MaterialPageRoute(builder: (context) {
           return HouseDetails(
+            other: snapshot.data()!
+            ['other'],
             type: snapshot.data()!['types'],
             constructionStatus: snapshot.data()!
             ['construction'],
