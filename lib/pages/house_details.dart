@@ -34,7 +34,7 @@ class HouseDetails extends StatefulWidget {
     required this.isPublic,
     required this.enableChange,
     required this.isBookmarked,
-    this.enableEdit, required this.buyRent,
+    this.enableEdit, required this.buyRent, required this.constructionStatus, required this.type,
   }) : super(key: key);
   final String title,
       price,
@@ -43,6 +43,8 @@ class HouseDetails extends StatefulWidget {
       bedRooms,
       docId,
       number,
+      constructionStatus,
+      type,
       name,
       keywords,
       uid,
@@ -325,83 +327,12 @@ class _HouseDetailsState extends State<HouseDetails> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.king_bed,
-                                    color: Colors.grey,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    widget.bedRooms,
-                                    style: GoogleFonts.play(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.bathtub,
-                                    color: Colors.grey,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    widget.bathRooms,
-                                    style: GoogleFonts.play(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.crop_square,
-                                    color: Colors.grey,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "${widget.landSize} ${widget.sizeUnit}",
-                                    style: GoogleFonts.play(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                widget.buyRent,
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
+                              _facilities(Icons.king_bed, widget.bedRooms),
+                              _facilities(Icons.bathtub, widget.bathRooms),
+                              _facilities(Icons.crop_square, "${widget.landSize} ${widget.sizeUnit}"),
+                              _facilities(Icons.monetization_on_outlined, widget.buyRent),
+                              _facilities(Icons.construction, widget.constructionStatus),
+                              _facilities(Icons.house_outlined, widget.type),
                             ],
                           ),
                         ),
@@ -424,7 +355,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                           child: Row(
                             children: [
                               for (var i = 0; i < splits.length; i++) ...[
-                                _facilities(Icons.bubble_chart, "${splits[i]}"),
+                                _facilities(Icons.circle_outlined, "${splits[i]}"),
                                 const SizedBox(
                                   width: 10,
                                 ),
@@ -765,6 +696,7 @@ class _HouseDetailsState extends State<HouseDetails> {
 
   _facilities(IconData icon, String facility) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 7.5),
       decoration: BoxDecoration(
           color: Colors.grey[100], borderRadius: BorderRadius.circular(5.0)),
       child: Padding(
@@ -774,8 +706,8 @@ class _HouseDetailsState extends State<HouseDetails> {
         ),
         child: Row(
           children: [
-            const Icon(
-              Icons.bubble_chart,
+             Icon(
+              icon,
               color: Colors.black,
               size: 16,
             ),

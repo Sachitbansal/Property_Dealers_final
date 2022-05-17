@@ -502,6 +502,10 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            type: storeDocs[i]
+                                                            ['types'],
+                                                            constructionStatus: storeDocs[i]
+                                                            ['construction'],
                                                             buyRent: storeDocs[i]
                                                             ['buyRent'][0],
                                                             isBookmarked: storeDocs[i]
@@ -694,6 +698,10 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
+                                                          type: storeDocs[i]
+                                                          ['types'],
+                                                          constructionStatus: storeDocs[i]
+                                                          ['construction'],
                                                           buyRent: storeDocs[i]
                                                           ['buyRent'][0],
                                                           isBookmarked: storeDocs[i]
@@ -887,6 +895,10 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            type: storeDocs[i]
+                                                            ['types'],
+                                                            constructionStatus: storeDocs[i]
+                                                            ['construction'],
                                                             buyRent: storeDocs[i]
                                                             ['buyRent'][0],
                                                             isBookmarked: storeDocs[i]

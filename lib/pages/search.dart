@@ -113,27 +113,29 @@ class _SearchState extends State<Search> {
                                 bookmarkIcon: data.docs[index]['bookmark'],
                                 bookmarkFunction: () async {
                                   CollectionReference students =
-                                  FirebaseFirestore.instance.collection(widget.uid.toString());
+                                      FirebaseFirestore.instance
+                                          .collection(widget.uid.toString());
 
                                   students.doc(data.docs[index]['id']).update({
                                     'bookmark': !data.docs[index]['bookmark'],
                                   }).whenComplete(() {
-                                    showSnackBar('Bookmarked', const Duration(milliseconds: 1000));
-                                    setState((){});
+                                    showSnackBar('Bookmarked',
+                                        const Duration(milliseconds: 1000));
+                                    setState(() {});
                                   });
-
                                 },
                                 share: () async {
                                   String generatedDeepLink =
-                                  await DynamicLinkServices.createPropertyShareLink(
-                                      short: false,
-                                      collectionId: widget.uid.toString(),
-                                      docId: data.docs[index]['id'],
-                                      imageUrl: data.docs[index]
-                                      ['images'][0],
-                                      propertyTitle: data.docs[index]
-                                      ['title']
-                                  );
+                                      await DynamicLinkServices
+                                          .createPropertyShareLink(
+                                              short: false,
+                                              collectionId:
+                                                  widget.uid.toString(),
+                                              docId: data.docs[index]['id'],
+                                              imageUrl: data.docs[index]
+                                                  ['images'][0],
+                                              propertyTitle: data.docs[index]
+                                                  ['title']);
                                   Share.share(generatedDeepLink);
                                 },
                                 onTap: () {
@@ -141,8 +143,12 @@ class _SearchState extends State<Search> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
+                                        type: data.docs[index]['types'],
+                                        constructionStatus: data.docs[index]
+                                            ['construction'],
                                         buyRent: data.docs[index]['buyRent'][0],
-                                        isBookmarked: data.docs[index]['bookmark'],
+                                        isBookmarked: data.docs[index]
+                                            ['bookmark'],
                                         isPublic: data.docs[index]['isPublic'],
                                         docId: data.docs[index]['id'],
                                         uid: widget.uid.toString(),

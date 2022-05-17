@@ -69,6 +69,9 @@ class DynamicLinkServices {
             return Navigator.push(context,
                 MaterialPageRoute(builder: (context) {
               return HouseDetails(
+                type: snapshot.data()!['types'],
+                constructionStatus: snapshot.data()!
+                ['construction'],
                 buyRent: snapshot.data()!['buyRent'][0],
                 isBookmarked: snapshot.data()!['bookmark'],
                 isPublic: snapshot.data()!['isPublic'],
@@ -120,6 +123,9 @@ class DynamicLinkServices {
           .then((snapshot) {
         return Navigator.push(context, MaterialPageRoute(builder: (context) {
           return HouseDetails(
+            type: snapshot.data()!['types'],
+            constructionStatus: snapshot.data()!
+            ['construction'],
             isBookmarked: snapshot.data()!['bookmark'],
             isPublic: snapshot.data()!['isPublic'],
             uid: collectionId,
