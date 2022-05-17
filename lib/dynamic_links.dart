@@ -69,6 +69,7 @@ class DynamicLinkServices {
             return Navigator.push(context,
                 MaterialPageRoute(builder: (context) {
               return HouseDetails(
+                buyRent: snapshot.data()!['buyRent'][0],
                 isBookmarked: snapshot.data()!['bookmark'],
                 isPublic: snapshot.data()!['isPublic'],
                 uid: collectionId,
@@ -123,6 +124,7 @@ class DynamicLinkServices {
             isPublic: snapshot.data()!['isPublic'],
             uid: collectionId,
             docId: docId,
+            buyRent: snapshot.data()!['buyRent'][0],
             assets: snapshot.data()!['images'],
             facilities: snapshot.data()!['keywords'],
             title: snapshot.data()!['title'],

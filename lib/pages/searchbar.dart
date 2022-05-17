@@ -141,6 +141,7 @@ class _SearchBarDataState extends State<SearchBarData> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => HouseDetails(
+                                      buyRent: data.docs[index]['buyRent'][0],
                                       isBookmarked: data.docs[index]['bookmark'],
                                       docId: data.docs[index]['id'],
                                       isPublic: data.docs[index]['isPublic'],

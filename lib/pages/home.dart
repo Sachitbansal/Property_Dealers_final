@@ -502,6 +502,8 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            buyRent: storeDocs[i]
+                                                            ['buyRent'][0],
                                                             isBookmarked: storeDocs[i]
                                                             ['bookmark'],
                                                         isPublic: storeDocs[i]
@@ -692,6 +694,8 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
+                                                          buyRent: storeDocs[i]
+                                                          ['buyRent'][0],
                                                           isBookmarked: storeDocs[i]
                                                           ['bookmark'],
                                                       enableEdit: false,
@@ -883,6 +887,8 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
+                                                            buyRent: storeDocs[i]
+                                                            ['buyRent'][0],
                                                             isBookmarked: storeDocs[i]
                                                             ['bookmark'],
                                                         enableEdit: true,
