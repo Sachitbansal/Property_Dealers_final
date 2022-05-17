@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:untitled/data_model.dart';
+
 // import '../addHelper.dart';
 import '../addHelper.dart';
 import '../dynamic_links.dart';
@@ -22,8 +24,8 @@ class _AddState extends State<Add> {
   @override
   void initState() {
     super.initState();
-    // AddProvider addProvider = Provider.of<AddProvider>(context, listen: false);
-    // addProvider.initialiseFullPageAdd();
+    AddProvider addProvider = Provider.of<AddProvider>(context, listen: false);
+    addProvider.initialiseFullPageAdd();
   }
 
   MaterialStateProperty<Color> kActiveCardColour =
@@ -35,25 +37,12 @@ class _AddState extends State<Add> {
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
 
-  String? downloadUrl =
-      'https://miro.medium.com/max/800/1*UL9RWkTUtJlyHW7kGm20hQ.png';
-
   late List buyRent = ['', 'Any'];
   late String bedRooms = 'Na';
   late String bathRooms = 'Na';
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String type = 'None';
-
-  late int landSize = 0;
-  late String keywords = 'None';
-  late String address = 'None';
-  late String title = 'None';
-  late String name = 'None';
-  late String other = 'None';
-  late int number = 0;
-
-  late int price = 0;
 
   final landSizeController = TextEditingController();
   final keywordsController = TextEditingController();
@@ -119,19 +108,19 @@ class _AddState extends State<Add> {
     });
   }
 
-  Future<void> addUser() {
+  Future<void> addUser() async {
     List varList = [
       buyRent[0].toLowerCase(),
       bedRooms,
       bathRooms,
       sizeUnit,
       construction,
-      landSize.toString(),
-      name,
-      number.toString(),
+      landSizeController.text.toString(),
+      nameController.text,
+      numberController.text.toString(),
       type.toLowerCase(),
-      price.toString(),
-      title
+      priceController.text.toString(),
+      titleController.text
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -148,28 +137,27 @@ class _AddState extends State<Add> {
       finalData.addAll(setSearchParam());
     }
 
-    CollectionReference students =
-        FirebaseFirestore.instance.collection(widget.collection.toString());
-    return students.add({
-      'searchData': finalData,
-      'buyRent': buyRent,
-      'bedRooms': bedRooms,
-      'bathRooms': bathRooms,
-      'sizeUnit': sizeUnit,
-      'isPublic': false,
-      'construction': construction,
-      'landSize': landSize,
-      'keywords': keywords,
-      'address': address,
-      'name': name,
-      'number': number,
-      'types': type,
-      'Price': price,
-      'title': title,
-      'images': urls,
-      'other': other,
-      'bookmark': false
-    }).then(
+    Property property = Property(
+      title: titleController.text,
+      Price: priceController.text,
+      address: addressController.text,
+      bedRooms: bedRooms,
+      number: numberController.text,
+      construction: construction,
+      types: type,
+      keywords: keywordsController.text,
+      sizeUnit: sizeUnit,
+      landSize: landSizeController.text,
+      other: otherController.text,
+      buyRent: buyRent,
+      bathRooms: bathRooms,
+      images: urls,
+      name: nameController.text,
+      isPublic: false,
+      bookmark: false,
+    );
+
+    await DatabaseServices().addProperty(property).then(
       (value) => {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -198,15 +186,6 @@ class _AddState extends State<Add> {
 
   @override
   Widget build(BuildContext context) {
-    setSearchParam(String caseNumber) {
-      List<String> caseSearchList = [];
-      String temp = "";
-      for (int i = 0; i < caseNumber.length; i++) {
-        temp = temp + caseNumber[i];
-        caseSearchList.add(temp);
-      }
-      return caseSearchList;
-    }
 
     final Size size = MediaQuery.of(context).size;
     return WillPopScope(
@@ -229,8 +208,8 @@ class _AddState extends State<Add> {
                 onPressed: () async {
                   String generatedDeepLink =
                       await DynamicLinkServices.createAddPropertyFromCustomer(
-                      short: false,
-                      collectionId: widget.collection.toString(),
+                    short: false,
+                    collectionId: widget.collection.toString(),
                   );
                   Share.share(generatedDeepLink);
                 },
@@ -241,18 +220,18 @@ class _AddState extends State<Add> {
         ),
         body: isLoading
             ? Stack(
-          children: [
-            Container(
-              color: Colors.black12,
-              child: Center(
-                child: BuildProgress(
-                  width: size.width,
-                  uploadTask: uploadTask,
-                ),
-              ),
-            )
-          ],
-        )
+                children: [
+                  Container(
+                    color: Colors.black12,
+                    child: Center(
+                      child: BuildProgress(
+                        width: size.width,
+                        uploadTask: uploadTask,
+                      ),
+                    ),
+                  )
+                ],
+              )
             : SingleChildScrollView(
                 child: Form(
                   key: _formKey,
@@ -695,11 +674,10 @@ class _AddState extends State<Add> {
                           title: 'Additional Information',
                         ),
                         CustomTextField(
-                          maxLines: 4,
-                          titleController: otherController,
-                          labelText: 'Information',
-                          validator: (value) => null
-                        ),
+                            maxLines: 4,
+                            titleController: otherController,
+                            labelText: 'Information',
+                            validator: (value) => null),
                         const FilterTitle(
                           title: 'Upload Images',
                         ),
@@ -818,18 +796,7 @@ class _AddState extends State<Add> {
                           onPressed: () {
                             if (_formKey.currentState!.validate() &&
                                 _image != null) {
-                              setState(() {
-                                landSize = int.parse(landSizeController.text);
-                                keywords =
-                                    keywordsController.text.toLowerCase();
-                                address = addressController.text.toLowerCase();
-                                name = nameController.text.toLowerCase();
-                                number = int.parse(numberController.text);
-                                price = int.parse(priceController.text);
-                                title = titleController.text.toLowerCase();
-                                other = otherController.text.toLowerCase();
-                                uploadFunction(_image!);
-                              });
+                              uploadFunction(_image!);
                             }
                           },
                         ),
