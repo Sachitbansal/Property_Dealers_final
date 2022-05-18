@@ -6,12 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_property.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../addHelper.dart';
 import '../data_model.dart';
 import '../dynamic_links.dart';
@@ -396,6 +397,16 @@ class _HouseDetailsState extends State<HouseDetails> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 UpdateProperty(
+                                              types: snapshot.data!['types'],
+                                              buyRent: snapshot.data!['buyRent'],
+                                              bathRooms:
+                                                  snapshot.data!['bathRooms'],
+                                              bedRooms:
+                                                  snapshot.data!['bedRooms'],
+                                              sizeUnit:
+                                                  snapshot.data!['sizeUnit'],
+                                              construction: snapshot
+                                                  .data!['construction'],
                                               collection: widget.uid.toString(),
                                               id: widget.docId,
                                               imageUrls:

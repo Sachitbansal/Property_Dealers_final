@@ -460,7 +460,7 @@ class ButtonWithText extends StatelessWidget {
   const ButtonWithText(
       {Key? key,
       required this.onTap,
-      required this.size,
+      this.size,
       required this.title,
       required this.bgColor,
       required this.fontColor})
@@ -488,6 +488,8 @@ class ButtonWithText extends StatelessWidget {
           child: Center(
             child: Text(
               title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.play(
                 color: fontColor,
                 fontWeight: FontWeight.w600,
