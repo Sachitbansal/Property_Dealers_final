@@ -161,7 +161,7 @@ class _SearchBarDataState extends State<SearchBarData> {
                                   builder: (context) => HouseDetails(
                                     enableEdit: true,
                                     uid: widget.uid.toString(),
-                                    docId: storeDocs[i],
+                                    docId: storeDocs[i]['id'],
                                     enableChange: true,
                                   ),
                                 ),

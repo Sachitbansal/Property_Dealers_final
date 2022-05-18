@@ -225,35 +225,6 @@ class _HomeState extends State<Home> {
                                       fontWeight: FontWeight.w400),
                                 ),
                                 const SizedBox(height: 10),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.blue[300],
-                                      padding: const EdgeInsets.all(20),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      backgroundColor: const Color(0xFFF5F6F9),
-                                    ),
-                                    onPressed: () {},
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Total Properties',
-                                          style: TextStyle(fontSize: 17),
-                                        ),
-                                        Text(
-                                          count.toString(),
-                                          style: const TextStyle(fontSize: 17),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                                 ProfileMenu(
                                   text: 'Edit Account Details',
                                   icon: Icons.person,
@@ -265,7 +236,6 @@ class _HomeState extends State<Home> {
                                           name: FirebaseAuth
                                               .instance.currentUser!.displayName
                                               .toString(),
-                                          phone: '9501006994',
                                           pic: FirebaseAuth.instance
                                                   .currentUser!.photoURL ??
                                               'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png',
@@ -361,159 +331,6 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          // FutureBuilder(
-                          //   future: propertyList,
-                          //   builder: (BuildContext context,
-                          //       AsyncSnapshot<List<Property>> snapshot) {
-                          //     if (snapshot.hasError) {
-                          //       ScaffoldMessenger.of(context).showSnackBar(
-                          //         const SnackBar(
-                          //           content: Text('Something Went Wrong.'),
-                          //         ),
-                          //       );
-                          //     }
-                          //     if (snapshot.connectionState ==
-                          //         ConnectionState.waiting) {
-                          //       return const Center(
-                          //         child: CircularProgressIndicator(),
-                          //       );
-                          //     }
-                          //
-                          //     return ListView.separated(
-                          //         itemCount: retrievedPropertyList!.length,
-                          //         separatorBuilder: (context, index) =>
-                          //             const SizedBox(
-                          //               height: 10,
-                          //             ),
-                          //         itemBuilder: (context, i) {
-                          //           return isLoading
-                          //               ? const Center(
-                          //                   child: Text('Loading'),
-                          //                 )
-                          //               : Expanded(
-                          //                   child: NearbyHomes(
-                          //                     size: size,
-                          //                     asset: retrievedPropertyList![i]
-                          //                         .images,
-                          //                     name: retrievedPropertyList![i]
-                          //                         .name,
-                          //                     location:
-                          //                         retrievedPropertyList![i]
-                          //                             .address,
-                          //                     bedCount:
-                          //                         retrievedPropertyList![i]
-                          //                             .bedRooms,
-                          //                     bathCount: retrievedPropertyList![i].bathRooms,
-                          //                     bookmarkIcon: retrievedPropertyList![i].bookmark.to,
-                          //                     bookmarkFunction: () async {
-                          //                       CollectionReference students =
-                          //                           FirebaseFirestore.instance
-                          //                               .collection(widget.uid
-                          //                                   .toString());
-                          //
-                          //                       students
-                          //                           .doc(storeDocs[i]['id'])
-                          //                           .update({
-                          //                         'bookmark': !storeDocs[i]
-                          //                             ['bookmark'],
-                          //                       }).whenComplete(() {
-                          //                         if (!storeDocs[i]
-                          //                             ['bookmark']) {
-                          //                           showSnackBar(
-                          //                             'Bookmark Added',
-                          //                             const Duration(
-                          //                               milliseconds: 1000,
-                          //                             ),
-                          //                           );
-                          //                         } else {
-                          //                           showSnackBar(
-                          //                             'Bookmark Removed',
-                          //                             const Duration(
-                          //                               milliseconds: 1000,
-                          //                             ),
-                          //                           );
-                          //                         }
-                          //                         setState(() {});
-                          //                       });
-                          //                     },
-                          //                     share: () async {
-                          //                       String generatedDeepLink =
-                          //                           await DynamicLinkServices
-                          //                               .createPropertyShareLink(
-                          //                                   short: false,
-                          //                                   collectionId: widget
-                          //                                       .uid
-                          //                                       .toString(),
-                          //                                   docId: storeDocs[i]
-                          //                                       ['id'],
-                          //                                   imageUrl: storeDocs[
-                          //                                       i]['images'][0],
-                          //                                   propertyTitle:
-                          //                                       storeDocs[i]
-                          //                                           ['title']);
-                          //                       Share.share(generatedDeepLink);
-                          //                     },
-                          //                     onTap: () {
-                          //                       Navigator.push(
-                          //                         context,
-                          //                         MaterialPageRoute(
-                          //                           builder: (context) =>
-                          //                               HouseDetails(
-                          //                             other: storeDocs[i]
-                          //                                 ['other'],
-                          //                             type: storeDocs[i]
-                          //                                 ['types'],
-                          //                             constructionStatus:
-                          //                                 storeDocs[i]
-                          //                                     ['construction'],
-                          //                             buyRent: storeDocs[i]
-                          //                                 ['buyRent'][0],
-                          //                             isBookmarked: storeDocs[i]
-                          //                                 ['bookmark'],
-                          //                             isPublic: storeDocs[i]
-                          //                                 ['isPublic'],
-                          //                             enableEdit: true,
-                          //                             uid:
-                          //                                 widget.uid.toString(),
-                          //                             docId: storeDocs[i]['id'],
-                          //                             assets: storeDocs[i]
-                          //                                 ['images'],
-                          //                             facilities: storeDocs[i]
-                          //                                 ['keywords'],
-                          //                             title: storeDocs[i]
-                          //                                 ['title'],
-                          //                             address: storeDocs[i]
-                          //                                 ['address'],
-                          //                             bedRooms: storeDocs[i]
-                          //                                 ['bedRooms'],
-                          //                             bathRooms: storeDocs[i]
-                          //                                 ['bathRooms'],
-                          //                             price: storeDocs[i]
-                          //                                     ['Price']
-                          //                                 .toString(),
-                          //                             landSize: storeDocs[i]
-                          //                                     ['landSize']
-                          //                                 .toString(),
-                          //                             keywords: storeDocs[i]
-                          //                                 ['keywords'],
-                          //                             name: storeDocs[i]
-                          //                                 ['name'],
-                          //                             number: storeDocs[i]
-                          //                                     ['number']
-                          //                                 .toString(),
-                          //                             sizeUnit: storeDocs[i]
-                          //                                 ['sizeUnit'],
-                          //                             enableChange: true,
-                          //                             // enableChange: true
-                          //                           ),
-                          //                         ),
-                          //                       );
-                          //                     },
-                          //                   ),
-                          //                 );
-                          //         });
-                          //   },
-                          // ),
                           StreamBuilder<QuerySnapshot>(
                             stream: homeProperties,
                             builder: (BuildContext context,
@@ -1049,8 +866,10 @@ class _HomeState extends State<Home> {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.person_outline,
+                    icon: Icon(
+                      selectedPage == Page.profile
+                          ? Icons.person
+                          : Icons.person_outline,
                       size: 26,
                       color: Colors.blueGrey,
                     ),

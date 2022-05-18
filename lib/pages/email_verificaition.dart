@@ -30,7 +30,6 @@ class _EmailVerificationState extends State<EmailVerification> {
       timer = Timer.periodic(
         const Duration(seconds: 3),
         (_) {
-          print(_.tick.toString());
           checkEmailVerified();
         },
       );
