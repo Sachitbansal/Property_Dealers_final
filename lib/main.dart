@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/addHelper.dart';
+import 'package:untitled/pages/email_verificaition.dart';
 import 'package:untitled/pages/home.dart';
 import 'package:untitled/pages/loginPage.dart';
 
@@ -68,36 +69,33 @@ class _MyAppState extends State<MyApp> {
           create: (context) => AddProvider(),
         )
       ],
-      child: FutureBuilder(
-        future: _initialization,
-        builder: (context, snapshot) {
-          // Check for Errors
-          if (snapshot.hasError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Something went wrong. Please try again later.'),
-              ),
-            );
-          }
-          // once Completed, show your application
-          if (snapshot.connectionState == ConnectionState.done) {
-            return MaterialApp(
-              title: 'Property Stocks',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-              ),
-              debugShowCheckedModeBanner: false,
-              home: FirebaseAuth.instance.currentUser == null &&
-                      _connectivityResult != ConnectivityResult.none
-                  ? const LoginScreen()
-                  : Home(
-                      uid: FirebaseAuth.instance.currentUser?.uid,
-                    ),
-            );
-          }
-          return const CircularProgressIndicator();
-        },
+      child: MaterialApp(
+        title: 'Property Stocks',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const MainPage(),
       ),
     );
   }
 }
+
+class MainPage extends StatelessWidget {
+  const MainPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && FirebaseAuth.instance.currentUser!.emailVerified) {
+          return Home(uid: FirebaseAuth.instance.currentUser!.uid);
+        } else {
+          return const LoginScreen();
+        }
+      },
+    );
+  }
+}
+

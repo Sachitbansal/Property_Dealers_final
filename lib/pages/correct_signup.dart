@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets.dart';
-import 'home_page.dart';
+import 'email_verificaition.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -21,6 +21,7 @@ class _SignUpState extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fPasswordController = TextEditingController();
+  final nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,6 +30,7 @@ class _SignUpState extends State<SignUp> {
     emailController.dispose();
     passwordController.dispose();
     fPasswordController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
@@ -38,22 +40,23 @@ class _SignUpState extends State<SignUp> {
 
     Future<void> signUp() async {
       try {
-        await auth.createUserWithEmailAndPassword(
-            email: email, password: fPassword);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(
-              uid: FirebaseAuth.instance.currentUser?.uid,
-            ),
-          ),
-        );
+        await auth
+            .createUserWithEmailAndPassword(
+                email: emailController.text, password: fPasswordController.text)
+            .whenComplete(() async {
+          await auth.currentUser!.updateDisplayName(nameController.text);
+        }).whenComplete(() {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const EmailVerification()),
+          );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You are now Signed in'),
-          ),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You are now Signed in'),
+            ),
+          );
+        });
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -119,6 +122,47 @@ class _SignUpState extends State<SignUp> {
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
+                      hintText: 'Name',
+                      labelText: 'Full Name',
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Theme.of(context).primaryColor,
+                        // size: 30.0,
+                      ),
+                    ),
+                    controller: nameController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter a Name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * .01,
+                ),
+                SizedBox(
+                  width: size.width * .9,
+                  child: TextFormField(
+                    cursorColor: Colors.blue[800],
+                    decoration: InputDecoration(
+                      fillColor: Colors.blue[50],
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15.0),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: const BorderSide(width: 0.8),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(
+                          width: 0.8,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
                       hintText: 'ID',
                       labelText: 'Email ID',
                       prefixIcon: Icon(
@@ -137,6 +181,7 @@ class _SignUpState extends State<SignUp> {
                           .hasMatch(value)) {
                         return 'Please Enter a Valid Email';
                       }
+                      return null;
                     },
                   ),
                 ),
@@ -205,6 +250,7 @@ class _SignUpState extends State<SignUp> {
                       if (value != pass) {
                         return 'Passwords do not match ';
                       }
+                      return null;
                     },
                     controller: fPasswordController,
                     obscureText: fPassVisible,
@@ -250,11 +296,7 @@ class _SignUpState extends State<SignUp> {
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: RoundedButton(() {
                     if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        email = emailController.text;
-                        fPassword = fPasswordController.text;
-                        signUp();
-                      });
+                      signUp();
                     }
                   }, 'Sign Up', Colors.white, Theme.of(context).primaryColor),
                 ),

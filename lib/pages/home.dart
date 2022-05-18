@@ -55,6 +55,7 @@ class _HomeState extends State<Home> {
 
   Future<List<Property>>? propertyList;
   List<Property>? retrievedPropertyList;
+  int? count;
 
   @override
   void initState() {
@@ -75,6 +76,13 @@ class _HomeState extends State<Home> {
     retrievedPropertyList = await DatabaseServices().retrieveProperties();
   }
 
+
+  Future<void> amount() async {
+    count = await FirebaseFirestore.instance
+        .collection(widget.uid.toString())
+        .snapshots().length;
+  }
+
   @override
   void dispose() {
     _streamSubscription.cancel();
@@ -83,17 +91,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
     final Stream<QuerySnapshot> homeProperties = FirebaseFirestore.instance
         .collection(widget.uid.toString())
         .snapshots();
 
     final Stream<QuerySnapshot> publicProperties =
         FirebaseFirestore.instance.collection('Public').snapshots();
-
-    final Stream<DocumentSnapshot> userData = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid.toString())
-        .snapshots();
 
     void showBottomSheet() {
       showModalBottomSheet(
@@ -189,136 +193,138 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   if (selectedPage == Page.profile)
-                    StreamBuilder<DocumentSnapshot>(
-                      stream: userData,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Something Went Wrong.'),
-                            ),
-                          );
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        final userDocument = snapshot.data;
-                        return Expanded(
-                          child: Column(
-                            children: [
-                              SingleChildScrollView(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                child: Column(
-                                  children: [
-                                    ProfilePic(
-                                        url: userDocument!["profilePic"]),
-                                    const SizedBox(
-                                      height: 20,
+                    Expanded(
+                      child: Column(
+                        children: [
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              children: [
+                                ProfilePic(
+                                    url: FirebaseAuth
+                                            .instance.currentUser!.photoURL ??
+                                        'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png'),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  FirebaseAuth.instance.currentUser!.displayName
+                                      .toString(),
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  FirebaseAuth.instance.currentUser!.email
+                                      .toString(),
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                const SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      primary: Colors.blue[300],
+                                      padding: const EdgeInsets.all(20),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      backgroundColor: const Color(0xFFF5F6F9),
                                     ),
-                                    Text(
-                                      userDocument['name'],
-                                      style: const TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
-                                      child: TextButton(
-                                        style: TextButton.styleFrom(
-                                          primary: Colors.blue[300],
-                                          padding: const EdgeInsets.all(20),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15)),
-                                          backgroundColor:
-                                              const Color(0xFFF5F6F9),
+                                    onPressed: () {},
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Total Properties',
+                                          style: TextStyle(fontSize: 17),
                                         ),
-                                        onPressed: () {},
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: const [
-                                            Text(
-                                              'Total Properties',
-                                              style: TextStyle(fontSize: 17),
-                                            ),
-                                            Text(
-                                              '20',
-                                              style: TextStyle(fontSize: 17),
-                                            ),
-                                          ],
+                                        Text(
+                                          count.toString(),
+                                          style: const TextStyle(fontSize: 17),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                ProfileMenu(
+                                  text: 'Edit Account Details',
+                                  icon: Icons.person,
+                                  press: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfilePage(
+                                          name: FirebaseAuth
+                                              .instance.currentUser!.displayName
+                                              .toString(),
+                                          phone: '9501006994',
+                                          pic: FirebaseAuth.instance
+                                                  .currentUser!.photoURL ??
+                                              'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png',
+                                          email: FirebaseAuth
+                                              .instance.currentUser!.email
+                                              .toString(),
+                                          uid: widget.uid.toString(),
                                         ),
                                       ),
-                                    ),
-                                    ProfileMenu(
-                                      text: 'Edit Account Details',
-                                      icon: Icons.person,
-                                      press: () async {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ProfilePage(
-                                              userdata: userDocument,
-                                              uid: widget.uid.toString(),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    ProfileMenu(
-                                      text: 'Reset Password',
-                                      icon: Icons.security,
-                                      press: () async {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ResetPassword(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    ProfileMenu(
-                                      text: 'Signout',
-                                      icon: Icons.logout,
-                                      press: () async {
-                                        try {
-                                          await FirebaseAuth.instance.signOut();
-                                          showSnackBar(
-                                            'Logged out',
-                                            const Duration(milliseconds: 1000),
-                                          );
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const LoginScreen(),
-                                            ),
-                                          );
-                                        } catch (e) {
-                                          showSnackBar(
-                                            'Could not loggout because of $e',
-                                            const Duration(milliseconds: 1000),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
-                              ),
-                            ],
+                                ProfileMenu(
+                                  text: 'Reset Password',
+                                  icon: Icons.security,
+                                  press: () async {
+                                    FirebaseAuth.instance
+                                        .sendPasswordResetEmail(
+                                            email: FirebaseAuth
+                                                .instance.currentUser!.email
+                                                .toString()).whenComplete(() {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Password Reset Email Sent to Registered Email Id'),
+                                        ),
+                                      );
+                                    });
+                                  },
+                                ),
+                                ProfileMenu(
+                                  text: 'Signout',
+                                  icon: Icons.logout,
+                                  press: () async {
+                                    try {
+                                      await FirebaseAuth.instance.signOut();
+                                      showSnackBar(
+                                        'Logged out',
+                                        const Duration(milliseconds: 1000),
+                                      );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen(),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      showSnackBar(
+                                        'Could not loggout because of $e',
+                                        const Duration(milliseconds: 1000),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      },
+                        ],
+                      ),
                     ),
                   if (selectedPage == Page.home)
                     Expanded(
@@ -1052,6 +1058,7 @@ class _HomeState extends State<Home> {
                       if (selectedPage != Page.profile) {
                         setState(() => selectedPage = Page.profile);
                       }
+                      amount();
                     },
                   ),
                 ],

@@ -2,10 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key, this.userdata, required this.uid})
+  const ProfilePage({Key? key, required this.uid, required this.name, required this.email, required this.phone, required this.pic})
       : super(key: key);
-  final DocumentSnapshot<Object?>? userdata;
-  final String uid;
+  final String uid, name, email, phone, pic;
 
   @override
   MapScreenState createState() => MapScreenState();
@@ -30,9 +29,9 @@ class MapScreenState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    nameController.text = widget.userdata!['name'];
-    emailController.text = widget.userdata!['email'];
-    phoneController.text = widget.userdata!['phone'];
+    nameController.text = widget.name;
+    emailController.text = widget.email;
+    phoneController.text = widget.phone;
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +64,7 @@ class MapScreenState extends State<ProfilePage>
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   image: NetworkImage(
-                                      widget.userdata!['profilePic']),
+                                      widget.pic),
                                   fit: BoxFit.cover,
                                 ),
                               ),

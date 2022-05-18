@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/pages/correct_signup.dart';
+import 'package:untitled/pages/email_verificaition.dart';
 import 'package:untitled/pages/reset_pass.dart';
 import '../widgets.dart';
-import 'home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -42,9 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Home(
-              uid: FirebaseAuth.instance.currentUser?.uid,
-            ),
+            builder: (context) => const EmailVerification(),
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -251,9 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Home(
-                                  uid: FirebaseAuth.instance.currentUser?.uid,
-                                ),
+                                builder: (context) => const EmailVerification()
                               ),
                             );
                           },
@@ -282,14 +278,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'https://i.ibb.co/NK8qZhq/google.png',
                                 height: 32,
                               ),
-                              const Expanded(
-                                child: Text(
-                                  'Login with Google',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      'Login with Google',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
                                 ),
                               ),
                               const Opacity(
