@@ -72,7 +72,6 @@ class DynamicLinkServices {
                 MaterialPageRoute(
                   builder: (context) {
                     return HouseDetails(
-                      enableChange: false,
                       enableEdit: false,
                       uid: collectionId,
                       docId: docId,
@@ -117,7 +116,6 @@ class DynamicLinkServices {
                 return HouseDetails(
                   uid: collectionId,
                   docId: docId,
-                  enableChange: false,
                   enableEdit: false,
                   // enableChange: true
                 );

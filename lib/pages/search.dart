@@ -143,7 +143,7 @@ class _SearchState extends State<Search> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
-                                        enableChange: false,
+                                        enableEdit: true,
                                         docId: data.docs[index]['id'],
                                         uid: widget.uid.toString(),
                                       ),

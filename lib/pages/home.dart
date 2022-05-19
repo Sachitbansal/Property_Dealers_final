@@ -8,12 +8,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/addHelper.dart';
-import 'package:untitled/data_model.dart';
 import 'package:untitled/dynamic_links.dart';
 import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
 import 'package:untitled/pages/profile.dart';
-import 'package:untitled/pages/reset_pass.dart';
 import 'package:untitled/pages/searchbar.dart';
 import '../widgets.dart';
 import 'filter.dart';
@@ -52,15 +50,9 @@ class _HomeState extends State<Home> {
   Future<void> _updateConnectionState(ConnectivityResult result) async {
     setState(() => _connectivityResult = result);
   }
-
-  Future<List<Property>>? propertyList;
-  List<Property>? retrievedPropertyList;
-  int? count;
-
   @override
   void initState() {
     super.initState();
-    _initRetrieval();
 
     initConnectivity();
     _streamSubscription =
@@ -69,18 +61,6 @@ class _HomeState extends State<Home> {
     DynamicLinkServices.initialDynamicLink(context);
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseHomePageBanner();
-  }
-
-  Future<void> _initRetrieval() async {
-    propertyList = DatabaseServices().retrieveProperties();
-    retrievedPropertyList = await DatabaseServices().retrieveProperties();
-  }
-
-
-  Future<void> amount() async {
-    count = await FirebaseFirestore.instance
-        .collection(widget.uid.toString())
-        .snapshots().length;
   }
 
   @override
@@ -438,8 +418,6 @@ class _HomeState extends State<Home> {
                                                       uid:
                                                           widget.uid.toString(),
                                                       docId: storeDocs[i]['id'],
-                                                      enableChange: true,
-                                                      // enableChange: true
                                                     ),
                                                   ),
                                                 );
@@ -586,17 +564,16 @@ class _HomeState extends State<Home> {
                                                 Share.share(generatedDeepLink);
                                               },
                                               onTap: () {
+                                                print('tap');
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
-                                                      enableEdit: false,
-                                                      enableChange: false,
-                                                      uid:
-                                                          widget.uid.toString(),
-                                                      docId: storeDocs[i]['id'],
-                                                    ),
+                                                          uid: 'Public',
+                                                          docId: storeDocs[i]['id'],
+                                                          enableEdit: false,
+                                                        ),
                                                   ),
                                                 );
                                               },
@@ -752,7 +729,6 @@ class _HomeState extends State<Home> {
                                                       builder: (context) =>
                                                           HouseDetails(
                                                         enableEdit: true,
-                                                        enableChange: true,
                                                         uid: widget.uid
                                                             .toString(),
                                                         docId: storeDocs[i]
@@ -877,7 +853,6 @@ class _HomeState extends State<Home> {
                       if (selectedPage != Page.profile) {
                         setState(() => selectedPage = Page.profile);
                       }
-                      amount();
                     },
                   ),
                 ],

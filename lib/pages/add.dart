@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:untitled/data_model.dart';
-
-// import '../addHelper.dart';
 import '../addHelper.dart';
 import '../dynamic_links.dart';
 import '../widgets.dart';
@@ -110,6 +107,7 @@ class _AddState extends State<Add> {
 
   Future<void> addUser() async {
     List varList = [
+      titleController.text,
       buyRent[0].toLowerCase(),
       bedRooms,
       bathRooms,
@@ -137,27 +135,28 @@ class _AddState extends State<Add> {
       finalData.addAll(setSearchParam());
     }
 
-    Property property = Property(
-      title: titleController.text,
-      Price: priceController.text,
-      address: addressController.text,
-      bedRooms: bedRooms,
-      number: numberController.text,
-      construction: construction,
-      types: type,
-      keywords: keywordsController.text,
-      sizeUnit: sizeUnit,
-      landSize: landSizeController.text,
-      other: otherController.text,
-      buyRent: buyRent,
-      bathRooms: bathRooms,
-      images: urls,
-      name: nameController.text,
-      isPublic: false,
-      bookmark: false,
-    );
-
-    await DatabaseServices().addProperty(property).then(
+    CollectionReference students =
+    FirebaseFirestore.instance.collection(widget.collection.toString());
+    return students.add({
+      'searchData': finalData,
+      'buyRent': buyRent,
+      'bedRooms': bedRooms,
+      'bathRooms': bathRooms,
+      'sizeUnit': sizeUnit,
+      'construction': construction,
+      'landSize': landSizeController.text,
+      'keywords': keywordsController.text,
+      'address': addressController.text,
+      'name': nameController.text,
+      'number': numberController.text,
+      'types': type,
+      'Price': priceController.text,
+      'title': titleController.text,
+      'images': urls,
+      'other': otherController.text,
+      'isPublic': false,
+      'bookmark': false
+    }).then(
       (value) => {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

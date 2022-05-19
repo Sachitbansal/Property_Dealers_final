@@ -1,11 +1,8 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../data_model.dart';
 import '../widgets.dart';
 
 class UpdateProperty extends StatefulWidget {
@@ -171,6 +168,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
   Future<void> updateProperty() async {
     List varList = [
+      titleController.text,
       buyRent[0].toLowerCase(),
       bedRooms,
       bathRooms,
@@ -198,27 +196,28 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       finalData.addAll(setSearchParam());
     }
 
-    Property property = Property(
-        title: titleController.text,
-        Price: priceController.text,
-        address: addressController.text,
-        bedRooms: bedRooms,
-        number: numberController.text,
-        construction: construction,
-        types: types,
-        keywords: keywordsController.text,
-        sizeUnit: sizeUnit,
-        landSize: landSizeController.text,
-        other: otherController.text,
-        buyRent: buyRent,
-        bathRooms: bathRooms,
-        images: urls,
-        name: nameController.text,
-        docId: widget.id,
-        isPublic: isPublic,
-        bookmark: bookmark);
+    print(finalData);
 
-    await DatabaseServices().updateProperty(property).then((value) {
+    CollectionReference students =
+    FirebaseFirestore.instance.collection(widget.collection.toString());
+    students.doc(widget.id).update({
+      'searchData': finalData,
+      'buyRent': buyRent,
+      'bedRooms': bedRooms,
+      'bathRooms': bathRooms,
+      'other': other,
+      'sizeUnit': sizeUnit,
+      'construction': construction,
+      'landSize': int.parse(landSize),
+      'keywords': keywords,
+      'address': address,
+      'name': nameController.text,
+      'number': int.parse(number),
+      'types': types,
+      'Price': int.parse(price),
+      'title': titleController.text,
+      'images': urls,
+    }).then((value) {
       showSnackBar(
         'Updated Private Data',
         const Duration(milliseconds: 1000),
@@ -412,7 +411,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         size: 50,
                                         onTap: () {
                                           setState(() => widget.bedRooms = '2');
-                                          print(bedRooms);
                                         },
                                         title: "2",
                                         fontColor: bedRooms == '2'

@@ -12,9 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_property.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../addHelper.dart';
-import '../data_model.dart';
 import '../dynamic_links.dart';
 
 class HouseDetails extends StatefulWidget {
@@ -22,12 +20,10 @@ class HouseDetails extends StatefulWidget {
     Key? key,
     required this.uid,
     required this.docId,
-    required this.enableChange,
-    this.enableEdit,
+    required this.enableEdit,
   }) : super(key: key);
   final String docId, uid;
-  bool? enableEdit = true;
-  bool enableChange;
+  final bool enableEdit;
 
   @override
   _HouseDetailsState createState() => _HouseDetailsState();
@@ -35,20 +31,13 @@ class HouseDetails extends StatefulWidget {
 
 class _HouseDetailsState extends State<HouseDetails> {
   late CarouselSliderController _sliderController;
-  late List<Property> retrievedPropertyList;
-  final String? collectionId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
-    _initRetrieval();
     AddProvider adProvider = Provider.of<AddProvider>(context, listen: false);
     adProvider.initialiseDetailsPageBanner();
     _sliderController = CarouselSliderController();
-  }
-
-  Future<void> _initRetrieval() async {
-    retrievedPropertyList = await DatabaseServices().retrieveProperties();
   }
 
   bool isPublic = false;
@@ -126,7 +115,7 @@ class _HouseDetailsState extends State<HouseDetails> {
     return Scaffold(
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
-              .collection(collectionId.toString())
+              .collection(widget.uid)
               .doc(widget.docId)
               .snapshots(),
           builder: (context, snapshot) {

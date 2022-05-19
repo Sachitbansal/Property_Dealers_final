@@ -162,7 +162,6 @@ class _SearchBarDataState extends State<SearchBarData> {
                                     enableEdit: true,
                                     uid: widget.uid.toString(),
                                     docId: storeDocs[i]['id'],
-                                    enableChange: true,
                                   ),
                                 ),
                               );
