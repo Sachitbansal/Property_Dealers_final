@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/pages/search.dart';
+
 import '../widgets.dart';
 
 class Filter extends StatefulWidget {
@@ -156,39 +157,47 @@ class _FilterState extends State<Filter> {
               ),
             ],
           ),
-          RangeSlider(
-            labels: RangeLabels('$rangeLabelStart', '$rangeLabelEnd'),
-            values: selectedRange,
-            onChanged: (RangeValues newRange) {
-              setState(() {
-                selectedRange = newRange;
-                rangeLabelStart = newRange.start.roundToDouble();
-                rangeLabelEnd = newRange.end.roundToDouble();
-              });
-            },
-            min: 30,
-            max: 1000,
-            divisions: 20,
-            activeColor: kActiveColor,
-            inactiveColor: Colors.grey[300],
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                r"₹30k",
-                style: TextStyle(
-                  fontSize: 14,
+            children: [
+              SizedBox(
+                width: size.width * .42,
+                child: RoundedInputField(
+                  label: 'Min',
+                  keyboardtype: TextInputType.phone,
+                  obscureText: false,
+                  iconChoose: Icons.monetization_on_outlined,
+                  onChanged: (String) {rangeLabelStart = double.parse(String);},
                 ),
               ),
-              Text(
-                r"₹1000k",
-                style: TextStyle(
-                  fontSize: 14,
+              SizedBox(
+                  width: size.width * .42,
+                child: RoundedInputField(
+                  label: 'Max',
+                  keyboardtype: TextInputType.phone,
+                  obscureText: false,
+                  iconChoose: Icons.monetization_on_outlined,
+                  onChanged: (String) {rangeLabelEnd = double.parse(String);},
                 ),
-              ),
+              )
             ],
           ),
+          // RangeSlider(
+          //   labels: RangeLabels('$rangeLabelStart', '$rangeLabelEnd'),
+          //   values: selectedRange,
+          //   onChanged: (RangeValues newRange) {
+          //     setState(() {
+          //       selectedRange = newRange;
+          //       rangeLabelStart = newRange.start.roundToDouble();
+          //       rangeLabelEnd = newRange.end.roundToDouble();
+          //     });
+          //   },
+          //   min: 30,
+          //   max: 1000,
+          //   divisions: 20,
+          //   activeColor: kActiveColor,
+          //   inactiveColor: Colors.grey[300],
+          // ),
           const FilterTitle(
             title: 'Rooms',
           ),

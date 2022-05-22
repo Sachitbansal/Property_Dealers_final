@@ -448,7 +448,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                                       ),
                                     ),
                                     Text(
-                                      '₹${snapshot.data!['Price']}',
+                                      '₹${snapshot.data!['Price'].toString()}',
                                       style: GoogleFonts.play(
                                         color: const Color(0xfff63e3c),
                                         fontWeight: FontWeight.w600,

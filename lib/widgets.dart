@@ -135,7 +135,7 @@ class RoundedInputField extends StatelessWidget {
       this.iconChoose,
       required this.obscureText,
       required this.onChanged,
-      required this.suffixiIcon,
+      this.suffixiIcon,
       this.hint = ''})
       : super(key: key);
 

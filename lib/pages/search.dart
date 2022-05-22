@@ -16,13 +16,13 @@ class Search extends StatefulWidget {
     required this.priceEnd,
     required this.bathrooms,
   }) : super(key: key);
-  final String? uid;
-  String propertyType = 'Flat';
-  String rooms = 'Any';
-  String bathrooms = 'Any';
-  String buyOrRent = 'Buy';
-  double priceStart = 100;
-  double priceEnd = 100;
+  final String uid;
+  final String propertyType;
+  final String rooms;
+  final String bathrooms;
+  final String buyOrRent;
+  final double priceStart;
+  final double priceEnd;
 
   @override
   _SearchState createState() => _SearchState();
@@ -58,6 +58,13 @@ class _SearchState extends State<Search> {
 
     final Size size = MediaQuery.of(context).size;
 
+    print(widget.priceEnd);
+    print(widget.bathrooms);
+    print(widget.priceStart);
+    print(widget.buyOrRent);
+    print(widget.propertyType);
+    print(widget.rooms);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -68,21 +75,6 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              // TextFormField(
-              //   controller: searchController,
-              //   decoration: InputDecoration(
-              //       labelText: 'Search For Properties',
-              //       suffixIcon: IconButton(
-              //         icon: const Icon(Icons.search),
-              //         onPressed: () {
-              //           setState(() {
-              //             final data = noticeCollection
-              //                 .where("searchData", arrayContains: searchController.text).snapshots();
-              //           });
-              //         },
-              //       )),
-              //
-              // ),
               SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: StreamBuilder<QuerySnapshot>(
@@ -96,28 +88,39 @@ class _SearchState extends State<Search> {
                         return const Text('Loading');
                       }
 
-                      final data = snapshot.requireData;
+                      final List storeDocs = [];
+                      snapshot.data!.docs
+                          .map((DocumentSnapshot document) {
+                        Map a = document.data() as Map<String, dynamic>;
+                        storeDocs.add(a);
+                        a['id'] = document.id;
+                        a['collection'] = document.reference;
+                      }).toList();
 
                       return ListView.builder(
-                        itemCount: data.size,
+                        itemCount: storeDocs.length,
                         itemBuilder: (context, index) {
+
+                          print(storeDocs[index]['id']);
+                          print('data Id');
+
                           return Column(
                             children: [
                               NearbyHomes(
                                 size: size,
-                                asset: data.docs[index]['images'],
-                                name: data.docs[index]['title'],
-                                location: data.docs[index]['address'],
-                                bedCount: data.docs[index]['bedRooms'],
-                                bathCount: data.docs[index]['bathRooms'],
-                                bookmarkIcon: data.docs[index]['bookmark'],
+                                asset: storeDocs[index]['images'],
+                                name: storeDocs[index]['title'],
+                                location: storeDocs[index]['address'],
+                                bedCount: storeDocs[index]['bedRooms'],
+                                bathCount: storeDocs[index]['bathRooms'],
+                                bookmarkIcon: storeDocs[index]['bookmark'],
                                 bookmarkFunction: () async {
                                   CollectionReference students =
                                       FirebaseFirestore.instance
                                           .collection(widget.uid.toString());
 
-                                  students.doc(data.docs[index]['id']).update({
-                                    'bookmark': !data.docs[index]['bookmark'],
+                                  students.doc(storeDocs[index]['id']).update({
+                                    'bookmark': !storeDocs[index]['bookmark'],
                                   }).whenComplete(() {
                                     showSnackBar('Bookmarked',
                                         const Duration(milliseconds: 1000));
@@ -131,10 +134,10 @@ class _SearchState extends State<Search> {
                                               short: false,
                                               collectionId:
                                                   widget.uid.toString(),
-                                              docId: data.docs[index]['id'],
-                                              imageUrl: data.docs[index]
+                                              docId: storeDocs[index]['id'],
+                                              imageUrl: storeDocs[index]
                                                   ['images'][0],
-                                              propertyTitle: data.docs[index]
+                                              propertyTitle: storeDocs[index]
                                                   ['title']);
                                   Share.share(generatedDeepLink);
                                 },
@@ -144,7 +147,7 @@ class _SearchState extends State<Search> {
                                     MaterialPageRoute(
                                       builder: (context) => HouseDetails(
                                         enableEdit: true,
-                                        docId: data.docs[index]['id'],
+                                        docId: storeDocs[index]['id'],
                                         uid: widget.uid.toString(),
                                       ),
                                     ),

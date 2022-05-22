@@ -175,11 +175,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       sizeUnit,
       construction,
       landSize.toString(),
-      name,
-      number.toString(),
+      nameController.text,
+      numberController.text.toString(),
       types.toLowerCase(),
-      price.toString(),
-      titleController.text
+      priceController.text.toString(),
+      addressController.text
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -205,16 +205,16 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'buyRent': buyRent,
       'bedRooms': bedRooms,
       'bathRooms': bathRooms,
-      'other': other,
+      'other': otherController.text,
       'sizeUnit': sizeUnit,
       'construction': construction,
-      'landSize': int.parse(landSize),
-      'keywords': keywords,
-      'address': address,
+      'landSize': int.parse(landSizeController.text),
+      'keywords': keywordsController.text,
+      'address': addressController.text,
       'name': nameController.text,
-      'number': int.parse(number),
+      'number': int.parse(numberController.text),
       'types': types,
-      'Price': int.parse(price),
+      'Price': int.parse(priceController.text),
       'title': titleController.text,
       'images': urls,
     }).then((value) {
