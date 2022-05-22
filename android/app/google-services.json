@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:390710604198:android:aa38d3a907cc35f8af5f67",
+        "mobilesdk_app_id": "1:390710604198:android:b6e16602a1c966e8af5f67",
         "android_client_info": {
-          "package_name": "com.example.untitled"
+          "package_name": "com.sachit.estatemate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "390710604198-7f5cu9bn31pm95sd1vech6r7c9bghfn4.apps.googleusercontent.com",
+          "client_id": "390710604198-js4suocd6m7g4g0k1nl9ormp13oq8p88.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.untitled",
-            "certificate_hash": "f799953e412d7ec04b0ffcd1f558366038282626"
+            "package_name": "com.sachit.estatemate",
+            "certificate_hash": "7e9d3da189a749c0a2c26b9e7d565d25460d9823"
           }
         },
         {
@@ -47,8 +47,7 @@
             }
           ]
         }
-      },
-      "admob_app_id": "ca-app-pub-9719585953227487~9933078888"
+      }
     }
   ],
   "configuration_version": "1"
