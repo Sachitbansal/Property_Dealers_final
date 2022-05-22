@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/addHelper.dart';
-import 'package:untitled/pages/email_verificaition.dart';
 import 'package:untitled/pages/home.dart';
 import 'package:untitled/pages/loginPage.dart';
 
@@ -27,7 +26,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   late StreamSubscription<User?> user;
   ConnectivityResult _connectivityResult = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();

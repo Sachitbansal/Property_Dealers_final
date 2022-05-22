@@ -854,7 +854,6 @@ class _HomeState extends State<Home> {
                         setState(() => selectedPage = Page.profile);
                       }
 
-                      throw Exception('Test Crash');
                     },
                   ),
                 ],

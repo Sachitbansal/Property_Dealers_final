@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +15,7 @@ import '../addHelper.dart';
 import '../dynamic_links.dart';
 
 class HouseDetails extends StatefulWidget {
-  HouseDetails({
+  const HouseDetails({
     Key? key,
     required this.uid,
     required this.docId,
@@ -694,7 +693,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                             padding: const EdgeInsets.all(8.0),
                             child: IconButton(
                               icon: const Icon(
-                                Icons.message,
+                                Icons.whatsapp,
                                 size: 22,
                               ),
                               color: const Color(0xfff63e3c),

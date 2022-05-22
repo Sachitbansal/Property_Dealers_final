@@ -2,7 +2,7 @@
     package="com.example.untitled">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
    <application
-        android:label="Property Stocks"
+        android:label="EstateMate"
         android:icon="@mipmap/ic_launcher">
 
                <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
