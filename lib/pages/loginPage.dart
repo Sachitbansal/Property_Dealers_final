@@ -71,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.fromLTRB(20, size.height * .05, 20, 0),
                   child: const Text(
                     'Client Data Management for Real Estate',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -329,13 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: size.height * .05,
                 ),
                 const Text(
-                  'SBSSdigital Automation Solutions © 2021',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                const Text(
-                  'Version 1.0',
+                  'EstateMate by Sachit Bansal',
                   style: TextStyle(
                     color: Colors.grey,
                   ),

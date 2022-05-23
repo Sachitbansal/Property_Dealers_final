@@ -174,106 +174,101 @@ class _HomeState extends State<Home> {
                   ),
                   if (selectedPage == Page.profile)
                     Expanded(
-                      child: Column(
-                        children: [
-                          SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Column(
-                              children: [
-                                ProfilePic(
-                                    url: FirebaseAuth
-                                            .instance.currentUser!.photoURL ??
-                                        'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png'),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  FirebaseAuth.instance.currentUser!.displayName
-                                      .toString(),
-                                  style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 20),
-                                Text(
-                                  FirebaseAuth.instance.currentUser!.email
-                                      .toString(),
-                                  style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                const SizedBox(height: 10),
-                                ProfileMenu(
-                                  text: 'Edit Account Details',
-                                  icon: Icons.person,
-                                  press: () async {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProfilePage(
-                                          name: FirebaseAuth
-                                              .instance.currentUser!.displayName
-                                              .toString(),
-                                          pic: FirebaseAuth.instance
-                                                  .currentUser!.photoURL ??
-                                              'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png',
-                                          email: FirebaseAuth
-                                              .instance.currentUser!.email
-                                              .toString(),
-                                          uid: widget.uid.toString(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                ProfileMenu(
-                                  text: 'Reset Password',
-                                  icon: Icons.security,
-                                  press: () async {
-                                    FirebaseAuth.instance
-                                        .sendPasswordResetEmail(
-                                            email: FirebaseAuth
-                                                .instance.currentUser!.email
-                                                .toString()).whenComplete(() {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Password Reset Email Sent to Registered Email Id'),
-                                        ),
-                                      );
-                                    });
-                                  },
-                                ),
-                                ProfileMenu(
-                                  text: 'Signout',
-                                  icon: Icons.logout,
-                                  press: () async {
-                                    try {
-                                      await FirebaseAuth.instance.signOut();
-                                      showSnackBar(
-                                        'Logged out',
-                                        const Duration(milliseconds: 1000),
-                                      );
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen(),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      showSnackBar(
-                                        'Could not loggout because of $e',
-                                        const Duration(milliseconds: 1000),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ProfilePic(
+                                url: FirebaseAuth
+                                        .instance.currentUser!.photoURL ??
+                                    'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png'),
+                            const SizedBox(
+                              height: 20,
                             ),
-                          ),
-                        ],
+                            Text(
+                              FirebaseAuth.instance.currentUser!.displayName
+                                  .toString(),
+                              style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              FirebaseAuth.instance.currentUser!.email
+                                  .toString(),
+                              style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            const SizedBox(height: 10),
+                            ProfileMenu(
+                              text: 'Edit Account Details',
+                              icon: Icons.person,
+                              press: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfilePage(
+                                      name: FirebaseAuth
+                                          .instance.currentUser!.displayName
+                                          .toString(),
+                                      pic: FirebaseAuth.instance
+                                              .currentUser!.photoURL ??
+                                          'https://www.kindpng.com/picc/m/24-248729_stockvader-predicted-adig-user-profile-image-png-transparent.png',
+                                      email: FirebaseAuth
+                                          .instance.currentUser!.email
+                                          .toString(),
+                                      uid: widget.uid.toString(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            ProfileMenu(
+                              text: 'Reset Password',
+                              icon: Icons.security,
+                              press: () async {
+                                FirebaseAuth.instance
+                                    .sendPasswordResetEmail(
+                                        email: FirebaseAuth
+                                            .instance.currentUser!.email
+                                            .toString()).whenComplete(() {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Password Reset Email Sent to Registered Email Id'),
+                                    ),
+                                  );
+                                });
+                              },
+                            ),
+                            ProfileMenu(
+                              text: 'Signout',
+                              icon: Icons.logout,
+                              press: () async {
+                                try {
+                                  await FirebaseAuth.instance.signOut();
+                                  showSnackBar(
+                                    'Logged out',
+                                    const Duration(milliseconds: 1000),
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginScreen(),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  showSnackBar(
+                                    'Could not loggout because of $e',
+                                    const Duration(milliseconds: 1000),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   if (selectedPage == Page.home)
@@ -287,7 +282,7 @@ class _HomeState extends State<Home> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Nearby Homes",
+                                  "Added Properties",
                                   style: GoogleFonts.play(
                                     color: const Color(0xff4d3a58),
                                     fontWeight: FontWeight.w600,
