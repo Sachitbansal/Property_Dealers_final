@@ -524,7 +524,7 @@ class _AddState extends State<Add> {
                           ],
                         ),
                         const FilterTitle(
-                          title: 'Minimum Land size',
+                          title: 'Land size',
                         ),
                         CustomTextField(
                           keyboardType: TextInputType.number,
