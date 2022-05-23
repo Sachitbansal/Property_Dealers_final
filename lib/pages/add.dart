@@ -36,6 +36,7 @@ class _AddState extends State<Add> {
 
   late List buyRent = ['', 'Any'];
   late String bedRooms = 'Na';
+  late String facing = 'North';
   late String bathRooms = 'Na';
   late String sizeUnit = 'None';
   late String construction = 'None';
@@ -548,6 +549,71 @@ class _AddState extends State<Add> {
                                     ? Colors.white
                                     : kActiveColor,
                                 bgColor: bathRooms == 'Na'
+                                    ? kActiveColor
+                                    : kInActiveColor,
+                              ),
+                            ],
+                          ),
+                        ),const FilterTitle(
+                          title: 'Facing Direction',
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              buildOption(
+                                onTap: () {
+                                  setState(() {
+                                    facing = 'North';
+                                  });
+                                },
+                                text: "North",
+                                textColor: facing == 'North'
+                                    ? Colors.white
+                                    : kActiveColor,
+                                bgColor: facing == 'North'
+                                    ? kActiveColor
+                                    : kInActiveColor,
+                              ),
+                              buildOption(
+                                onTap: () {
+                                  setState(() {
+                                    facing = 'West';
+                                  });
+                                },
+                                text: "West",
+                                textColor: facing == 'West'
+                                    ? Colors.white
+                                    : kActiveColor,
+                                bgColor: facing == 'West'
+                                    ? kActiveColor
+                                    : kInActiveColor,
+                              ),
+                              buildOption(
+                                onTap: () {
+                                  setState(() {
+                                    facing = 'East';
+                                  });
+                                },
+                                text: "East",
+                                textColor: facing == 'East'
+                                    ? Colors.white
+                                    : kActiveColor,
+                                bgColor: facing == 'East'
+                                    ? kActiveColor
+                                    : kInActiveColor,
+                              ),buildOption(
+                                onTap: () {
+                                  setState(() {
+                                    facing = 'South';
+                                  });
+                                },
+                                text: "South",
+                                textColor: facing == 'South'
+                                    ? Colors.white
+                                    : kActiveColor,
+                                bgColor: facing == 'South'
                                     ? kActiveColor
                                     : kInActiveColor,
                               ),
