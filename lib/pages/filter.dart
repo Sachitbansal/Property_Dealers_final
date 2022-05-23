@@ -17,6 +17,7 @@ class _FilterState extends State<Filter> {
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'Flat';
   String rooms = 'Na';
+  String facing = 'North';
   String bathrooms = 'Na';
   String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
@@ -223,6 +224,56 @@ class _FilterState extends State<Filter> {
             ],
           ),
           const FilterTitle(
+            title: 'Side Facing',
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      facing = 'North';
+                    });
+                  },
+                  text: "North",
+                  textColor: facing == 'North' ? Colors.white : kActiveColor,
+                  bgColor: facing == 'North' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      facing = 'West';
+                    });
+                  },
+                  text: "West",
+                  textColor: facing == 'West' ? Colors.white : kActiveColor,
+                  bgColor: facing == 'West' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      facing = 'East';
+                    });
+                  },
+                  text: "East",
+                  textColor: facing == 'East' ? Colors.white : kActiveColor,
+                  bgColor: facing == 'East' ? kActiveColor : kInActiveColor,
+                ),buildOption(
+                  onTap: () {
+                    setState(() {
+                      facing = 'South';
+                    });
+                  },
+                  text: "South",
+                  textColor: facing == 'South' ? Colors.white : kActiveColor,
+                  bgColor: facing == 'South' ? kActiveColor : kInActiveColor,
+                ),
+              ],
+            ),
+          ),
+          const FilterTitle(
             title: 'Rooms',
           ),
           SingleChildScrollView(
@@ -259,7 +310,8 @@ class _FilterState extends State<Filter> {
                   text: "3",
                   textColor: rooms == '3' ? Colors.white : kActiveColor,
                   bgColor: rooms == '3' ? kActiveColor : kInActiveColor,
-                ),buildOption(
+                ),
+                buildOption(
                   onTap: () {
                     setState(() {
                       rooms = '4';
@@ -268,7 +320,8 @@ class _FilterState extends State<Filter> {
                   text: "4",
                   textColor: rooms == '4' ? Colors.white : kActiveColor,
                   bgColor: rooms == '4' ? kActiveColor : kInActiveColor,
-                ),buildOption(
+                ),
+                buildOption(
                   onTap: () {
                     setState(() {
                       rooms = '4+';
@@ -388,7 +441,8 @@ class _FilterState extends State<Filter> {
                     buyOrRent: buyOrRent,
                     bathrooms: bathrooms,
                     areaStart: areaStart,
-                    areaEnd: areaEnd
+                    areaEnd: areaEnd,
+                    facing: facing
                   ),
                 ),
               );

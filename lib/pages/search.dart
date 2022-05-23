@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+
+';
 import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'house_details.dart';
@@ -17,8 +19,10 @@ class Search extends StatefulWidget {
     required this.bathrooms,
     required this.areaStart,
     required this.areaEnd,
+    required this.facing,
   }) : super(key: key);
   final String uid;
+  final String facing;
   final String propertyType;
   final String rooms;
   final String bathrooms;
@@ -107,7 +111,9 @@ class _SearchState extends State<Search> {
                           for (var i = 0;
                           i < storeDocs.length;
                           i++) ...[
-                            if (storeDocs[i]['landSize'] >= widget.areaStart && storeDocs[i]['landSize'] <= widget.areaEnd)
+                            if (storeDocs[i]['landSize'] >= widget.areaStart &&
+                                storeDocs[i]['landSize'] <= widget.areaEnd &&
+                                storeDocs[i]['facing'] == widget.facing)
                               NearbyHomes(
                                 size: size,
                                 asset: storeDocs[i]['images'],
