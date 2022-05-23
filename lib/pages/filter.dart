@@ -201,98 +201,140 @@ class _FilterState extends State<Filter> {
           const FilterTitle(
             title: 'Rooms',
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    rooms = '1';
-                  });
-                },
-                text: "1",
-                textColor: rooms == '1' ? Colors.white : kActiveColor,
-                bgColor: rooms == '1' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    rooms = '2';
-                  });
-                },
-                text: "2",
-                textColor: rooms == '2' ? Colors.white : kActiveColor,
-                bgColor: rooms == '2' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    rooms = '3';
-                  });
-                },
-                text: "3",
-                textColor: rooms == '3' ? Colors.white : kActiveColor,
-                bgColor: rooms == '3' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    rooms = 'Na';
-                  });
-                },
-                text: "Na",
-                textColor: rooms == 'Na' ? Colors.white : kActiveColor,
-                bgColor: rooms == 'Na' ? kActiveColor : kInActiveColor,
-              ),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = '1';
+                    });
+                  },
+                  text: "1",
+                  textColor: rooms == '1' ? Colors.white : kActiveColor,
+                  bgColor: rooms == '1' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = '2';
+                    });
+                  },
+                  text: "2",
+                  textColor: rooms == '2' ? Colors.white : kActiveColor,
+                  bgColor: rooms == '2' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = '3';
+                    });
+                  },
+                  text: "3",
+                  textColor: rooms == '3' ? Colors.white : kActiveColor,
+                  bgColor: rooms == '3' ? kActiveColor : kInActiveColor,
+                ),buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = '4';
+                    });
+                  },
+                  text: "4",
+                  textColor: rooms == '4' ? Colors.white : kActiveColor,
+                  bgColor: rooms == '4' ? kActiveColor : kInActiveColor,
+                ),buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = '4+';
+                    });
+                  },
+                  text: "4+",
+                  textColor: rooms == '4+' ? Colors.white : kActiveColor,
+                  bgColor: rooms == '4+' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      rooms = 'Na';
+                    });
+                  },
+                  text: "Na",
+                  textColor: rooms == 'Na' ? Colors.white : kActiveColor,
+                  bgColor: rooms == 'Na' ? kActiveColor : kInActiveColor,
+                ),
+              ],
+            ),
           ),
           const FilterTitle(
             title: 'Bathrooms',
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    bathrooms = '1';
-                  });
-                },
-                text: "1",
-                textColor: bathrooms == '1' ? Colors.white : kActiveColor,
-                bgColor: bathrooms == '1' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                onTap: () {
-                  setState(() {
-                    bathrooms = '2';
-                  });
-                },
-                text: "2",
-                textColor: bathrooms == '2' ? Colors.white : kActiveColor,
-                bgColor: bathrooms == '2' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                textColor: bathrooms == '3' ? Colors.white : kActiveColor,
-                onTap: () {
-                  setState(() {
-                    bathrooms = '3';
-                  });
-                },
-                text: "3",
-                bgColor: bathrooms == '3' ? kActiveColor : kInActiveColor,
-              ),
-              buildOption(
-                textColor: bathrooms == 'Na' ? Colors.white : kActiveColor,
-                onTap: () {
-                  setState(() {
-                    bathrooms = 'Na';
-                  });
-                },
-                text: "Na",
-                bgColor: bathrooms == 'Na' ? kActiveColor : kInActiveColor,
-              ),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      bathrooms = '1';
+                    });
+                  },
+                  text: "1",
+                  textColor: bathrooms == '1' ? Colors.white : kActiveColor,
+                  bgColor: bathrooms == '1' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  onTap: () {
+                    setState(() {
+                      bathrooms = '2';
+                    });
+                  },
+                  text: "2",
+                  textColor: bathrooms == '2' ? Colors.white : kActiveColor,
+                  bgColor: bathrooms == '2' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  textColor: bathrooms == '3' ? Colors.white : kActiveColor,
+                  onTap: () {
+                    setState(() {
+                      bathrooms = '3';
+                    });
+                  },
+                  text: "3",
+                  bgColor: bathrooms == '3' ? kActiveColor : kInActiveColor,
+                ),buildOption(
+                  textColor: bathrooms == '4' ? Colors.white : kActiveColor,
+                  onTap: () {
+                    setState(() {
+                      bathrooms = '4';
+                    });
+                  },
+                  text: "4",
+                  bgColor: bathrooms == '4' ? kActiveColor : kInActiveColor,
+                ),buildOption(
+                  textColor: bathrooms == '4+' ? Colors.white : kActiveColor,
+                  onTap: () {
+                    setState(() {
+                      bathrooms = '4+';
+                    });
+                  },
+                  text: "4+",
+                  bgColor: bathrooms == '4+' ? kActiveColor : kInActiveColor,
+                ),
+                buildOption(
+                  textColor: bathrooms == 'Na' ? Colors.white : kActiveColor,
+                  onTap: () {
+                    setState(() {
+                      bathrooms = 'Na';
+                    });
+                  },
+                  text: "Na",
+                  bgColor: bathrooms == 'Na' ? kActiveColor : kInActiveColor,
+                ),
+              ],
+            ),
           ),
           const SizedBox(
             height: 20,
