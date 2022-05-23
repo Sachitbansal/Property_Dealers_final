@@ -576,15 +576,58 @@ class _AddState extends State<Add> {
                             ButtonWithText(
                               onTap: () {
                                 setState(() {
-                                  sizeUnit = 'Hectares';
+                                  sizeUnit = 'Yards²';
                                 });
                               },
                               size: size.width * .35,
-                              title: 'Hectares',
-                              bgColor: sizeUnit == 'Hectares'
+                              title: 'Yards²',
+                              bgColor: sizeUnit == 'Yards²'
                                   ? kActiveColor
                                   : kInActiveColor,
-                              fontColor: sizeUnit == 'Hectares'
+                              fontColor: sizeUnit == 'Yards²'
+                                  ? Colors.white
+                                  : kActiveColor,
+                            ),
+                            ButtonWithText(
+                              onTap: () {
+                                setState(() {
+                                  sizeUnit = 'Feet²';
+                                });
+                              },
+                              size: size.width * .35,
+                              title: 'Feet²',
+                              bgColor: sizeUnit == 'Feet²'
+                                  ? kActiveColor
+                                  : kInActiveColor,
+                              fontColor: sizeUnit == 'Feet²'
+                                  ? Colors.white
+                                  : kActiveColor,
+                            ),ButtonWithText(
+                              onTap: () {
+                                setState(() {
+                                  sizeUnit = 'biswa';
+                                });
+                              },
+                              size: size.width * .35,
+                              title: 'biswa',
+                              bgColor: sizeUnit == 'biswa'
+                                  ? kActiveColor
+                                  : kInActiveColor,
+                              fontColor: sizeUnit == 'biswa'
+                                  ? Colors.white
+                                  : kActiveColor,
+                            ),ButtonWithText(
+                              onTap: () {
+                                setState(() {
+                                  sizeUnit = 'marla';
+                                });
+                              },
+                              size: size.width * .35,
+                              title: 'marla',
+                              bgColor: sizeUnit == 'marla'
+                                  ? kActiveColor
+                                  : kInActiveColor,
+                              fontColor: sizeUnit == 'marla'
                                   ? Colors.white
                                   : kActiveColor,
                             ),
