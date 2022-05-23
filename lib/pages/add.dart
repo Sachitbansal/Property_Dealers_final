@@ -796,6 +796,10 @@ class _AddState extends State<Add> {
                             if (_formKey.currentState!.validate() &&
                                 _image != null) {
                               uploadFunction(_image!);
+                            } else if (_image == null){
+                              showSnackBar('Please Select Images', Duration(milliseconds: 1000));
+                            } else {
+                              showSnackBar('Please fill all fields', Duration(milliseconds: 1000));
                             }
                           },
                         ),

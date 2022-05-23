@@ -302,14 +302,10 @@ class _FilterState extends State<Filter> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.blue[200]!),
                 alignment: Alignment.center),
-            child: SizedBox(
-              height: 40,
-              width: size.width * .8,
-              child: const Center(
-                child: Text(
-                  'Search',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
+            child: const Center(
+              child: Text(
+                'Search',
+                style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
             onPressed: () {
