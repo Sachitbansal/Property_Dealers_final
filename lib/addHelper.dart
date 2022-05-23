@@ -3,15 +3,15 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AddHelper {
   static String homePageBannerKey() {
-    return 'ca-app-pub-1043664077333093/1036718028';
+    return 'ca-app-pub-1979824654658323/1440813210';
   }
 
   static String detailsPageBannerKey() {
-    return 'ca-app-pub-1043664077333093/7218982995';
+    return 'ca-app-pub-1979824654658323/5794705789';
   }
 
   static String addPropertyInterstitialAddKey() {
-    return 'ca-app-pub-1043664077333093/1228289717';
+    return 'ca-app-pub-1979824654658323/4290052428';
   }
 }
 
