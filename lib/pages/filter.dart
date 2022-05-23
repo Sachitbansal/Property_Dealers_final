@@ -21,6 +21,8 @@ class _FilterState extends State<Filter> {
   String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
   double rangeLabelEnd = 1000.0;
+  double areaStart = 30.0;
+  double areaEnd = 1000.0;
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +155,7 @@ class _FilterState extends State<Filter> {
           Row(
             children: const [
               FilterTitle(
-                title: 'Price Range',
+                title: 'Budget',
               ),
             ],
           ),
@@ -177,27 +179,49 @@ class _FilterState extends State<Filter> {
                   keyboardtype: TextInputType.phone,
                   obscureText: false,
                   iconChoose: Icons.monetization_on_outlined,
-                  onChanged: (String) {rangeLabelEnd = double.parse(String);},
+                  onChanged: (String) {
+                    rangeLabelEnd = double.parse(String);
+                  },
                 ),
               )
             ],
           ),
-          // RangeSlider(
-          //   labels: RangeLabels('$rangeLabelStart', '$rangeLabelEnd'),
-          //   values: selectedRange,
-          //   onChanged: (RangeValues newRange) {
-          //     setState(() {
-          //       selectedRange = newRange;
-          //       rangeLabelStart = newRange.start.roundToDouble();
-          //       rangeLabelEnd = newRange.end.roundToDouble();
-          //     });
-          //   },
-          //   min: 30,
-          //   max: 1000,
-          //   divisions: 20,
-          //   activeColor: kActiveColor,
-          //   inactiveColor: Colors.grey[300],
-          // ),
+          Row(
+            children: const [
+              FilterTitle(
+                title: 'Area Range',
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: size.width * .42,
+                child: RoundedInputField(
+                  label: 'Min',
+                  keyboardtype: TextInputType.phone,
+                  obscureText: false,
+                  iconChoose: Icons.area_chart,
+                  onChanged: (String) {
+                    areaStart = double.parse(String);
+                  },
+                ),
+              ),
+              SizedBox(
+                width: size.width * .42,
+                child: RoundedInputField(
+                  label: 'Max',
+                  keyboardtype: TextInputType.phone,
+                  obscureText: false,
+                  iconChoose: Icons.area_chart,
+                  onChanged: (String) {
+                    areaEnd = double.parse(String);
+                  },
+                ),
+              )
+            ],
+          ),
           const FilterTitle(
             title: 'Rooms',
           ),
@@ -363,6 +387,8 @@ class _FilterState extends State<Filter> {
                     rooms: rooms,
                     buyOrRent: buyOrRent,
                     bathrooms: bathrooms,
+                    areaStart: areaStart,
+                    areaEnd: areaEnd
                   ),
                 ),
               );

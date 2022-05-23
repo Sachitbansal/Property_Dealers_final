@@ -15,6 +15,8 @@ class Search extends StatefulWidget {
     required this.priceStart,
     required this.priceEnd,
     required this.bathrooms,
+    required this.areaStart,
+    required this.areaEnd,
   }) : super(key: key);
   final String uid;
   final String propertyType;
@@ -23,6 +25,8 @@ class Search extends StatefulWidget {
   final String buyOrRent;
   final double priceStart;
   final double priceEnd;
+  final double areaStart;
+  final double areaEnd;
 
   @override
   _SearchState createState() => _SearchState();
@@ -103,7 +107,7 @@ class _SearchState extends State<Search> {
                           for (var i = 0;
                           i < storeDocs.length;
                           i++) ...[
-                            if (storeDocs[i]['bookmark'])
+                            if (storeDocs[i]['landSize'] >= widget.areaStart && storeDocs[i]['landSize'] <= widget.areaEnd)
                               NearbyHomes(
                                 size: size,
                                 asset: storeDocs[i]['images'],
