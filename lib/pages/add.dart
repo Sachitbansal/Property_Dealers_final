@@ -44,7 +44,6 @@ class _AddState extends State<Add> {
   late String type = 'None';
 
   final landSizeController = TextEditingController();
-  final keywordsController = TextEditingController();
   final addressController = TextEditingController();
   final nameController = TextEditingController();
   final numberController = TextEditingController();
@@ -56,7 +55,6 @@ class _AddState extends State<Add> {
   void dispose() {
     nameController.dispose();
     landSizeController.dispose();
-    keywordsController.dispose();
     addressController.dispose();
     numberController.dispose();
     otherController.dispose();
@@ -149,7 +147,6 @@ class _AddState extends State<Add> {
       'sizeUnit': sizeUnit,
       'construction': construction,
       'landSize': landSizeController.text,
-      'keywords': keywordsController.text,
       'address': addressController.text,
       'name': nameController.text,
       'number': numberController.text,
@@ -788,19 +785,6 @@ class _AddState extends State<Add> {
                                   : kActiveColor,
                             ),
                           ],
-                        ),
-                        const FilterTitle(
-                          title: 'Keywords (separated by comma)',
-                        ),
-                        CustomTextField(
-                          titleController: keywordsController,
-                          labelText: 'Pool, Parking',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Some Keywords';
-                            }
-                            return null;
-                          },
                         ),
                         const FilterTitle(
                           title: 'Address Of Property',
