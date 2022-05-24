@@ -393,8 +393,8 @@ class ButtonWithTextAndIcon extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // width: width,
         decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue[200]!),
             color: bgColor, borderRadius: BorderRadius.circular(15.0)),
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -475,8 +475,11 @@ class ButtonWithText extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        margin: EdgeInsets.all(5),
         width: size,
+        height: 50,
         decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue[200]!),
           color: bgColor,
           borderRadius: BorderRadius.circular(15.0),
         ),
