@@ -52,7 +52,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.sachit.estatemate"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 31
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
