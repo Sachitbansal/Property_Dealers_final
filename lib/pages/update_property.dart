@@ -16,11 +16,12 @@ class UpdateProperty extends StatefulWidget {
       required this.bathRooms,
       required this.sizeUnit,
       required this.types,
+      required this.facing,
       required this.construction})
       : super(key: key);
   final String collection, id;
   final List imageUrls, buyRent;
-  String bedRooms, bathRooms, sizeUnit, types, construction;
+  String bedRooms, bathRooms, sizeUnit, types, construction, facing;
 
   @override
   State<UpdateProperty> createState() => _UpdatePropertyState();
@@ -51,6 +52,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   late String landSize = '0';
   late String number = '0';
   late String price = '0';
+  late String facing = '0';
 
   late List existingUrls = [];
   late bool isPublic = false;
@@ -330,6 +332,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                           sizeUnit = widget.sizeUnit;
                           types = widget.types;
                           construction = widget.construction;
+                          facing = widget.facing;
 
                           existingUrls = data['images'];
                           isPublic = data['isPublic'];
@@ -379,183 +382,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                       ),
                                     ),
                                   ],
-                                ),
-                                const FilterTitle(
-                                  title: 'Bedrooms',
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        size: 50,
-                                        onTap: () {
-                                          setState(() => widget.bedRooms = '1');
-                                        },
-                                        title: "1",
-                                        fontColor: bedRooms == '1'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bedRooms == '1'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        size: 50,
-                                        onTap: () {
-                                          setState(() => widget.bedRooms = '2');
-                                        },
-                                        title: "2",
-                                        fontColor: bedRooms == '2'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bedRooms == '2'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        size: 50,
-                                        onTap: () {
-                                          setState(() => widget.bedRooms = '3');
-                                        },
-                                        title: "3",
-                                        fontColor: bedRooms == '3'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bedRooms == '3'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        size: 50,
-                                        onTap: () {
-                                          setState(() => widget.bedRooms = '4');
-                                        },
-                                        title: "4",
-                                        fontColor: bedRooms == '4'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bedRooms == '4'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        size: 80,
-                                        onTap: () {
-                                          setState(() => widget.bedRooms = 'Na');
-                                        },
-                                        title: "Na",
-                                        fontColor: bedRooms == 'Na'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bedRooms == 'Na'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const FilterTitle(
-                                  title: 'Bathrooms',
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.bathRooms = '1');
-                                        },
-                                        title: "1",
-                                        fontColor: bathRooms == '1'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bathRooms == '1'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.bathRooms = '2');
-                                        },
-                                        title: "2",
-                                        fontColor: bathRooms == '2'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bathRooms == '2'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.bathRooms = '3');
-                                        },
-                                        title: "3",
-                                        fontColor: bathRooms == '3'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bathRooms == '3'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.bathRooms = '4');
-                                        },
-                                        title: "4",
-                                        fontColor: bathRooms == '4'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bathRooms == '4'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.bathRooms = 'Na');
-                                        },
-                                        title: "Na",
-                                        fontColor: bathRooms == 'Na'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                        bgColor: bathRooms == 'Na'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                      ),
-                                    ],
-                                  ),
                                 ),
                                 const FilterTitle(
                                   title: 'Property Type',
@@ -632,118 +458,370 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                     ],
                                   ),
                                 ),
-                                const FilterTitle(
-                                  title: 'Construction Status',
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
                                     children: [
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.construction = 'Any');
-                                        },
-                                        title: 'Any',
-                                        bgColor: construction == 'Any'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: construction == 'Any'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() => widget.construction = 'New');
-                                        },
-                                        title: 'New',
-                                        bgColor: construction == 'New'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: construction == 'New'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          setState(() =>
-                                              widget.construction = 'Established');
-                                        },
-                                        title: 'Established',
-                                        bgColor: construction == 'Established'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: construction == 'Established'
-                                            ? Colors.white
-                                            : kActiveColor,
+                                      FilterTitle(
+                                        title: 'Bedrooms',
                                       ),
                                     ],
                                   ),
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          size: 50,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = '1');
+                                          },
+                                          title: "1",
+                                          fontColor: bedRooms == '1'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == '1'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 50,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = '2');
+                                          },
+                                          title: "2",
+                                          fontColor: bedRooms == '2'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == '2'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 50,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = '3');
+                                          },
+                                          title: "3",
+                                          fontColor: bedRooms == '3'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == '3'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 50,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = '4');
+                                          },
+                                          title: "4",
+                                          fontColor: bedRooms == '4'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == '4'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),ButtonWithText(
+                                          size: 55,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = '4+');
+                                          },
+                                          title: "4+",
+                                          fontColor: bedRooms == '4+'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == '4+'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 60,
+                                          onTap: () {
+                                            setState(() => widget.bedRooms = 'Na');
+                                          },
+                                          title: "Na",
+                                          fontColor: bedRooms == 'Na'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bedRooms == 'Na'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                const FilterTitle(
-                                  title: 'Unit of Area',
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
                                     children: [
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          sizeUnit = 'm²';
-                                        },
-                                        title: 'm²',
-                                        bgColor: sizeUnit == 'm²'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: sizeUnit == 'm²'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          sizeUnit = 'Acres';
-                                        },
-                                        title: 'Acres',
-                                        bgColor: sizeUnit == 'Acres'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: sizeUnit == 'Acres'
-                                            ? Colors.white
-                                            : kActiveColor,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      ButtonWithText(
-                                        onTap: () {
-                                          sizeUnit = 'Hectares';
-                                        },
-                                        title: 'Hectares',
-                                        bgColor: sizeUnit == 'Hectares'
-                                            ? kActiveColor
-                                            : kInActiveColor,
-                                        fontColor: sizeUnit == 'Hectares'
-                                            ? Colors.white
-                                            : kActiveColor,
+                                      FilterTitle(
+                                        title: 'Bathrooms',
                                       ),
                                     ],
                                   ),
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = '1');
+                                          },
+                                          size: 50,
+                                          title: "1",
+                                          fontColor: bathRooms == '1'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == '1'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = '2');
+                                          },
+                                          size: 50,
+                                          title: "2",
+                                          fontColor: bathRooms == '2'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == '2'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 50,
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = '3');
+                                          },
+                                          title: "3",
+                                          fontColor: bathRooms == '3'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == '3'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = '4');
+                                          }, size: 50,
+                                          title: "4",
+                                          fontColor: bathRooms == '4'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == '4'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = '4+');
+                                          }, size: 60,
+                                          title: "4+",
+                                          fontColor: bathRooms == '4+'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == '4+'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.bathRooms = 'Na');
+                                          }, size: 60,
+                                          title: "Na",
+                                          fontColor: bathRooms == 'Na'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: bathRooms == 'Na'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
+                                    children: [
+                                      FilterTitle(
+                                        title: 'Construction Status',
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() => widget.construction = 'Any');
+                                          }, size: 80,
+                                          title: 'Any',
+                                          bgColor: construction == 'Any'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: construction == 'Any'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 80,
+                                          onTap: () {
+                                            setState(() => widget.construction = 'New');
+                                          },
+                                          title: 'New',
+                                          bgColor: construction == 'New'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: construction == 'New'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          size: 150,
+                                          onTap: () {
+                                            setState(() =>
+                                            widget.construction = 'Established');
+                                          },
+                                          title: 'Established',
+                                          bgColor: construction == 'Established'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: construction == 'Established'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
+                                    children: [
+                                      const FilterTitle(
+                                        title: 'Facing Direction',
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              facing = 'North';
+                                            });
+                                          },
+                                          title: "North",
+                                          size: 100,
+                                          fontColor: facing == 'North'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: facing == 'North'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              facing = 'West';
+                                            });
+                                          },
+                                          title: "West",
+                                          size: 100,
+                                          fontColor: facing == 'West'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: facing == 'West'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              facing = 'East';
+                                            });
+                                          },size: 100,
+                                          title: "East",
+                                          fontColor: facing == 'East'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: facing == 'East'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              facing = 'South';
+                                            });
+                                          },size: 100,
+                                          title: "South",
+                                          fontColor: facing == 'South'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: facing == 'South'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
+                                    children: [
+                                      FilterTitle(
+                                        title: 'Unit of Area',
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            sizeUnit = 'm²';
+                                          },
+                                          size: 60,
+                                          title: 'm²',
+                                          bgColor: sizeUnit == 'm²'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'm²'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            sizeUnit = 'Acres';
+                                          }, size: 80,
+                                          title: 'Acres',
+                                          bgColor: sizeUnit == 'Acres'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'Acres'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            sizeUnit = 'Hectares';
+                                          }, size: 140,
+                                          title: 'Hectares',
+                                          bgColor: sizeUnit == 'Hectares'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'Hectares'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                                 const FilterTitle(
                                   title: 'Title Of Property',

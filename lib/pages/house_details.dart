@@ -384,6 +384,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 UpdateProperty(
+                                                  facing: snapshot.data!['facing'],
                                               types: snapshot.data!['types'],
                                               buyRent: snapshot.data!['buyRent'],
                                               bathRooms:

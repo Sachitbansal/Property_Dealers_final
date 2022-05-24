@@ -114,6 +114,7 @@ class _AddState extends State<Add> {
       bedRooms,
       bathRooms,
       sizeUnit,
+      facing,
       construction,
       landSizeController.text.toString(),
       nameController.text,
@@ -153,6 +154,7 @@ class _AddState extends State<Add> {
       'name': nameController.text,
       'number': numberController.text,
       'types': type,
+      'facing': facing,
       'Price': priceController.text,
       'title': titleController.text,
       'images': urls,
@@ -985,6 +987,8 @@ class _AddState extends State<Add> {
                               showSnackBar('Please fill all fields',
                                   Duration(milliseconds: 1000));
                             }
+
+
                           },
                         ),
                         const SizedBox(
