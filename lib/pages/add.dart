@@ -138,6 +138,12 @@ class _AddState extends State<Add> {
       finalData.addAll(setSearchParam());
     }
 
+    if (urls.isEmpty) {
+      urls = [
+        'https://cdn.pixabay.com/photo/2012/04/24/12/29/no-symbol-39767_1280.png'
+      ];
+    }
+
     CollectionReference students =
     FirebaseFirestore.instance.collection(widget.collection.toString());
     return students.add({
@@ -977,17 +983,21 @@ class _AddState extends State<Add> {
                             ),
                           ),
                           onPressed: () {
-                            if (_formKey.currentState!.validate() &&
-                                _image != null) {
+                            // if (_formKey.currentState!.validate() &&
+                            //     _image != null) {
+                            //   uploadFunction(_image!);
+                            // } else if (_image == null) {
+                            //   showSnackBar('Please Select Images',
+                            //       Duration(milliseconds: 1000));
+                            // } else {
+                            //   showSnackBar('Please fill all fields',
+                            //       Duration(milliseconds: 1000));
+                            // }
+                            if (_image != null) {
                               uploadFunction(_image!);
-                            } else if (_image == null) {
-                              showSnackBar('Please Select Images',
-                                  Duration(milliseconds: 1000));
                             } else {
-                              showSnackBar('Please fill all fields',
-                                  Duration(milliseconds: 1000));
+                              addUser();
                             }
-
 
                           },
                         ),

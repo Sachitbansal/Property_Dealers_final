@@ -296,6 +296,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                                                 .whenComplete(
                                               () {
                                                 Navigator.pop(context);
+                                                Navigator.pop(context);
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
@@ -506,39 +507,7 @@ class _HouseDetailsState extends State<HouseDetails> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (var i = 0;
-                                        i <
-                                            snapshot.data!['keywords']
-                                                .split(',')
-                                                .length;
-                                        i++) ...[
-                                      _facilities(Icons.circle_outlined,
-                                          "${snapshot.data!['keywords'].split(',')[i]}"),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                    ]
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                snapshot.data!['keywords'],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.play(
-                                  color: Colors.black87,
-                                  letterSpacing: 1.0,
-                                  wordSpacing: 2.0,
-                                  fontSize: 14,
-                                ),
-                              ),
+
                               const SizedBox(
                                 height: 10,
                               ),
