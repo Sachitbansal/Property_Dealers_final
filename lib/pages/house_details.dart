@@ -130,7 +130,6 @@ class _HouseDetailsState extends State<HouseDetails> {
                 child: CircularProgressIndicator(),
               );
             }
-
             return Column(
               children: [
                 Expanded(
