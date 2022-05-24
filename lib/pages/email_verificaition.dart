@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/pages/home.dart';
+import 'package:untitled/pages/phone.dart';
 
 import '../widgets.dart';
 
@@ -69,8 +71,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? Home(
-          uid: FirebaseAuth.instance.currentUser?.uid,
+      ? Phone( uid: FirebaseAuth.instance.currentUser!.uid
         )
       : Scaffold(
           backgroundColor: Colors.white,
@@ -80,7 +81,7 @@ class _EmailVerificationState extends State<EmailVerification> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.network(
-                    'https://downloader.la/temp/[Downloader.la]-6284a5afc8331.jpg'),
+                    'https://img.freepik.com/free-vector/email-messaging-email-marketing-campaign_183665-8.jpg?w=2000'),
                 const Text(
                   'Please Verify Your Email Using the Link Sent To Your Email Id',
                   textAlign: TextAlign.center,

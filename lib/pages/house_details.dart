@@ -81,7 +81,7 @@ class _HouseDetailsState extends State<HouseDetails> {
         required String proceedButton}) async {
       return showDialog<void>(
         context: context,
-        barrierDismissible: false, // user must tap button!
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(confirmDialog),
@@ -614,99 +614,105 @@ class _HouseDetailsState extends State<HouseDetails> {
                     ),
                   ),
                 ),
-                Container(
-                  height: 90,
-                  color: const Color(0xfff7f7f9),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
-                    ),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network(
-                            "https://img.freepik.com/free-photo/happy-african-american-child-boy-smiling_263368-10.jpg?size=664&ext=jpg&ga=GA1.2.740930980.1616477634",
-                            height: 50,
-                            width: 50,
-                            fit: BoxFit.cover,
-                          ),
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance.collection('UserPhone').doc(snapshot.data!['colid']).snapshots(),
+                  builder: (context, snap) {
+
+                    return Container(
+                      height: 90,
+                      color: const Color(0xfff7f7f9),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 20,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                snapshot.data!['name'],
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(
+                                "https://img.freepik.com/free-photo/happy-african-american-child-boy-smiling_263368-10.jpg?size=664&ext=jpg&ga=GA1.2.740930980.1616477634",
+                                height: 50,
+                                width: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.enableEdit ? snapshot.data!['name'].toString() : snapshot.data!['ownerName'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.play(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    widget.enableEdit ? snapshot.data!['number'].toString() : snap.data!['phone'].toString(),
+                                    maxLines: 1,
+                                    style: GoogleFonts.play(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                  color: Colors.white, shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.phone,
+                                    size: 22,
+                                  ),
+                                  color: Colors.green,
+                                  onPressed: () =>
+                                      phoneCall(snapshot.data!['number']),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                snapshot.data!['number'].toString(),
-                                maxLines: 1,
-                                style: GoogleFonts.play(
-                                  color: Colors.grey,
-                                  fontSize: 14,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                  color: Colors.white, shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.whatsapp,
+                                    size: 22,
+                                  ),
+                                  color: const Color(0xfff63e3c),
+                                  onPressed: () async {
+                                    await launch(
+                                        'https://api.whatsapp.com/send/?phone=91${snapshot.data!['number']}&text&app_absent=0');
+                                  },
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.phone,
-                                size: 22,
-                              ),
-                              color: Colors.green,
-                              onPressed: () =>
-                                  phoneCall(snapshot.data!['number']),
                             ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.whatsapp,
-                                size: 22,
-                              ),
-                              color: const Color(0xfff63e3c),
-                              onPressed: () async {
-                                await launch(
-                                    'https://api.whatsapp.com/send/?phone=91${snapshot.data!['number']}&text&app_absent=0');
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  }
                 ),
                 SizedBox(
                   child: Consumer<AddProvider>(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets.dart';
@@ -26,7 +27,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
     fPasswordController.dispose();
@@ -140,9 +140,8 @@ class _SignUpState extends State<SignUp> {
                       return null;
                     },
                   ),
-                ),
-                SizedBox(
-                  height: size.height * .02,
+                ),SizedBox(
+                  height: size.height * .01,
                 ),
                 SizedBox(
                   width: size.width * .9,
@@ -187,7 +186,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * .02,
+                  height: size.height * .01,
                 ),
                 SizedBox(
                   width: size.width * .9,
@@ -239,7 +238,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
+                  height: size.height * .01,
                 ),
                 SizedBox(
                   width: size.width * .9,
