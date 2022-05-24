@@ -140,7 +140,7 @@ class _AddState extends State<Add> {
 
     if (urls.isEmpty) {
       urls = [
-        'https://cdn.pixabay.com/photo/2012/04/24/12/29/no-symbol-39767_1280.png'
+        'https://cdn.iconscout.com/icon/free/png-256/house-home-building-infrastructure-real-estate-resident-emoj-symbol-1-30743.png'
       ];
     }
 
