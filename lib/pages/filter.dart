@@ -25,6 +25,7 @@ class _FilterState extends State<Filter> {
   double rangeLabelEnd = 1000.0;
   double areaStart = 30.0;
   double areaEnd = 1000.0;
+  late String priceSuffix = 'None';
 
   @override
   Widget build(BuildContext context) {
@@ -154,38 +155,91 @@ class _FilterState extends State<Filter> {
               ],
             ),
           ),
-          Row(
-            children: const [
-              FilterTitle(
-                title: 'Budget',
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Price',
+                ),
+              ],
+            ),
             children: [
-              SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Min',
-                  // keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.monetization_on_outlined,
-                  onChanged: (String) {rangeLabelStart = double.parse(String);},
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Min',
+                      keyboardtype: TextInputType.number,
+                      obscureText: false,
+                      iconChoose: Icons.monetization_on_outlined,
+                      onChanged: (String) {rangeLabelStart = double.parse(String);},
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Max',
+                      keyboardtype: TextInputType.number,
+                      obscureText: false,
+                      iconChoose: Icons.monetization_on_outlined,
+                      onChanged: (String) {
+                        rangeLabelEnd = double.parse(String);
+                      },
+                    ),
+                  )
+                ],
               ),
-              SizedBox(
-                  width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Max',
-                  // keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.monetization_on_outlined,
-                  onChanged: (String) {
-                    rangeLabelEnd = double.parse(String);
-                  },
-                ),
-              )
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Crore';
+                      });
+                    },
+                    size: 80,
+                    title: "Crore",
+                    fontColor: priceSuffix == 'Crore'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Crore'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Lakh';
+                      });
+                    }, size: 80,
+                    title: "Lakh",
+                    fontColor: priceSuffix == 'Lakh'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Lakh'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Thousand';
+                      });
+                    },
+                    title: "Thousand",
+                    size: 120,
+                    fontColor: priceSuffix == 'Thousand'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Thousand'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                ],
+              ),
             ],
           ),
           ExpansionTile(
@@ -565,6 +619,18 @@ class _FilterState extends State<Filter> {
               ),
             ),
             onPressed: () {
+
+              if (priceSuffix == 'Crore') {
+                rangeLabelEnd = rangeLabelEnd * 10000000;
+                rangeLabelStart = rangeLabelStart * 10000000;
+              } else if (priceSuffix == 'Lakh') {
+                rangeLabelEnd = rangeLabelEnd * 100000;
+                rangeLabelStart = rangeLabelStart * 100000;
+              } else {
+                rangeLabelEnd = rangeLabelEnd * 1000;
+                rangeLabelStart = rangeLabelStart * 1000;
+              }
+
               Navigator.push(
                 context,
                 MaterialPageRoute(

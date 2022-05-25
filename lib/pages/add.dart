@@ -44,6 +44,8 @@ class _AddState extends State<Add> {
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String type = 'None';
+  late String priceSuffix = 'None';
+  late int price = 0;
 
   final landSizeController = TextEditingController();
   final addressController = TextEditingController();
@@ -144,6 +146,14 @@ class _AddState extends State<Add> {
       ];
     }
 
+    if (priceSuffix == 'Crore') {
+      price = int.parse(priceController.text * 10000000);
+    } else if (priceSuffix == 'Lakh') {
+      price = int.parse(priceController.text * 100000);
+    } else {
+      price = int.parse(priceController.text * 1000);
+    }
+
     CollectionReference students =
     FirebaseFirestore.instance.collection(widget.collection.toString());
     return students.add({
@@ -161,7 +171,9 @@ class _AddState extends State<Add> {
       'number': numberController.text,
       'types': type,
       'facing': facing,
-      'Price': priceController.text,
+      'Price': price,
+      'priceAmount': priceController.text,
+      'priceSuffix': priceSuffix,
       'title': titleController.text,
       'images': urls,
       'other': otherController.text,
@@ -367,18 +379,70 @@ class _AddState extends State<Add> {
                             ),
                           ],
                         ),
-                        const FilterTitle(
-                          title: 'Price',
-                        ),
-                        CustomTextField(
-                          titleController: priceController,
-                          labelText: '100000',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter a desired price';
-                            }
-                            return null;
-                          },
+                        ExpansionTile(
+                          expandedAlignment: Alignment.bottomLeft,
+                          title: Row(
+                            children: [
+                              const FilterTitle(
+                                title: 'Price',
+                              ),
+                            ],
+                          ),
+                          children: [
+                            CustomTextField(
+                              keyboardType: TextInputType.number,
+                              titleController: priceController,
+                              labelText: '100000',
+                            ),
+                            Wrap(
+                              children: [
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Crore';
+                                    });
+                                  },
+                                  size: 80,
+                                  title: "Crore",
+                                  fontColor: priceSuffix == 'Crore'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Crore'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Lakh';
+                                    });
+                                  }, size: 80,
+                                  title: "Lakh",
+                                  fontColor: priceSuffix == 'Lakh'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Lakh'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Thousand';
+                                    });
+                                  },
+                                  title: "Thousand",
+                                  size: 120,
+                                  fontColor: priceSuffix == 'Thousand'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Thousand'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         ExpansionTile(
                           expandedAlignment: Alignment.bottomLeft,
@@ -412,7 +476,8 @@ class _AddState extends State<Add> {
                                     setState(() {
                                       bedRooms = '2';
                                     });
-                                  }, size: 70,
+                                  },
+                                  size: 70,
                                   title: "2",
                                   fontColor: bedRooms == '2'
                                       ? Colors.white

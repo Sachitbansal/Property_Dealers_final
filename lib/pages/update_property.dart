@@ -44,15 +44,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String types = 'None';
-
-  late String keywords = 'None';
-  late String address = 'None';
-  late String name = 'None';
-  late String other = 'None';
-  late String landSize = '0';
-  late String number = '0';
-  late String price = '0';
   late String facing = '0';
+  late String priceSuffix = 'None';
+  late int price = 0;
 
   late List existingUrls = [];
   late bool isPublic = false;
@@ -176,7 +170,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       bathRooms,
       sizeUnit,
       construction,
-      landSize.toString(),
+      landSizeController.text,
       nameController.text,
       numberController.text.toString(),
       types.toLowerCase(),
@@ -198,7 +192,13 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       finalData.addAll(setSearchParam());
     }
 
-    print(finalData);
+    if (priceSuffix == 'Crore') {
+      price = int.parse(priceController.text * 10000000);
+    } else if (priceSuffix == 'Lakh') {
+      price = int.parse(priceController.text * 100000);
+    } else {
+      price = int.parse(priceController.text * 1000);
+    }
 
     CollectionReference students =
     FirebaseFirestore.instance.collection(widget.collection.toString());
@@ -216,7 +216,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'name': nameController.text,
       'number': int.parse(numberController.text),
       'types': types,
-      'Price': int.parse(priceController.text),
+      'Price': price,
+      'priceAmount': priceController.text,
+      'priceSuffix': priceSuffix,
       'title': titleController.text,
       'images': urls,
     }).then((value) {
@@ -888,6 +890,71 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                     ),
                                   ],
                                 ),
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
+                                    children: [
+                                      const FilterTitle(
+                                        title: 'Price',
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    CustomTextField(
+                                      keyboardType: TextInputType.number,
+                                      titleController: priceController,
+                                      labelText: '100000',
+                                    ),
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Crore';
+                                            });
+                                          },
+                                          size: 80,
+                                          title: "Crore",
+                                          fontColor: priceSuffix == 'Crore'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Crore'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Lakh';
+                                            });
+                                          }, size: 80,
+                                          title: "Lakh",
+                                          fontColor: priceSuffix == 'Lakh'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Lakh'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Thousand';
+                                            });
+                                          },
+                                          title: "Thousand",
+                                          size: 120,
+                                          fontColor: priceSuffix == 'Thousand'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Thousand'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                                 const FilterTitle(
                                   title: 'Title Of Property',
                                 ),
@@ -902,21 +969,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                   },
                                 ),
                                 const FilterTitle(
-                                  title: 'Price',
-                                ),
-                                CustomTextField(
-                                  // keyboardType: TextInputType.number,
-                                  titleController: priceController,
-                                  labelText: '100000',
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter a desired price';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const FilterTitle(
-                                  title: 'Minimum Land size',
+                                  title: 'Land size',
                                 ),
                                 CustomTextField(
                                   keyboardType: TextInputType.number,
@@ -931,9 +984,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 ),
                                 const SizedBox(
                                   height: 5,
-                                ),
-                                const FilterTitle(
-                                  title: 'Keywords (separated by comma)',
                                 ),
                                 const FilterTitle(
                                   title: 'Address Of Property',
