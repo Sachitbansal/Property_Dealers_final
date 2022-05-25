@@ -43,6 +43,8 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
+  Set selectedList = Set();
+
   @override
   Widget build(BuildContext context) {
     final CollectionReference noticeCollection =
@@ -113,6 +115,14 @@ class _SearchState extends State<Search> {
                                 storeDocs[i]['landSize'] <= widget.areaEnd &&
                                 storeDocs[i]['facing'] == widget.facing)
                               NearbyHomes(
+                                isSelected: (bool value) {
+                                  if (value) {
+                                    selectedList.add(storeDocs[i]);
+                                  } else {
+                                    selectedList.remove(storeDocs[i]);
+                                  }
+                                },
+                                key: Key((i).toString()),
                                 size: size,
                                 asset: storeDocs[i]['images'],
                                 name: storeDocs[i]['title'],

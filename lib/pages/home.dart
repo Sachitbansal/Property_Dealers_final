@@ -16,7 +16,6 @@ import 'package:untitled/pages/profile.dart';
 import 'package:untitled/pages/searchbar.dart';
 
 import '../widgets.dart';
-import 'filter.dart';
 import 'house_details.dart';
 
 enum Page { home, public, bookmark, profile }
@@ -82,28 +81,6 @@ class _HomeState extends State<Home> {
     final Stream<QuerySnapshot> publicProperties =
         FirebaseFirestore.instance.collection('Public').snapshots();
 
-    void showBottomSheet() {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-        ),
-        builder: (BuildContext context) {
-          return SingleChildScrollView(
-            child: Wrap(
-              children: [
-                Filter(uid: widget.uid.toString()),
-              ],
-            ),
-          );
-        },
-      );
-    }
-
     showSnackBar(String snackText, Duration d) {
       final snackBar = SnackBar(content: Text(snackText), duration: d);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -124,53 +101,57 @@ class _HomeState extends State<Home> {
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: .04 * size.width),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Find your\n',
-                            style: GoogleFonts.play(
-                                color: Colors.grey, fontSize: 26),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Perfect Home',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: 'Find your\n',
                                 style: GoogleFonts.play(
-                                    color: Colors.blue[300],
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(
-                              color: Colors.grey[300]!,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(.02 * size.width),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.search,
-                                size: 24.0,
+                                    color: Colors.grey, fontSize: 26),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Perfect Home',
+                                    style: GoogleFonts.play(
+                                        color: Colors.blue[300],
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
                               ),
-                              color: Colors.black,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SearchBarData(
-                                      uid: widget.uid.toString(),
-                                    ),
-                                  ),
-                                );
-                              },
                             ),
-                          ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                  color: Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(.02 * size.width),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.search,
+                                    size: 24.0,
+                                  ),
+                                  color: Colors.black,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchBarData(
+                                          uid: widget.uid.toString(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -285,31 +266,8 @@ class _HomeState extends State<Home> {
                             ),
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Added Properties",
-                                      style: GoogleFonts.play(
-                                        color: const Color(0xff4d3a58),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    TextButton(
-                                      child: Text(
-                                        "FILTER",
-                                        style: GoogleFonts.play(
-                                          color: const Color(0xfff63e3c),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        showBottomSheet();
-                                      },
-                                    )
-                                  ],
+                                TitleFilter(
+                                  title: 'Added Properties',
                                 ),
                                 GestureDetector(
                                   onTap: () async {
@@ -318,26 +276,31 @@ class _HomeState extends State<Home> {
                                       var linkList = '';
 
                                       for (int i = 0;
-                                      i < selectedList.length;
-                                      i++) {
+                                          i < selectedList.length;
+                                          i++) {
                                         String generatedDeepLink =
-                                        await DynamicLinkServices
-                                            .createPropertyShareLink(
-                                            short: false,
-                                            collectionId:
-                                            widget.uid.toString(),
-                                            docId: selectedList.elementAt(i)['id'],
-                                            imageUrl: selectedList.elementAt(i)['id'][0],
-                                            propertyTitle: selectedList.elementAt(i)['title']);
+                                            await DynamicLinkServices
+                                                .createPropertyShareLink(
+                                                    short: false,
+                                                    collectionId:
+                                                        widget.uid.toString(),
+                                                    docId: selectedList
+                                                        .elementAt(i)['id'],
+                                                    imageUrl: selectedList
+                                                        .elementAt(i)['id'][0],
+                                                    propertyTitle: selectedList
+                                                        .elementAt(i)['title']);
 
-                                        linkList = linkList +
-                                            '\n $generatedDeepLink';
+                                        linkList =
+                                            linkList + '\n $generatedDeepLink';
                                       }
                                       Share.share(linkList);
 
                                       selectedList = Set();
                                     } else {
-                                      showSnackBar('Please Select Properties to Share', Duration(seconds: 2));
+                                      showSnackBar(
+                                          'Please Select Properties to Share',
+                                          Duration(seconds: 2));
                                     }
                                   },
                                   child: Padding(
@@ -397,7 +360,7 @@ class _HomeState extends State<Home> {
                                       for (var i = 0;
                                           i < storeDocs.length;
                                           i++) ...[
-                                        NearbyHomes1(
+                                        NearbyHomes(
                                           size: size,
                                           isSelected: (bool value) {
                                             if (value) {
@@ -405,8 +368,6 @@ class _HomeState extends State<Home> {
                                             } else {
                                               selectedList.remove(storeDocs[i]);
                                             }
-                                            print(selectedList.length);
-                                            print(selectedList);
                                           },
                                           key: Key((i).toString()),
                                           asset: storeDocs[i]['images'],
@@ -495,30 +456,60 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: .04 * size.width),
-                            child: Row(
+                            child: Column(
                               children: [
-                                Text(
-                                  "Public Properties",
-                                  style: GoogleFonts.play(
-                                    color: const Color(0xff4d3a58),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                  ),
+                                TitleFilter(
+                                  title: 'Public Properties',
                                 ),
-                                const Spacer(),
-                                TextButton(
-                                  child: Text(
-                                    "FILTER",
-                                    style: GoogleFonts.play(
-                                      color: const Color(0xfff63e3c),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (selectedList.length > 0) {
+                                      print(selectedList);
+                                      var linkList = '';
+
+                                      for (int i = 0;
+                                          i < selectedList.length;
+                                          i++) {
+                                        String generatedDeepLink =
+                                            await DynamicLinkServices
+                                                .createPropertyShareLink(
+                                                    short: false,
+                                                    collectionId:
+                                                        widget.uid.toString(),
+                                                    docId: selectedList
+                                                        .elementAt(i)['id'],
+                                                    imageUrl: selectedList
+                                                        .elementAt(i)['id'][0],
+                                                    propertyTitle: selectedList
+                                                        .elementAt(i)['title']);
+
+                                        linkList =
+                                            linkList + '\n $generatedDeepLink';
+                                      }
+                                      Share.share(linkList);
+
+                                      selectedList = Set();
+                                    } else {
+                                      showSnackBar(
+                                          'Please Select Properties to Share',
+                                          Duration(seconds: 2));
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.blue[200]!),
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0)),
+                                      height: 40,
+                                      width: size.width * .86,
+                                      child: Icon(Icons.share),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    showBottomSheet();
-                                  },
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -560,6 +551,16 @@ class _HomeState extends State<Home> {
                                               i < storeDocs.length;
                                               i++) ...[
                                             NearbyHomes(
+                                              isSelected: (bool value) {
+                                                if (value) {
+                                                  selectedList
+                                                      .add(storeDocs[i]);
+                                                } else {
+                                                  selectedList
+                                                      .remove(storeDocs[i]);
+                                                }
+                                              },
+                                              key: Key((i).toString()),
                                               usage: 'public',
                                               size: size,
                                               asset: storeDocs[i]['images'],
@@ -573,18 +574,18 @@ class _HomeState extends State<Home> {
                                                   ['bookmark'],
                                               bookmarkFunction: () async {
                                                 CollectionReference students =
-                                                    FirebaseFirestore.instance
-                                                        .collection(widget.uid
-                                                            .toString());
+                                                FirebaseFirestore.instance
+                                                    .collection(widget.uid
+                                                    .toString());
 
                                                 students
                                                     .doc(storeDocs[i]['id'])
                                                     .update({
                                                   'bookmark': !storeDocs[i]
-                                                      ['bookmark'],
+                                                  ['bookmark'],
                                                 }).whenComplete(() {
                                                   if (!storeDocs[i]
-                                                      ['bookmark']) {
+                                                  ['bookmark']) {
                                                     showSnackBar(
                                                       'Bookmark Added',
                                                       const Duration(
@@ -604,19 +605,19 @@ class _HomeState extends State<Home> {
                                               },
                                               share: () async {
                                                 String generatedDeepLink =
-                                                    await DynamicLinkServices
-                                                        .createPropertyShareLink(
-                                                            short: false,
-                                                            collectionId: widget
-                                                                .uid
-                                                                .toString(),
-                                                            docId: storeDocs[i]
-                                                                ['id'],
-                                                            imageUrl: storeDocs[
-                                                                i]['images'][0],
-                                                            propertyTitle:
-                                                                storeDocs[i]
-                                                                    ['title']);
+                                                await DynamicLinkServices
+                                                    .createPropertyShareLink(
+                                                    short: false,
+                                                    collectionId: widget
+                                                        .uid
+                                                        .toString(),
+                                                    docId: storeDocs[i]
+                                                    ['id'],
+                                                    imageUrl: storeDocs[
+                                                    i]['images'][0],
+                                                    propertyTitle:
+                                                    storeDocs[i]
+                                                    ['title']);
                                                 Share.share(generatedDeepLink);
                                               },
                                               onTap: () {
@@ -626,10 +627,10 @@ class _HomeState extends State<Home> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HouseDetails(
-                                                      uid: 'Public',
-                                                      docId: storeDocs[i]['id'],
-                                                      enableEdit: false,
-                                                    ),
+                                                          uid: 'Public',
+                                                          docId: storeDocs[i]['id'],
+                                                          enableEdit: false,
+                                                        ),
                                                   ),
                                                 );
                                               },
@@ -650,30 +651,62 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: .04 * size.width),
-                            child: Row(
+                            child: Column(
                               children: [
-                                Text(
-                                  "Bookmarked Properties",
-                                  style: GoogleFonts.play(
-                                    color: const Color(0xff4d3a58),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                  ),
+                                TitleFilter(
+                                  title: 'Bookmarked Properties',
                                 ),
-                                const Spacer(),
-                                TextButton(
-                                  child: Text(
-                                    "FILTER",
-                                    style: GoogleFonts.play(
-                                      color: const Color(0xfff63e3c),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (selectedList.length > 0) {
+                                      setState(() => isLoading = true);
+                                      print(selectedList);
+                                      var linkList = '';
+
+                                      for (int i = 0;
+                                          i < selectedList.length;
+                                          i++) {
+                                        String generatedDeepLink =
+                                            await DynamicLinkServices
+                                                .createPropertyShareLink(
+                                                    short: false,
+                                                    collectionId:
+                                                        widget.uid.toString(),
+                                                    docId: selectedList
+                                                        .elementAt(i)['id'],
+                                                    imageUrl: selectedList
+                                                        .elementAt(i)['id'][0],
+                                                    propertyTitle: selectedList
+                                                        .elementAt(i)['title']);
+
+                                        linkList =
+                                            linkList + '\n $generatedDeepLink';
+                                      }
+                                      Share.share(linkList).whenComplete(() =>
+                                          setState(() => isLoading = false));
+
+                                      selectedList = Set();
+                                    } else {
+                                      showSnackBar(
+                                          'Please Select Properties to Share',
+                                          Duration(seconds: 2));
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.blue[200]!),
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15.0)),
+                                      height: 40,
+                                      width: size.width * .86,
+                                      child: Icon(Icons.share),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    showBottomSheet();
-                                  },
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -716,6 +749,16 @@ class _HomeState extends State<Home> {
                                               i++) ...[
                                             if (storeDocs[i]['bookmark'])
                                               NearbyHomes(
+                                                isSelected: (bool value) {
+                                                  if (value) {
+                                                    selectedList
+                                                        .add(storeDocs[i]);
+                                                  } else {
+                                                    selectedList
+                                                        .remove(storeDocs[i]);
+                                                  }
+                                                },
+                                                key: Key((i).toString()),
                                                 size: size,
                                                 asset: storeDocs[i]['images'],
                                                 name: storeDocs[i]['title'],
@@ -729,18 +772,18 @@ class _HomeState extends State<Home> {
                                                     ['bookmark'],
                                                 bookmarkFunction: () async {
                                                   CollectionReference students =
-                                                      FirebaseFirestore.instance
-                                                          .collection(widget.uid
-                                                              .toString());
+                                                  FirebaseFirestore.instance
+                                                      .collection(widget.uid
+                                                      .toString());
 
                                                   students
                                                       .doc(storeDocs[i]['id'])
                                                       .update({
                                                     'bookmark': !storeDocs[i]
-                                                        ['bookmark'],
+                                                    ['bookmark'],
                                                   }).whenComplete(() {
                                                     if (!storeDocs[i]
-                                                        ['bookmark']) {
+                                                    ['bookmark']) {
                                                       showSnackBar(
                                                         'Bookmark Added',
                                                         const Duration(
@@ -760,21 +803,21 @@ class _HomeState extends State<Home> {
                                                 },
                                                 share: () async {
                                                   String generatedDeepLink =
-                                                      await DynamicLinkServices
-                                                          .createPropertyShareLink(
-                                                              short: false,
-                                                              collectionId: widget
-                                                                  .uid
-                                                                  .toString(),
-                                                              docId:
-                                                                  storeDocs[i]
-                                                                      ['id'],
-                                                              imageUrl: storeDocs[
-                                                                      i]
-                                                                  ['images'][0],
-                                                              propertyTitle:
-                                                                  storeDocs[i][
-                                                                      'title']);
+                                                  await DynamicLinkServices
+                                                      .createPropertyShareLink(
+                                                      short: false,
+                                                      collectionId: widget
+                                                          .uid
+                                                          .toString(),
+                                                      docId:
+                                                      storeDocs[i]
+                                                      ['id'],
+                                                      imageUrl: storeDocs[
+                                                      i]
+                                                      ['images'][0],
+                                                      propertyTitle:
+                                                      storeDocs[i][
+                                                      'title']);
                                                   Share.share(
                                                       generatedDeepLink);
                                                 },
@@ -784,12 +827,12 @@ class _HomeState extends State<Home> {
                                                     MaterialPageRoute(
                                                       builder: (context) =>
                                                           HouseDetails(
-                                                        enableEdit: true,
-                                                        uid: widget.uid
-                                                            .toString(),
-                                                        docId: storeDocs[i]
+                                                            enableEdit: true,
+                                                            uid: widget.uid
+                                                                .toString(),
+                                                            docId: storeDocs[i]
                                                             ['id'],
-                                                      ),
+                                                          ),
                                                     ),
                                                   );
                                                 },
@@ -866,6 +909,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       if (selectedPage != Page.home) {
                         setState(() => selectedPage = Page.home);
+                        selectedList = Set();
                       }
                     },
                   ),
@@ -880,6 +924,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       if (selectedPage != Page.public) {
                         setState(() => selectedPage = Page.public);
+                        selectedList = Set();
                       }
                     },
                   ),
@@ -894,6 +939,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       if (selectedPage != Page.bookmark) {
                         setState(() => selectedPage = Page.bookmark);
+                        selectedList = Set();
                       }
                     },
                   ),
@@ -908,6 +954,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       if (selectedPage != Page.profile) {
                         setState(() => selectedPage = Page.profile);
+                        selectedList = Set();
                       }
                     },
                   ),

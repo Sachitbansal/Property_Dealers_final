@@ -22,6 +22,8 @@ class _SearchBarDataState extends State<SearchBarData> {
     super.dispose();
   }
 
+  Set selectedList = Set();
+
   @override
   Widget build(BuildContext context) {
     final CollectionReference noticeCollection =
@@ -110,6 +112,14 @@ class _SearchBarDataState extends State<SearchBarData> {
                       children: [
                         for (var i = 0; i < storeDocs.length; i++) ...[
                           NearbyHomes(
+                            isSelected: (bool value) {
+                              if (value) {
+                                selectedList.add(storeDocs[i]);
+                              } else {
+                                selectedList.remove(storeDocs[i]);
+                              }
+                            },
+                            key: Key((i).toString()),
                             size: size,
                             asset: storeDocs[i]['images'],
                             name: storeDocs[i]['title'],

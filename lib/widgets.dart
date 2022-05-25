@@ -1,5 +1,5 @@
-import 'package:flutter_carousel_slider/carousel_slider.dart' as yo;
-import 'package:untitled/pages/house_details.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:untitled/pages/filter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -506,189 +506,189 @@ class ButtonWithText extends StatelessWidget {
   }
 }
 
-class NearbyHomes extends StatelessWidget {
+// class NearbyHomes extends StatelessWidget {
+//   const NearbyHomes({
+//     Key? key,
+//     required this.asset,
+//     required this.name,
+//     required this.location,
+//     required this.bedCount,
+//     required this.share,
+//     required this.bathCount,
+//     required this.onTap,
+//     required this.size,
+//     required this.bookmarkFunction,
+//     required this.bookmarkIcon,
+//     this.usage,
+//   }) : super(key: key);
+//   final List asset;
+//   final String location, bedCount, name, bathCount;
+//   final String? usage;
+//   final Size size;
+//   final bool bookmarkIcon;
+//   final void Function()? share, onTap, bookmarkFunction;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.symmetric(
+//           horizontal: 0.05 * size.width, vertical: 0.025 * size.width),
+//       child: GestureDetector(
+//         onTap: onTap,
+//         child: Container(
+//           decoration: BoxDecoration(
+//             color: const Color(0xFFF5F6F9),
+//             borderRadius: BorderRadius.circular(20),
+//           ),
+//           child: Row(
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               Container(
+//                 height: 100,
+//                 width: 100,
+//                 decoration: BoxDecoration(
+//                   borderRadius: BorderRadius.circular(20),
+//                   border: Border.all(color: Colors.black, width: .5),
+//                 ),
+//                 child: ClipRRect(
+//                   borderRadius: BorderRadius.circular(20),
+//                   child: CarouselSlider(
+//                     options: CarouselOptions(
+//                       autoPlay: true,
+//                       disableCenter: false,
+//                     ),
+//                     items: asset
+//                         .map(
+//                           (item) => Container(
+//                             decoration: BoxDecoration(
+//                               image: DecorationImage(
+//                                 fit: BoxFit.cover,
+//                                 image: NetworkImage(item.toString()),
+//                               ),
+//                             ),
+//                           ),
+//                         )
+//                         .toList(),
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(
+//                 width: .1 * size.width,
+//               ),
+//               Expanded(
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             name,
+//                             overflow: TextOverflow.ellipsis,
+//                             softWrap: false,
+//                             maxLines: 2,
+//                             style: GoogleFonts.play(
+//                               color: Colors.black,
+//                               fontWeight: FontWeight.w600,
+//                               fontSize: 16,
+//                             ),
+//                           ),
+//                           const SizedBox(
+//                             height: 5,
+//                           ),
+//                           Text(
+//                             location,
+//                             softWrap: false,
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                             style: GoogleFonts.play(
+//                               color: Colors.grey,
+//                               fontSize: 14,
+//                             ),
+//                           ),
+//                           const SizedBox(
+//                             height: 5,
+//                           ),
+//                           Row(
+//                             children: [
+//                               Row(
+//                                 children: [
+//                                   Icon(
+//                                     Icons.king_bed,
+//                                     color: Colors.blue[700],
+//                                     size: 18,
+//                                   ),
+//                                   const SizedBox(
+//                                     width: 5,
+//                                   ),
+//                                   Text(
+//                                     bedCount,
+//                                     style: GoogleFonts.play(
+//                                       fontWeight: FontWeight.bold,
+//                                       color: Colors.lightBlueAccent,
+//                                       fontSize: 14,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(
+//                                 width: 10,
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   Icon(
+//                                     Icons.bathtub,
+//                                     color: Colors.blue[700],
+//                                     size: 16,
+//                                   ),
+//                                   const SizedBox(
+//                                     width: 5,
+//                                   ),
+//                                   Text(
+//                                     bathCount,
+//                                     style: GoogleFonts.play(
+//                                       fontWeight: FontWeight.bold,
+//                                       color: Colors.lightBlueAccent,
+//                                       fontSize: 14,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               Column(
+//                 children: [
+//                   if (usage != 'public')
+//                     IconButton(
+//                       icon: Icon(
+//                         bookmarkIcon ? Icons.bookmark : Icons.bookmark_border,
+//                         color: Colors.lightBlueAccent,
+//                       ),
+//                       onPressed: bookmarkFunction,
+//                     ),
+//                   IconButton(
+//                     icon: const Icon(Icons.share),
+//                     onPressed: share,
+//                   ),
+//                 ],
+//               )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class NearbyHomes extends StatefulWidget {
   const NearbyHomes({
-    Key? key,
-    required this.asset,
-    required this.name,
-    required this.location,
-    required this.bedCount,
-    required this.share,
-    required this.bathCount,
-    required this.onTap,
-    required this.size,
-    required this.bookmarkFunction,
-    required this.bookmarkIcon,
-    this.usage,
-  }) : super(key: key);
-  final List asset;
-  final String location, bedCount, name, bathCount;
-  final String? usage;
-  final Size size;
-  final bool bookmarkIcon;
-  final void Function()? share, onTap, bookmarkFunction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 0.05 * size.width, vertical: 0.025 * size.width),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F6F9),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black, width: .5),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      disableCenter: false,
-                    ),
-                    items: asset
-                        .map(
-                          (item) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(item.toString()),
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: .1 * size.width,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                            maxLines: 2,
-                            style: GoogleFonts.play(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            location,
-                            softWrap: false,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.play(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.king_bed,
-                                    color: Colors.blue[700],
-                                    size: 18,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    bedCount,
-                                    style: GoogleFonts.play(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.lightBlueAccent,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.bathtub,
-                                    color: Colors.blue[700],
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    bathCount,
-                                    style: GoogleFonts.play(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.lightBlueAccent,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: [
-                  if (usage != 'public')
-                    IconButton(
-                      icon: Icon(
-                        bookmarkIcon ? Icons.bookmark : Icons.bookmark_border,
-                        color: Colors.lightBlueAccent,
-                      ),
-                      onPressed: bookmarkFunction,
-                    ),
-                  IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: share,
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class NearbyHomes1 extends StatefulWidget {
-  const NearbyHomes1({
     Key? key,
     required this.asset,
     required this.name,
@@ -712,10 +712,10 @@ class NearbyHomes1 extends StatefulWidget {
   final ValueChanged<bool> isSelected;
 
   @override
-  State<NearbyHomes1> createState() => _NearbyHomes1State();
+  State<NearbyHomes> createState() => _NearbyHomesState();
 }
 
-class _NearbyHomes1State extends State<NearbyHomes1> {
+class _NearbyHomesState extends State<NearbyHomes> {
     bool isSelected = false;
 
   @override
@@ -1066,3 +1066,67 @@ class ProfileMenu extends StatelessWidget {
   }
 }
 
+class TitleFilter extends StatefulWidget {
+  const TitleFilter({
+    Key? key, required this.title,
+  }) : super(key: key);
+
+  final String title;
+
+  @override
+  State<TitleFilter> createState() => _TitleFilterState();
+}
+
+class _TitleFilterState extends State<TitleFilter> {
+  void showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Wrap(
+            children: [
+              Filter(uid: FirebaseAuth.instance.currentUser!.uid),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          widget.title,
+          style: GoogleFonts.play(
+            color: const Color(0xff4d3a58),
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+        const Spacer(),
+        TextButton(
+          child: Text(
+            "FILTER",
+            style: GoogleFonts.play(
+              color: const Color(0xfff63e3c),
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+          onPressed: () {
+            showBottomSheet();
+          },
+        )
+      ],
+    );
+  }
+}
