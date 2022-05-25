@@ -1,9 +1,10 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:untitled/pages/filter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:untitled/pages/customer_requirements.dart';
+import 'package:untitled/pages/filter.dart';
 
 class MyDivider extends StatelessWidget {
   const MyDivider({Key? key}) : super(key: key);
@@ -526,166 +527,6 @@ class ButtonWithText extends StatelessWidget {
 //   final String? usage;
 //   final Size size;
 //   final bool bookmarkIcon;
-//   final void Function()? share, onTap, bookmarkFunction;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.symmetric(
-//           horizontal: 0.05 * size.width, vertical: 0.025 * size.width),
-//       child: GestureDetector(
-//         onTap: onTap,
-//         child: Container(
-//           decoration: BoxDecoration(
-//             color: const Color(0xFFF5F6F9),
-//             borderRadius: BorderRadius.circular(20),
-//           ),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               Container(
-//                 height: 100,
-//                 width: 100,
-//                 decoration: BoxDecoration(
-//                   borderRadius: BorderRadius.circular(20),
-//                   border: Border.all(color: Colors.black, width: .5),
-//                 ),
-//                 child: ClipRRect(
-//                   borderRadius: BorderRadius.circular(20),
-//                   child: CarouselSlider(
-//                     options: CarouselOptions(
-//                       autoPlay: true,
-//                       disableCenter: false,
-//                     ),
-//                     items: asset
-//                         .map(
-//                           (item) => Container(
-//                             decoration: BoxDecoration(
-//                               image: DecorationImage(
-//                                 fit: BoxFit.cover,
-//                                 image: NetworkImage(item.toString()),
-//                               ),
-//                             ),
-//                           ),
-//                         )
-//                         .toList(),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 width: .1 * size.width,
-//               ),
-//               Expanded(
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Expanded(
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             name,
-//                             overflow: TextOverflow.ellipsis,
-//                             softWrap: false,
-//                             maxLines: 2,
-//                             style: GoogleFonts.play(
-//                               color: Colors.black,
-//                               fontWeight: FontWeight.w600,
-//                               fontSize: 16,
-//                             ),
-//                           ),
-//                           const SizedBox(
-//                             height: 5,
-//                           ),
-//                           Text(
-//                             location,
-//                             softWrap: false,
-//                             maxLines: 1,
-//                             overflow: TextOverflow.ellipsis,
-//                             style: GoogleFonts.play(
-//                               color: Colors.grey,
-//                               fontSize: 14,
-//                             ),
-//                           ),
-//                           const SizedBox(
-//                             height: 5,
-//                           ),
-//                           Row(
-//                             children: [
-//                               Row(
-//                                 children: [
-//                                   Icon(
-//                                     Icons.king_bed,
-//                                     color: Colors.blue[700],
-//                                     size: 18,
-//                                   ),
-//                                   const SizedBox(
-//                                     width: 5,
-//                                   ),
-//                                   Text(
-//                                     bedCount,
-//                                     style: GoogleFonts.play(
-//                                       fontWeight: FontWeight.bold,
-//                                       color: Colors.lightBlueAccent,
-//                                       fontSize: 14,
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                               const SizedBox(
-//                                 width: 10,
-//                               ),
-//                               Row(
-//                                 children: [
-//                                   Icon(
-//                                     Icons.bathtub,
-//                                     color: Colors.blue[700],
-//                                     size: 16,
-//                                   ),
-//                                   const SizedBox(
-//                                     width: 5,
-//                                   ),
-//                                   Text(
-//                                     bathCount,
-//                                     style: GoogleFonts.play(
-//                                       fontWeight: FontWeight.bold,
-//                                       color: Colors.lightBlueAccent,
-//                                       fontSize: 14,
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ],
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               Column(
-//                 children: [
-//                   if (usage != 'public')
-//                     IconButton(
-//                       icon: Icon(
-//                         bookmarkIcon ? Icons.bookmark : Icons.bookmark_border,
-//                         color: Colors.lightBlueAccent,
-//                       ),
-//                       onPressed: bookmarkFunction,
-//                     ),
-//                   IconButton(
-//                     icon: const Icon(Icons.share),
-//                     onPressed: share,
-//                   ),
-//                 ],
-//               )
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class NearbyHomes extends StatefulWidget {
   const NearbyHomes({
@@ -716,19 +557,20 @@ class NearbyHomes extends StatefulWidget {
 }
 
 class _NearbyHomesState extends State<NearbyHomes> {
-    bool isSelected = false;
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: 0.05 * widget.size.width, vertical: 0.025 * widget.size.width),
+          horizontal: 0.05 * widget.size.width,
+          vertical: 0.025 * widget.size.width),
       child: GestureDetector(
         onLongPress: () {
-            setState(() {
-              isSelected = !isSelected;
-              widget.isSelected(isSelected);
-            });
+          setState(() {
+            isSelected = !isSelected;
+            widget.isSelected(isSelected);
+          });
         },
         onTap: widget.onTap,
         child: Container(
@@ -875,6 +717,181 @@ class _NearbyHomesState extends State<NearbyHomes> {
                   ),
                 ],
               )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomersContainer extends StatefulWidget {
+  const CustomersContainer({
+    Key? key,
+    required this.name,
+    required this.phone,
+    required this.priceLower,
+    required this.priceUpper,
+    required this.sizeLower,
+    required this.sizeUpper,
+    required this.type,
+    required this.sizeUnit, required this.size, required this.onTap,
+  }) : super(key: key);
+  final String name,
+      phone,
+      priceLower,
+      priceUpper,
+      sizeLower,
+      sizeUpper,
+      type,
+      sizeUnit;
+  final Size size;
+  final void Function() onTap;
+
+  @override
+  State<CustomersContainer> createState() => _CustomersContainerState();
+}
+
+class _CustomersContainerState extends State<CustomersContainer> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: 0.05 * widget.size.width,
+          vertical: 0.025 * widget.size.width),
+      child: GestureDetector(
+        onLongPress: () {
+        },
+        onTap: widget.onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFF5F6F9),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.name,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                            maxLines: 2,
+                            style: GoogleFonts.play(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.phone,
+                            softWrap: false,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.play(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    widget.priceLower,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    widget.priceUpper,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    widget.sizeLower,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    widget.sizeUpper,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                widget.sizeUnit,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                maxLines: 2,
+                                style: GoogleFonts.play(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                widget.type,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                maxLines: 2,
+                                style: GoogleFonts.play(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -1123,7 +1140,13 @@ class _TitleFilterState extends State<TitleFilter> {
             ),
           ),
           onPressed: () {
-            showBottomSheet();
+            Navigator.push(
+              context,
+              CustomPageRoute(
+                child: AddCustomerRequirements(),
+              ),
+            );
+            // showBottomSheet();
           },
         )
       ],
