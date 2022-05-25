@@ -19,6 +19,7 @@ class _FilterState extends State<Filter> {
   String bedRooms = 'Na';
   String facing = 'North';
   String bathRooms = 'Na';
+  String sizeUnit = 'Na';
   String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
   double rangeLabelEnd = 1000.0;
@@ -187,296 +188,365 @@ class _FilterState extends State<Filter> {
               )
             ],
           ),
-          Row(
-            children: const [
-              FilterTitle(
-                title: 'Area Range',
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Min',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.area_chart,
-                  onChanged: (String) {
-                    areaStart = double.parse(String);
-                  },
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Land size',
                 ),
+              ],
+            ),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Min',
+                      keyboardtype: TextInputType.phone,
+                      obscureText: false,
+                      iconChoose: Icons.area_chart,
+                      onChanged: (String) {
+                        areaStart = double.parse(String);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Max',
+                      keyboardtype: TextInputType.phone,
+                      obscureText: false,
+                      iconChoose: Icons.area_chart,
+                      onChanged: (String) {
+                        areaEnd = double.parse(String);
+                      },
+                    ),
+                  )
+                ],
               ),
               SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Max',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.area_chart,
-                  onChanged: (String) {
-                    areaEnd = double.parse(String);
-                  },
+                height: 5,
+              ),
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'm²';
+                      });
+                    },
+                    size: 70,
+                    title: 'm²',
+                    bgColor: sizeUnit == 'm²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'm²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Acres';
+                      });
+                    },
+                    size: 80,
+                    title: 'Acres',
+                    bgColor: sizeUnit == 'Acres'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Acres'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Yards²';
+                      });
+                    },
+                    size: 100,
+                    title: 'Yards²',
+                    bgColor: sizeUnit == 'Yards²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Yards²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Feet²';
+                      });
+                    },
+                    size: 90,
+                    title: 'Feet²',
+                    bgColor: sizeUnit == 'Feet²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Feet²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'biswa';
+                      });
+                    },
+                    size: 90,
+                    title: 'biswa',
+                    bgColor: sizeUnit == 'biswa'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'biswa'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'marla';
+                      });
+                    },
+                    size: 90,
+                    title: 'marla',
+                    bgColor: sizeUnit == 'marla'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'marla'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Facing Direction',
                 ),
-              )
-            ],
-          ),
-          const FilterTitle(
-            title: 'Side Facing',
-          ),
-          Wrap(
+              ],
+            ),
             children: [
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    facing = 'North';
-                  });
-                },
-                title: "North",
-                size: 100,
-                fontColor: facing == 'North'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: facing == 'North'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    facing = 'West';
-                  });
-                },
-                title: "West",
-                size: 100,
-                fontColor: facing == 'West'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: facing == 'West'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    facing = 'East';
-                  });
-                },size: 100,
-                title: "East",
-                fontColor: facing == 'East'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: facing == 'East'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    facing = 'South';
-                  });
-                },size: 100,
-                title: "South",
-                fontColor: facing == 'South'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: facing == 'South'
-                    ? kActiveColor
-                    : kInActiveColor,
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'North';
+                      });
+                    },
+                    title: "North",
+                    size: 100,
+                    fontColor: facing == 'North' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'North' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'West';
+                      });
+                    },
+                    title: "West",
+                    size: 100,
+                    fontColor: facing == 'West' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'West' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'East';
+                      });
+                    },
+                    size: 100,
+                    title: "East",
+                    fontColor: facing == 'East' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'East' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'South';
+                      });
+                    },
+                    size: 100,
+                    title: "South",
+                    fontColor: facing == 'South' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'South' ? kActiveColor : kInActiveColor,
+                  ),
+                ],
               ),
             ],
           ),
-          const FilterTitle(
-            title: 'Rooms',
-          ),
-          Wrap(
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Bedrooms',
+                ),
+              ],
+            ),
             children: [
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = '1';
-                  });
-                },
-                size: 70,
-                title: "1",
-                fontColor: bedRooms == '1'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == '1'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = '2';
-                  });
-                }, size: 70,
-                title: "2",
-                fontColor: bedRooms == '2'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == '2'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = '3';
-                  });
-                },
-                title: "3",
-                size: 70,
-                fontColor: bedRooms == '3'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == '3'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = '4';
-                  });
-                },
-                title: "4",
-                size: 70,
-                fontColor: bedRooms == '4'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == '4'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = '4+';
-                  });
-                },
-                title: "4+",
-                fontColor: bedRooms == '4+'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == '4+'
-                    ? kActiveColor
-                    : kInActiveColor,
-                size: 70,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bedRooms = 'Na';
-                  });
-                },
-                title: "Na",
-                fontColor: bedRooms == 'Na'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bedRooms == 'Na'
-                    ? kActiveColor
-                    : kInActiveColor,
-                size: 70,
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '1';
+                      });
+                    },
+                    size: 70,
+                    title: "1",
+                    fontColor: bedRooms == '1' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '1' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '2';
+                      });
+                    },
+                    size: 70,
+                    title: "2",
+                    fontColor: bedRooms == '2' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '2' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '3';
+                      });
+                    },
+                    title: "3",
+                    size: 70,
+                    fontColor: bedRooms == '3' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '3' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '4';
+                      });
+                    },
+                    title: "4",
+                    size: 70,
+                    fontColor: bedRooms == '4' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '4' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '4+';
+                      });
+                    },
+                    title: "4+",
+                    fontColor: bedRooms == '4+' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '4+' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = 'Na';
+                      });
+                    },
+                    title: "Na",
+                    fontColor: bedRooms == 'Na' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == 'Na' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                ],
               ),
             ],
           ),
-          const FilterTitle(
-            title: 'Bathrooms',
-          ),
-          Wrap(
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Bathrooms',
+                ),
+              ],
+            ),
             children: [
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = '1';
-                  });
-                },
-                size: 70,
-                title: "1",
-                fontColor: bathRooms == '1'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == '1'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = '2';
-                  });
-                },
-                title: "2",
-                size: 70,
-                fontColor: bathRooms == '2'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == '2'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = '3';
-                  });
-                },
-                title: "3",
-                size: 70,
-                fontColor: bathRooms == '3'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == '3'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = '4';
-                  });
-                },
-                title: "4",
-                fontColor: bathRooms == '4'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == '4'
-                    ? kActiveColor
-                    : kInActiveColor,
-                size: 70,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = '4+';
-                  });
-                },  size: 70,
-                title: "4+",
-                fontColor: bathRooms == '4+'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == '4+'
-                    ? kActiveColor
-                    : kInActiveColor,
-              ),
-              ButtonWithText(
-                onTap: () {
-                  setState(() {
-                    bathRooms = 'Na';
-                  });
-                },
-                title: "Na",
-                size: 70,
-                fontColor: bathRooms == 'Na'
-                    ? Colors.white
-                    : kActiveColor,
-                bgColor: bathRooms == 'Na'
-                    ? kActiveColor
-                    : kInActiveColor,
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '1';
+                      });
+                    },
+                    size: 70,
+                    title: "1",
+                    fontColor: bathRooms == '1' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '1' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '2';
+                      });
+                    },
+                    title: "2",
+                    size: 70,
+                    fontColor: bathRooms == '2' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '2' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '3';
+                      });
+                    },
+                    title: "3",
+                    size: 70,
+                    fontColor: bathRooms == '3' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '3' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '4';
+                      });
+                    },
+                    title: "4",
+                    fontColor: bathRooms == '4' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '4' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '4+';
+                      });
+                    },
+                    size: 70,
+                    title: "4+",
+                    fontColor: bathRooms == '4+' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '4+' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = 'Na';
+                      });
+                    },
+                    title: "Na",
+                    size: 70,
+                    fontColor: bathRooms == 'Na' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == 'Na' ? kActiveColor : kInActiveColor,
+                  ),
+                ],
               ),
             ],
           ),
@@ -495,7 +565,6 @@ class _FilterState extends State<Filter> {
               ),
             ),
             onPressed: () {
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
