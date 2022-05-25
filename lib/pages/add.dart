@@ -372,7 +372,6 @@ class _AddState extends State<Add> {
                         ),
                         CustomTextField(
                           titleController: priceController,
-                          keyboardType: TextInputType.number,
                           labelText: '100000',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -839,6 +838,21 @@ class _AddState extends State<Add> {
                                       ? kActiveColor
                                       : kInActiveColor,
                                   fontColor: construction == 'Established'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      construction = 'Under Construction';
+                                    });
+                                  },
+                                  size: 200,
+                                  title: 'Under Construction',
+                                  bgColor: construction == 'Under Construction'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                  fontColor: construction == 'Under Construction'
                                       ? Colors.white
                                       : kActiveColor,
                                 ),

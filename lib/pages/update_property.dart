@@ -319,7 +319,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                           var data = snapshot.data!.data();
                           nameController.text = data!['name'];
                           landSizeController.text = data['landSize'].toString();
-                          keywordsController.text = data['keywords'];
                           addressController.text = data['address'];
                           titleController.text = data['title'];
                           numberController.text = data['number'].toString();
@@ -679,7 +678,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                               : kActiveColor,
                                         ),
                                         ButtonWithText(
-                                          size: 150,
                                           onTap: () {
                                             setState(() =>
                                             widget.construction = 'Established');
@@ -689,6 +687,20 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                               ? kActiveColor
                                               : kInActiveColor,
                                           fontColor: construction == 'Established'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              construction = 'Under Construction';
+                                            });
+                                          },
+                                          title: 'Under Construction',
+                                          bgColor: construction == 'Under Construction'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: construction == 'Under Construction'
                                               ? Colors.white
                                               : kActiveColor,
                                         ),
@@ -784,9 +796,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                       children: [
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'm²';
+                                            setState(() {
+                                              sizeUnit = 'm²';
+                                            });
                                           },
-                                          size: 60,
+                                          size: 70,
                                           title: 'm²',
                                           bgColor: sizeUnit == 'm²'
                                               ? kActiveColor
@@ -797,8 +811,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'Acres';
-                                          }, size: 80,
+                                            setState(() {
+                                              sizeUnit = 'Acres';
+                                            });
+                                          },
+                                          size: 80,
                                           title: 'Acres',
                                           bgColor: sizeUnit == 'Acres'
                                               ? kActiveColor
@@ -809,13 +826,61 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'Hectares';
-                                          }, size: 140,
-                                          title: 'Hectares',
-                                          bgColor: sizeUnit == 'Hectares'
+                                            setState(() {
+                                              sizeUnit = 'Yards²';
+                                            });
+                                          },
+                                          size: 100,
+                                          title: 'Yards²',
+                                          bgColor: sizeUnit == 'Yards²'
                                               ? kActiveColor
                                               : kInActiveColor,
-                                          fontColor: sizeUnit == 'Hectares'
+                                          fontColor: sizeUnit == 'Yards²'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'Feet²';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'Feet²',
+                                          bgColor: sizeUnit == 'Feet²'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'Feet²'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'biswa';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'biswa',
+                                          bgColor: sizeUnit == 'biswa'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'biswa'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'marla';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'marla',
+                                          bgColor: sizeUnit == 'marla'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'marla'
                                               ? Colors.white
                                               : kActiveColor,
                                         ),
@@ -840,7 +905,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                   title: 'Price',
                                 ),
                                 CustomTextField(
-                                  keyboardType: TextInputType.number,
+                                  // keyboardType: TextInputType.number,
                                   titleController: priceController,
                                   labelText: '100000',
                                   validator: (value) {
@@ -869,16 +934,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 ),
                                 const FilterTitle(
                                   title: 'Keywords (separated by comma)',
-                                ),
-                                CustomTextField(
-                                  titleController: keywordsController,
-                                  labelText: 'Pool, Parking',
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Some Keywords';
-                                    }
-                                    return null;
-                                  },
                                 ),
                                 const FilterTitle(
                                   title: 'Address Of Property',
