@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'house_details.dart';
@@ -71,74 +72,73 @@ class _SearchState extends State<Search> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Search'),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              if (selectedList.length > 0) {
+                setState(() => isLoading = true);
+                print(selectedList);
+                var linkList = '';
+
+                for (int i = 0;
+                i < selectedList.length;
+                i++) {
+                  String generatedDeepLink =
+                  await DynamicLinkServices
+                      .createPropertyShareLink(
+                      short: false,
+                      collectionId:
+                      widget.uid.toString(),
+                      docId: selectedList
+                          .elementAt(i)['id'],
+                      imageUrl: selectedList
+                          .elementAt(i)['id'][0],
+                      propertyTitle: selectedList
+                          .elementAt(i)['title']);
+
+                  linkList =
+                      linkList + '\n $generatedDeepLink';
+                }
+                Share.share(linkList).whenComplete(() =>
+                    setState(() => isLoading = false));
+
+                selectedList = Set();
+              } else {
+                showSnackBar(
+                    'Please Select Properties to Share',
+                    Duration(seconds: 2));
+              }
+            },
+            child: Icon(Icons.share),
+          ),
+          SizedBox(width: 10,)
+        ],
       ),
-      body: isLoading ? Center(child: Column(children: [CircularProgressIndicator(), Text('Generating Links')],),) : SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  if (selectedList.length > 0) {
-                    setState(() => isLoading = true);
-                    print(selectedList);
-                    var linkList = '';
-
-                    for (int i = 0;
-                    i < selectedList.length;
-                    i++) {
-                      String generatedDeepLink =
-                      await DynamicLinkServices
-                          .createPropertyShareLink(
-                          short: false,
-                          collectionId:
-                          widget.uid.toString(),
-                          docId: selectedList
-                              .elementAt(i)['id'],
-                          imageUrl: selectedList
-                              .elementAt(i)['id'][0],
-                          propertyTitle: selectedList
-                              .elementAt(i)['title']);
-
-                      linkList =
-                          linkList + '\n $generatedDeepLink';
-                    }
-                    Share.share(linkList).whenComplete(() =>
-                        setState(() => isLoading = false));
-
-                    selectedList = Set();
-                  } else {
-                    showSnackBar(
-                        'Please Select Properties to Share',
-                        Duration(seconds: 2));
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.blue[200]!),
-                        color: Colors.white,
-                        borderRadius:
-                        BorderRadius.circular(15.0)),
-                    height: 40,
-                    width: size.width * .86,
-                    child: Icon(Icons.share),
-                  ),
-                ),
+      body: isLoading
+          ? Center(
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  Text('Generating Links')
+                ],
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: data,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Something Went Wrong.'),
-                        ),
+            )
+          : SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: data,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Something Went Wrong.'),
+                              ),
                       );
                     }
                     if (snapshot.connectionState ==

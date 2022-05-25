@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../dynamic_links.dart';
 import '../widgets.dart';
 import 'house_details.dart';
@@ -23,6 +24,7 @@ class _SearchBarDataState extends State<SearchBarData> {
   }
 
   Set selectedList = Set();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +45,66 @@ class _SearchBarDataState extends State<SearchBarData> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Search Data'),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              if (selectedList.length > 0) {
+                setState(() => isLoading = true);
+                print(selectedList);
+                var linkList = '';
+
+                for (int i = 0; i < selectedList.length; i++) {
+                  String generatedDeepLink =
+                      await DynamicLinkServices.createPropertyShareLink(
+                          short: false,
+                          collectionId: widget.uid.toString(),
+                          docId: selectedList.elementAt(i)['id'],
+                          imageUrl: selectedList.elementAt(i)['id'][0],
+                          propertyTitle: selectedList.elementAt(i)['title']);
+
+                  linkList = linkList + '\n $generatedDeepLink';
+                }
+                Share.share(linkList)
+                    .whenComplete(() => setState(() => isLoading = false));
+
+                selectedList = Set();
+              } else {
+                showSnackBar(
+                    'Please Select Properties to Share', Duration(seconds: 2));
+              }
+            },
+            child: Icon(Icons.share),
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              CustomTextField(
-                onChanged: (String query) {
-                  setState(() {
-                    final data = noticeCollection
-                        .where("searchData",
-                            arrayContains: searchController.text)
+        child: isLoading
+            ? Center(
+                child: Column(
+                  children: [
+                    CircularProgressIndicator(),
+                    Text('Generating Links')
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    CustomTextField(
+                      onChanged: (String query) {
+                        setState(() {
+                          final data = noticeCollection
+                              .where("searchData",
+                                  arrayContains: searchController.text)
                         .snapshots();
                   });
                 },
