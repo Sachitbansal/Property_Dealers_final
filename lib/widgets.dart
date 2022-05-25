@@ -687,6 +687,202 @@ class NearbyHomes extends StatelessWidget {
   }
 }
 
+class NearbyHomes1 extends StatefulWidget {
+  const NearbyHomes1({
+    Key? key,
+    required this.asset,
+    required this.name,
+    required this.location,
+    required this.bedCount,
+    required this.share,
+    required this.bathCount,
+    required this.onTap,
+    required this.size,
+    required this.bookmarkFunction,
+    required this.bookmarkIcon,
+    required this.isSelected,
+    this.usage,
+  }) : super(key: key);
+  final List asset;
+  final String location, bedCount, name, bathCount;
+  final String? usage;
+  final Size size;
+  final bool bookmarkIcon;
+  final void Function()? share, onTap, bookmarkFunction;
+  final ValueChanged<bool> isSelected;
+
+  @override
+  State<NearbyHomes1> createState() => _NearbyHomes1State();
+}
+
+class _NearbyHomes1State extends State<NearbyHomes1> {
+    bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: 0.05 * widget.size.width, vertical: 0.025 * widget.size.width),
+      child: GestureDetector(
+        onLongPress: () {
+            setState(() {
+              isSelected = !isSelected;
+              widget.isSelected(isSelected);
+            });
+        },
+        onTap: widget.onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blue[50] : Color(0xFFF5F6F9),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black, width: .5),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      autoPlay: true,
+                      disableCenter: false,
+                    ),
+                    items: widget.asset
+                        .map(
+                          (item) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(item.toString()),
+                          ),
+                        ),
+                      ),
+                    )
+                        .toList(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: .1 * widget.size.width,
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.name,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                            maxLines: 2,
+                            style: GoogleFonts.play(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.location,
+                            softWrap: false,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.play(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.king_bed,
+                                    color: Colors.blue[700],
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    widget.bedCount,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.bathtub,
+                                    color: Colors.blue[700],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    widget.bathCount,
+                                    style: GoogleFonts.play(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.lightBlueAccent,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  if (widget.usage != 'public')
+                    IconButton(
+                      icon: Icon(
+                        widget.bookmarkIcon ? Icons.bookmark : Icons.bookmark_border,
+                        color: Colors.lightBlueAccent,
+                      ),
+                      onPressed: widget.bookmarkFunction,
+                    ),
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: widget.share,
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key? key,
