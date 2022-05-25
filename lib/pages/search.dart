@@ -44,6 +44,7 @@ class _SearchState extends State<Search> {
   }
 
   Set selectedList = Set();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +72,62 @@ class _SearchState extends State<Search> {
         centerTitle: true,
         title: const Text('Search'),
       ),
-      body: SingleChildScrollView(
+      body: isLoading ? Center(child: Column(children: [CircularProgressIndicator(), Text('Generating Links')],),) : SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
+              GestureDetector(
+                onTap: () async {
+                  if (selectedList.length > 0) {
+                    setState(() => isLoading = true);
+                    print(selectedList);
+                    var linkList = '';
+
+                    for (int i = 0;
+                    i < selectedList.length;
+                    i++) {
+                      String generatedDeepLink =
+                      await DynamicLinkServices
+                          .createPropertyShareLink(
+                          short: false,
+                          collectionId:
+                          widget.uid.toString(),
+                          docId: selectedList
+                              .elementAt(i)['id'],
+                          imageUrl: selectedList
+                              .elementAt(i)['id'][0],
+                          propertyTitle: selectedList
+                              .elementAt(i)['title']);
+
+                      linkList =
+                          linkList + '\n $generatedDeepLink';
+                    }
+                    Share.share(linkList).whenComplete(() =>
+                        setState(() => isLoading = false));
+
+                    selectedList = Set();
+                  } else {
+                    showSnackBar(
+                        'Please Select Properties to Share',
+                        Duration(seconds: 2));
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.blue[200]!),
+                        color: Colors.white,
+                        borderRadius:
+                        BorderRadius.circular(15.0)),
+                    height: 40,
+                    width: size.width * .86,
+                    child: Icon(Icons.share),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: StreamBuilder<QuerySnapshot>(
@@ -104,106 +156,104 @@ class _SearchState extends State<Search> {
                       a['id'] = document.id;
                     }).toList();
 
-                    return Expanded(
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          for (var i = 0;
-                          i < storeDocs.length;
-                          i++) ...[
-                            if (storeDocs[i]['landSize'] >= widget.areaStart &&
-                                storeDocs[i]['landSize'] <= widget.areaEnd &&
-                                storeDocs[i]['facing'] == widget.facing)
-                              NearbyHomes(
-                                isSelected: (bool value) {
-                                  if (value) {
-                                    selectedList.add(storeDocs[i]);
-                                  } else {
-                                    selectedList.remove(storeDocs[i]);
-                                  }
-                                },
-                                key: Key((i).toString()),
-                                size: size,
-                                asset: storeDocs[i]['images'],
-                                name: storeDocs[i]['title'],
-                                location: storeDocs[i]
-                                ['address'],
-                                bedCount: storeDocs[i]
-                                ['bedRooms'],
-                                bathCount: storeDocs[i]
-                                ['bathRooms'],
-                                bookmarkIcon: storeDocs[i]
-                                ['bookmark'],
-                                bookmarkFunction: () async {
-                                  CollectionReference students =
-                                  FirebaseFirestore.instance
-                                      .collection(widget.uid
-                                      .toString());
+                    return ListView(
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        for (var i = 0;
+                        i < storeDocs.length;
+                        i++) ...[
+                          if (storeDocs[i]['landSize'] >= widget.areaStart &&
+                              storeDocs[i]['landSize'] <= widget.areaEnd &&
+                              storeDocs[i]['facing'] == widget.facing)
+                            NearbyHomes(
+                              isSelected: (bool value) {
+                                if (value) {
+                                  selectedList.add(storeDocs[i]);
+                                } else {
+                                  selectedList.remove(storeDocs[i]);
+                                }
+                              },
+                              key: Key((i).toString()),
+                              size: size,
+                              asset: storeDocs[i]['images'],
+                              name: storeDocs[i]['title'],
+                              location: storeDocs[i]
+                              ['address'],
+                              bedCount: storeDocs[i]
+                              ['bedRooms'],
+                              bathCount: storeDocs[i]
+                              ['bathRooms'],
+                              bookmarkIcon: storeDocs[i]
+                              ['bookmark'],
+                              bookmarkFunction: () async {
+                                CollectionReference students =
+                                FirebaseFirestore.instance
+                                    .collection(widget.uid
+                                    .toString());
 
-                                  students
-                                      .doc(storeDocs[i]['id'])
-                                      .update({
-                                    'bookmark': !storeDocs[i]
-                                    ['bookmark'],
-                                  }).whenComplete(() {
-                                    if (!storeDocs[i]
-                                    ['bookmark']) {
-                                      showSnackBar(
-                                        'Bookmark Added',
-                                        const Duration(
-                                          milliseconds: 1000,
+                                students
+                                    .doc(storeDocs[i]['id'])
+                                    .update({
+                                  'bookmark': !storeDocs[i]
+                                  ['bookmark'],
+                                }).whenComplete(() {
+                                  if (!storeDocs[i]
+                                  ['bookmark']) {
+                                    showSnackBar(
+                                      'Bookmark Added',
+                                      const Duration(
+                                        milliseconds: 1000,
+                                      ),
+                                    );
+                                  } else {
+                                    showSnackBar(
+                                      'Bookmark Removed',
+                                      const Duration(
+                                        milliseconds: 1000,
+                                      ),
+                                    );
+                                  }
+                                  setState(() {});
+                                });
+                              },
+                              share: () async {
+                                String generatedDeepLink =
+                                await DynamicLinkServices
+                                    .createPropertyShareLink(
+                                    short: false,
+                                    collectionId: widget
+                                        .uid
+                                        .toString(),
+                                    docId:
+                                    storeDocs[i]
+                                    ['id'],
+                                    imageUrl: storeDocs[
+                                    i]
+                                    ['images'][0],
+                                    propertyTitle:
+                                    storeDocs[i][
+                                    'title']);
+                                Share.share(
+                                    generatedDeepLink);
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        HouseDetails(
+                                          enableEdit: true,
+                                          uid: widget.uid
+                                              .toString(),
+                                          docId: storeDocs[i]
+                                          ['id'],
                                         ),
-                                      );
-                                    } else {
-                                      showSnackBar(
-                                        'Bookmark Removed',
-                                        const Duration(
-                                          milliseconds: 1000,
-                                        ),
-                                      );
-                                    }
-                                    setState(() {});
-                                  });
-                                },
-                                share: () async {
-                                  String generatedDeepLink =
-                                  await DynamicLinkServices
-                                      .createPropertyShareLink(
-                                      short: false,
-                                      collectionId: widget
-                                          .uid
-                                          .toString(),
-                                      docId:
-                                      storeDocs[i]
-                                      ['id'],
-                                      imageUrl: storeDocs[
-                                      i]
-                                      ['images'][0],
-                                      propertyTitle:
-                                      storeDocs[i][
-                                      'title']);
-                                  Share.share(
-                                      generatedDeepLink);
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          HouseDetails(
-                                            enableEdit: true,
-                                            uid: widget.uid
-                                                .toString(),
-                                            docId: storeDocs[i]
-                                            ['id'],
-                                          ),
-                                    ),
-                                  );
-                                },
-                              ),
-                          ]
-                        ],
-                      ),
+                                  ),
+                                );
+                              },
+                            ),
+                        ]
+                      ],
                     );
                   },
                 ),

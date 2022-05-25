@@ -272,6 +272,7 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () async {
                                     if (selectedList.length > 0) {
+                                      setState(()=>isLoading = true);
                                       print(selectedList);
                                       var linkList = '';
 
@@ -294,7 +295,8 @@ class _HomeState extends State<Home> {
                                         linkList =
                                             linkList + '\n $generatedDeepLink';
                                       }
-                                      Share.share(linkList);
+                                      Share.share(linkList).whenComplete(() =>
+                                          setState(() => isLoading = false));
 
                                       selectedList = Set();
                                     } else {
@@ -464,6 +466,7 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () async {
                                     if (selectedList.length > 0) {
+                                      setState(()=>isLoading = true);
                                       print(selectedList);
                                       var linkList = '';
 
@@ -486,7 +489,8 @@ class _HomeState extends State<Home> {
                                         linkList =
                                             linkList + '\n $generatedDeepLink';
                                       }
-                                      Share.share(linkList);
+                                      Share.share(linkList).whenComplete(() =>
+                                          setState(() => isLoading = false));
 
                                       selectedList = Set();
                                     } else {
