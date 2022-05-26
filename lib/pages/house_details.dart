@@ -13,6 +13,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_property.dart';
+import 'package:untitled/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../addHelper.dart';
@@ -81,11 +82,24 @@ class _HouseDetailsState extends State<HouseDetails> {
   @override
   Widget build(BuildContext context) {
     void phoneCall(String phoneNumber) async {
-      final url = 'tel:$phoneNumber';
-      if (await canLaunch(url)) {
-        await launch(url);
+      final String url = 'tel:$phoneNumber';
+      final Uri link = Uri.parse(url);
+      if (await canLaunchUrl(link)) {
+        await launchUrl(link);
       } else {
-        throw 'Could not launch $url';
+        showSnackBar('Could not launch $url', Duration(seconds: 2));
+      }
+    }
+
+    void whatsapp(String number) async {
+      if (number.contains('+91') ||
+          (number.contains('91') &&
+              number.length > 10)) {
+        await launch(
+            'https://wa.me/$number');
+      } else {
+        await launch(
+            'https://wa.me/91$number');
       }
     }
 
@@ -443,10 +457,9 @@ class _HouseDetailsState extends State<HouseDetails> {
                                       onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                UpdateProperty(
-                                                  priceSuffix: snapshot
+                                                  CustomPageRoute(
+                                                    child: UpdateProperty(
+                                                      priceSuffix: snapshot
                                                           .data!['priceSuffix'],
                                                       facing: snapshot
                                                           .data!['facing'],
@@ -459,34 +472,36 @@ class _HouseDetailsState extends State<HouseDetails> {
                                                       bedRooms: snapshot
                                                           .data!['bedRooms'],
                                                       sizeUnit: snapshot
-                                                      .data!['sizeUnit'],
-                                                  construction: snapshot
-                                                      .data!['construction'],
-                                                  collection:
-                                                  widget.uid.toString(),
-                                                  id: widget.docId,
-                                                  imageUrls:
-                                                  snapshot.data!['images'],
+                                                          .data!['sizeUnit'],
+                                                      construction:
+                                                          snapshot.data![
+                                                              'construction'],
+                                                      collection:
+                                                          widget.uid.toString(),
+                                                      id: widget.docId,
+                                                      imageUrls: snapshot
+                                                          .data!['images'],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white70,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
                                                 ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white70,
-                                          borderRadius:
-                                          BorderRadius.circular(15.0),
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            Icons.edit,
-                                            color: Colors.black,
-                                            size: 24,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(
+                                                    Icons.edit,
+                                                    color: Colors.black,
+                                                    size: 24,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                   ],
                                 ),
                               ),
@@ -720,39 +735,38 @@ class _HouseDetailsState extends State<HouseDetails> {
                                     shape: BoxShape.circle),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.phone,
-                                      size: 22,
-                                    ),
-                                    color: Colors.green,
-                                    onPressed: () =>
-                                        phoneCall(snapshot.data!['number']),
-                                  ),
-                                ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.phone,
+                                              size: 22,
+                                            ),
+                                            color: Colors.green,
+                                            onPressed: () => phoneCall(snapshot
+                                                .data!['number']
+                                                .toString()),
+                                          ),
+                                        ),
                               ),
                               const SizedBox(
                                 width: 20,
                               ),
                               Container(
                                 decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.whatsapp,
-                                      size: 22,
-                                    ),
-                                    color: const Color(0xfff63e3c),
-                                    onPressed: () async {
-                                      await launch(
-                                          'https://api.whatsapp.com/send/?phone=91${snapshot.data!['number']}&text&app_absent=0');
-                                    },
-                                  ),
-                                ),
-                              ),
+                                            color: Colors.white,
+                                            shape: BoxShape.circle),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.whatsapp,
+                                              size: 22,
+                                            ),
+                                            color: const Color(0xfff63e3c),
+                                            onPressed: () => whatsapp(snapshot
+                                                .data!['number']
+                                                .toString()),),
+                                        ),
+                                      ),
                             ],
                           ),
                         ),

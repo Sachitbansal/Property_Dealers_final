@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:untitled/pages/contacts.dart';
 
 import '../addHelper.dart';
 import '../dynamic_links.dart';
@@ -82,17 +84,23 @@ class _AddState extends State<Add> {
   bool isPicked = false;
 
   Future imagePickerMethod() async {
-    final pick = await imagePicker.pickMultiImage(imageQuality: 30);
-    setState(() {
-      if (pick != null) {
-        setState(() {
-          isPicked = true;
-        });
-        _image = pick;
-      } else {
-        showSnackBar("No File selected", const Duration(milliseconds: 400));
-      }
-    });
+    bool isGranted = await Permission.mediaLibrary.status.isGranted;
+    if (!isGranted) {
+      isGranted = await Permission.mediaLibrary.request().isGranted;
+    } else {
+      final pick = await imagePicker.pickMultiImage(imageQuality: 30);
+      setState(() {
+        if (pick != null) {
+          setState(() {
+            isPicked = true;
+          });
+          _image = pick;
+        } else {
+          showSnackBar("No File selected", const Duration(milliseconds: 400));
+        }
+      });
+    }
+
   }
 
   void uploadFunction(List<XFile> images) async {
@@ -106,6 +114,7 @@ class _AddState extends State<Add> {
 
     addUser().whenComplete(() {
       urls.clear();
+      Navigator.pop(context);
     });
   }
 
@@ -204,6 +213,13 @@ class _AddState extends State<Add> {
       });
     });
     return await reference.getDownloadURL();
+  }
+
+  Future<void> getContact() async {
+    numberController.text = await Navigator.push(
+      context,
+      CustomPageRoute(child: Contacts()),
+    );
   }
 
   @override
@@ -1044,41 +1060,27 @@ class _AddState extends State<Add> {
                         const SizedBox(
                           height: 10,
                         ),
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.blue[200]!),
-                            alignment: Alignment.center,
-                          ),
-                          child: const SizedBox(
-                            height: 40,
-                            // width: size.width * .8,
-                            child: Center(
-                              child: Text(
-                                'Add',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            // if (_formKey.currentState!.validate() &&
-                            //     _image != null) {
-                            //   uploadFunction(_image!);
-                            // } else if (_image == null) {
-                            //   showSnackBar('Please Select Images',
-                            //       Duration(milliseconds: 1000));
-                            // } else {
-                            //   showSnackBar('Please fill all fields',
-                            //       Duration(milliseconds: 1000));
-                            // }
-                            if (_image != null) {
-                              uploadFunction(_image!);
-                            } else {
-                              addUser();
-                            }
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                RoundedButton(getContact, 'Choose Contact', Colors.white,
+                                    Colors.blue[200]!),
+                                const SizedBox(
+                                  height: 10,
+                                ), RoundedButton( () {
+                                  if (_image != null) {
+                                    uploadFunction(_image!);
+                                  } else {
+                                    addUser();
+                                  }
 
-                          },
+                                }, 'Add Property', Colors.white,
+                                    Colors.blue[200]!),
+                              ],
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 20,
@@ -1090,5 +1092,6 @@ class _AddState extends State<Add> {
               ),
       ),
     );
+
   }
 }

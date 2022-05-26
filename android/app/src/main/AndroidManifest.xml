@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sachit.estatemate">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-   <application
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <application
         android:label="EstateMate"
         android:icon="@mipmap/ic_launcher">
        <meta-data

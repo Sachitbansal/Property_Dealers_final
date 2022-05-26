@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:untitled/pages/contacts.dart';
+import '../main.dart';
 import '../widgets.dart';
 
 class UpdateProperty extends StatefulWidget {
@@ -174,7 +176,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       construction.toLowerCase(),
       landSizeController.text.toString().toLowerCase(),
       nameController.text.toLowerCase(),
-      numberController.text.toString().toLowerCase(),
+      numberController.text.toString(),
       types.toLowerCase(),
       priceController.text.toString().toLowerCase(),
       priceSuffix.toLowerCase(),
@@ -216,7 +218,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'keywords': keywordsController.text,
       'address': addressController.text,
       'name': nameController.text,
-      'number': int.parse(numberController.text),
+      'number': numberController.text,
       'types': types,
       'facing': facing,
       'Price': price,
@@ -279,6 +281,13 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     await uploadTask?.whenComplete(() {});
     // print(await reference.getDownloadURL());
     return await reference.getDownloadURL();
+  }
+
+  Future<void> getContact() async {
+    numberController.text = await Navigator.push(
+      context,
+      CustomPageRoute(child: Contacts()),
+    );
   }
 
   @override
@@ -1058,27 +1067,24 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all<Color>(
-                                        Colors.blue[200]!),
-                                    alignment: Alignment.center,
-                                  ),
-                                  child: const SizedBox(
-                                    height: 40,
-                                    child: Center(
-                                      child: Text(
-                                        'Update',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        RoundedButton(getContact, 'Choose Contact', Colors.white,
+                                            Colors.blue[200]!),
+                                        const SizedBox(
+                                          height: 10,
+                                        ), RoundedButton( () {
+                                          if (_formKey.currentState!.validate()) {
+                                            _showMyDialog();
+                                          }
+                                        }, 'Update Property', Colors.white,
+                                            Colors.blue[200]!),
+                                      ],
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      _showMyDialog();
-                                    }
-                                  },
+                                  ],
                                 ),
                                 const SizedBox(
                                   height: 20,

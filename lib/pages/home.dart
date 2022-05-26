@@ -141,12 +141,11 @@ class _HomeState extends State<Home> {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SearchBarData(
-                                          uid: widget.uid.toString(),
-                                        ),
-                                      ),
-                                    );
+                                        CustomPageRoute(
+                                          child: SearchBarData(
+                                            uid: widget.uid.toString(),
+                                          ),
+                                        ));
                                   },
                                 ),
                               ),
@@ -191,9 +190,9 @@ class _HomeState extends State<Home> {
                               icon: Icons.person,
                               press: () async {
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfilePage(
+                                    context,
+                                    CustomPageRoute(
+                                        child: ProfilePage(
                                       name: FirebaseAuth
                                           .instance.currentUser!.displayName
                                           .toString(),
@@ -204,9 +203,7 @@ class _HomeState extends State<Home> {
                                           .instance.currentUser!.email
                                           .toString(),
                                       uid: widget.uid.toString(),
-                                    ),
-                                  ),
-                                );
+                                    )));
                               },
                             ),
                             ProfileMenu(
@@ -240,10 +237,9 @@ class _HomeState extends State<Home> {
                                   );
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
-                                    ),
-                                  );
+                                      CustomPageRoute(
+                                        child: const LoginScreen(),
+                                      ));
                                 } catch (e) {
                                   showSnackBar(
                                     'Could not loggout because of $e',
@@ -428,17 +424,13 @@ class _HomeState extends State<Home> {
                                               },
                                               onTap: () {
                                                 Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HouseDetails(
-                                                      enableEdit: true,
-                                                      uid:
-                                                          widget.uid.toString(),
-                                                      docId: storeDocs[i]['id'],
-                                                    ),
-                                                  ),
-                                                );
+                                                    context,
+                                                CustomPageRoute(
+                                                    child: HouseDetails(
+                                                  enableEdit: true,
+                                                  uid: widget.uid.toString(),
+                                                  docId: storeDocs[i]['id'],
+                                                )));
                                               },
                                             ),
                                           ]
@@ -627,16 +619,15 @@ class _HomeState extends State<Home> {
                                               onTap: () {
                                                 print('tap');
                                                 Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HouseDetails(
-                                                          uid: 'Public',
-                                                          docId: storeDocs[i]['id'],
-                                                          enableEdit: false,
-                                                        ),
-                                                  ),
-                                                );
+                                                    context,
+                                                    CustomPageRoute(
+                                                      child: HouseDetails(
+                                                        uid: 'Public',
+                                                        docId: storeDocs[i]
+                                                            ['id'],
+                                                        enableEdit: false,
+                                                      ),
+                                                    ));
                                               },
                                             ),
                                           ]
@@ -828,15 +819,14 @@ class _HomeState extends State<Home> {
                                                 onTap: () {
                                                   Navigator.push(
                                                     context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          HouseDetails(
-                                                            enableEdit: true,
-                                                            uid: widget.uid
-                                                                .toString(),
-                                                            docId: storeDocs[i]
+                                                    CustomPageRoute(
+                                                      child: HouseDetails(
+                                                        enableEdit: true,
+                                                        uid: widget.uid
+                                                            .toString(),
+                                                        docId: storeDocs[i]
                                                             ['id'],
-                                                          ),
+                                                      ),
                                                     ),
                                                   );
                                                 },
@@ -875,13 +865,12 @@ class _HomeState extends State<Home> {
                 shape: const RoundedRectangleBorder(),
                 onPressed: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Add(
-                        collection: widget.uid.toString(),
-                      ),
-                    ),
-                  );
+                      context,
+                      CustomPageRoute(
+                        child: Add(
+                          collection: widget.uid.toString(),
+                        ),
+                      ));
                 },
                 tooltip: 'Increment',
                 child: const Icon(

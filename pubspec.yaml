@@ -50,6 +50,8 @@ dependencies:
   share_plus: ^4.0.4
   connectivity_plus: ^2.3.0
   firebase_crashlytics: ^2.8.0
+  fast_contacts: ^1.1.1
+  contacts_service: ^0.6.3
 
 dev_dependencies:
   change_app_package_name: ^1.0.0
