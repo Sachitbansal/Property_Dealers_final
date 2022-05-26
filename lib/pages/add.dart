@@ -111,19 +111,19 @@ class _AddState extends State<Add> {
 
   Future<void> addUser() async {
     List varList = [
-      titleController.text,
+      titleController.text.toLowerCase(),
       buyRent[0].toLowerCase(),
-      bedRooms,
-      bathRooms,
-      sizeUnit,
-      facing,
-      construction,
-      landSizeController.text.toString(),
-      nameController.text,
-      numberController.text.toString(),
+      bedRooms.toLowerCase(),
+      bathRooms.toLowerCase(),
+      sizeUnit.toLowerCase(),
+      facing.toLowerCase(),
+      construction.toLowerCase(),
+      landSizeController.text.toString().toLowerCase(),
+      nameController.text.toLowerCase(),
+      numberController.text.toString().toLowerCase(),
       type.toLowerCase(),
-      priceController.text.toString(),
-      titleController.text
+      priceController.text.toString().toLowerCase(),
+      priceSuffix.toLowerCase(),
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -147,11 +147,11 @@ class _AddState extends State<Add> {
     }
 
     if (priceSuffix == 'Crore') {
-      price = int.parse(priceController.text * 10000000);
+      price = int.parse(priceController.text)  * 10000000;
     } else if (priceSuffix == 'Lakh') {
-      price = int.parse(priceController.text * 100000);
+      price = int.parse(priceController.text) * 100000;
     } else {
-      price = int.parse(priceController.text * 1000);
+      price = int.parse(priceController.text)  * 1000;
     }
 
     CollectionReference students =
@@ -172,7 +172,7 @@ class _AddState extends State<Add> {
       'types': type,
       'facing': facing,
       'Price': price,
-      'priceAmount': priceController.text,
+      'priceAmount': priceController.text.toString(),
       'priceSuffix': priceSuffix,
       'title': titleController.text,
       'images': urls,

@@ -17,11 +17,12 @@ class UpdateProperty extends StatefulWidget {
       required this.sizeUnit,
       required this.types,
       required this.facing,
+      required this.priceSuffix,
       required this.construction})
       : super(key: key);
   final String collection, id;
   final List imageUrls, buyRent;
-  String bedRooms, bathRooms, sizeUnit, types, construction, facing;
+  String bedRooms, bathRooms, sizeUnit, types, construction, facing, priceSuffix;
 
   @override
   State<UpdateProperty> createState() => _UpdatePropertyState();
@@ -46,7 +47,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   late String types = 'None';
   late String facing = '0';
   late String priceSuffix = 'None';
-  late int price = 0;
+  late double price = 0;
 
   late List existingUrls = [];
   late bool isPublic = false;
@@ -164,18 +165,19 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
   Future<void> updateProperty() async {
     List varList = [
-      titleController.text,
+      titleController.text.toLowerCase(),
       buyRent[0].toLowerCase(),
-      bedRooms,
-      bathRooms,
-      sizeUnit,
-      construction,
-      landSizeController.text,
-      nameController.text,
-      numberController.text.toString(),
+      bedRooms.toLowerCase(),
+      bathRooms.toLowerCase(),
+      sizeUnit.toLowerCase(),
+      facing.toLowerCase(),
+      construction.toLowerCase(),
+      landSizeController.text.toString().toLowerCase(),
+      nameController.text.toLowerCase(),
+      numberController.text.toString().toLowerCase(),
       types.toLowerCase(),
-      priceController.text.toString(),
-      addressController.text
+      priceController.text.toString().toLowerCase(),
+      priceSuffix.toLowerCase(),
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -193,11 +195,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     }
 
     if (priceSuffix == 'Crore') {
-      price = int.parse(priceController.text * 10000000);
+      price = double.parse(priceController.text)  * 10000000;
     } else if (priceSuffix == 'Lakh') {
-      price = int.parse(priceController.text * 100000);
+      price = double.parse(priceController.text)  * 100000;
     } else {
-      price = int.parse(priceController.text * 1000);
+      price = double.parse(priceController.text)  * 1000;
     }
 
     CollectionReference students =
@@ -216,6 +218,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'name': nameController.text,
       'number': int.parse(numberController.text),
       'types': types,
+      'facing': facing,
       'Price': price,
       'priceAmount': priceController.text,
       'priceSuffix': priceSuffix,
@@ -324,10 +327,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                           addressController.text = data['address'];
                           titleController.text = data['title'];
                           numberController.text = data['number'].toString();
-                          priceController.text = data['Price'].toString();
+                          priceController.text = data['priceAmount'].toString();
                           otherController.text = data['other'].toString();
 
                           buyRent = widget.buyRent;
+                          priceSuffix = widget.priceSuffix;
                           bedRooms = widget.bedRooms;
                           bathRooms = widget.bathRooms;
                           sizeUnit = widget.sizeUnit;
@@ -691,12 +695,10 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                           fontColor: construction == 'Established'
                                               ? Colors.white
                                               : kActiveColor,
-                                        ),
-                                        ButtonWithText(
+                                        ),ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              construction = 'Under Construction';
-                                            });
+                                            setState(() =>
+                                            widget.construction = 'Under Construction');
                                           },
                                           title: 'Under Construction',
                                           bgColor: construction == 'Under Construction'
@@ -724,61 +726,54 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                       children: [
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'North';
-                                            });
+                                            setState(() =>
+                                            widget.facing = 'North');
                                           },
-                                          title: "North",
-                                          size: 100,
-                                          fontColor: facing == 'North'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                          title: 'North',
                                           bgColor: facing == 'North'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'North'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'West';
-                                            });
+                                            setState(() =>
+                                            widget.facing = 'East');
                                           },
-                                          title: "West",
-                                          size: 100,
-                                          fontColor: facing == 'West'
-                                              ? Colors.white
-                                              : kActiveColor,
-                                          bgColor: facing == 'West'
-                                              ? kActiveColor
-                                              : kInActiveColor,
-                                        ),
-                                        ButtonWithText(
-                                          onTap: () {
-                                            setState(() {
-                                              facing = 'East';
-                                            });
-                                          },size: 100,
-                                          title: "East",
-                                          fontColor: facing == 'East'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                          title: 'East',
                                           bgColor: facing == 'East'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'East'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),ButtonWithText(
+                                          onTap: () {
+                                            setState(() =>
+                                            widget.facing = 'West');
+                                          },
+                                          title: 'West',
+                                          bgColor: facing == 'West'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: facing == 'West'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'South';
-                                            });
-                                          },size: 100,
-                                          title: "South",
-                                          fontColor: facing == 'South'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                            setState(() =>
+                                            widget.facing = 'South');
+                                          },
+                                          title: 'South',
                                           bgColor: facing == 'South'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'South'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                       ],
                                     ),
@@ -927,8 +922,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                             setState(() {
                                               priceSuffix = 'Lakh';
                                             });
-                                          }, size: 80,
-                                          title: "Lakh",
+                                          }, size: 80, title: "Lakh",
                                           fontColor: priceSuffix == 'Lakh'
                                               ? Colors.white
                                               : kActiveColor,

@@ -446,17 +446,19 @@ class _HouseDetailsState extends State<HouseDetails> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 UpdateProperty(
-                                                  facing:
-                                                  snapshot.data!['facing'],
-                                                  types:
-                                                  snapshot.data!['types'],
-                                                  buyRent:
-                                                  snapshot.data!['buyRent'],
-                                                  bathRooms: snapshot
-                                                      .data!['bathRooms'],
-                                                  bedRooms: snapshot
-                                                      .data!['bedRooms'],
-                                                  sizeUnit: snapshot
+                                                  priceSuffix: snapshot
+                                                          .data!['priceSuffix'],
+                                                      facing: snapshot
+                                                          .data!['facing'],
+                                                      types: snapshot
+                                                          .data!['types'],
+                                                      buyRent: snapshot
+                                                          .data!['buyRent'],
+                                                      bathRooms: snapshot
+                                                          .data!['bathRooms'],
+                                                      bedRooms: snapshot
+                                                          .data!['bedRooms'],
+                                                      sizeUnit: snapshot
                                                       .data!['sizeUnit'],
                                                   construction: snapshot
                                                       .data!['construction'],
@@ -514,75 +516,73 @@ class _HouseDetailsState extends State<HouseDetails> {
                                       ),
                                     ),
                                     Text(
-                                      '₹${snapshot.data!['Price'].toString()}',
-                                      style: GoogleFonts.play(
-                                        color: const Color(0xfff63e3c),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
+                                      '₹${snapshot.data!['priceAmount'].toString()} ${snapshot.data!['priceSuffix'].toString()}',
+                                              style: GoogleFonts.play(
+                                                color: const Color(0xfff63e3c),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                        snapshot.data!['address'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.play(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                snapshot.data!['address'],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.play(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _facilities(Icons.king_bed,
-                                        snapshot.data!['bedRooms']),
-                                    _facilities(Icons.bathtub,
-                                        snapshot.data!['bathRooms']),
-                                    _facilities(Icons.crop_square,
-                                        "${snapshot.data!['landSize']} ${snapshot.data!['sizeUnit']}"),
-                                    _facilities(Icons.monetization_on_outlined,
-                                        snapshot.data!['buyRent'][0]),
-                                    _facilities(Icons.construction,
-                                        snapshot.data!['construction']),
-                                    _facilities(Icons.house_outlined,
-                                        snapshot.data!['types']),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Facilities",
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Other Information",
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Property Details",
+                                        style: GoogleFonts.play(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Wrap(
+                                        children: [
+                                          _facilities(Icons.king_bed,
+                                              snapshot.data!['bedRooms'], 60, 'Bedrooms:',),
+                                          _facilities(Icons.bathtub,
+                                              snapshot.data!['bathRooms'], 60, 'Bathrooms:',),
+                                          _facilities(
+                                              Icons.circle,
+                                              "${snapshot.data!['landSize']} ${snapshot.data!['sizeUnit']}",
+                                              100, 'Area:',),
+                                          _facilities(
+                                              Icons.monetization_on,
+                                              snapshot.data!['buyRent'][0],
+                                              80, 'Buy/Rent',),
+                                          _facilities(
+                                            Icons.construction,
+                                            snapshot.data!['construction'],
+                                            80, 'Construction Status:',),
+                                          _facilities(Icons.house,
+                                              snapshot.data!['types'], 80, 'Property Type:',),
+                                          _facilities(Icons.zoom_out_map,
+                                              snapshot.data!['facing'], 80, 'Facing:',),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Other Information",
+                                        style: GoogleFonts.play(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
                               ),
                               Text(
                                 snapshot.data!['other'],
@@ -780,32 +780,48 @@ class _HouseDetailsState extends State<HouseDetails> {
     );
   }
 
-  _facilities(IconData icon, String facility) {
+  _facilities(IconData icon, String facility, double? width, String title) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 7.5),
+      margin: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
       decoration: BoxDecoration(
-          color: Colors.grey[100], borderRadius: BorderRadius.circular(5.0)),
+          border: Border.all(color: Colors.blue[200]!),
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(5.0)),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: 10,
+          horizontal: 5,
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: Colors.black,
+              color: Colors.blue[800],
               size: 16,
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              facility,
+              title,
               style: GoogleFonts.play(
-                color: Colors.black,
+                color: Colors.blue[300],
                 fontWeight: FontWeight.w600,
-                fontSize: 12,
+                fontSize: 15,
+              ),
+            ), const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Text(
+                facility,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.play(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
               ),
             ),
           ],
