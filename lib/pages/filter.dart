@@ -15,14 +15,16 @@ class _FilterState extends State<Filter> {
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'Flat';
-  String rooms = 'Na';
+  String bedRooms = 'Na';
   String facing = 'North';
-  String bathrooms = 'Na';
+  String bathRooms = 'Na';
+  String sizeUnit = 'Na';
   String buyOrRent = 'Any';
   double rangeLabelStart = 30.0;
   double rangeLabelEnd = 1000.0;
   double areaStart = 30.0;
   double areaEnd = 1000.0;
+  late String priceSuffix = 'None';
 
   @override
   Widget build(BuildContext context) {
@@ -152,265 +154,454 @@ class _FilterState extends State<Filter> {
               ],
             ),
           ),
-          Row(
-            children: const [
-              FilterTitle(
-                title: 'Budget',
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Price',
+                ),
+              ],
+            ),
             children: [
-              SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Min',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.monetization_on_outlined,
-                  onChanged: (String) {rangeLabelStart = double.parse(String);},
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Min',
+                      keyboardtype: TextInputType.number,
+                      obscureText: false,
+                      iconChoose: Icons.monetization_on_outlined,
+                      onChanged: (String) {rangeLabelStart = double.parse(String);},
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Max',
+                      keyboardtype: TextInputType.number,
+                      obscureText: false,
+                      iconChoose: Icons.monetization_on_outlined,
+                      onChanged: (String) {
+                        rangeLabelEnd = double.parse(String);
+                      },
+                    ),
+                  )
+                ],
               ),
-              SizedBox(
-                  width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Max',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.monetization_on_outlined,
-                  onChanged: (String) {
-                    rangeLabelEnd = double.parse(String);
-                  },
-                ),
-              )
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Crore';
+                      });
+                    },
+                    size: 80,
+                    title: "Crore",
+                    fontColor: priceSuffix == 'Crore'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Crore'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Lakh';
+                      });
+                    }, size: 80,
+                    title: "Lakh",
+                    fontColor: priceSuffix == 'Lakh'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Lakh'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        priceSuffix = 'Thousand';
+                      });
+                    },
+                    title: "Thousand",
+                    size: 120,
+                    fontColor: priceSuffix == 'Thousand'
+                        ? Colors.white
+                        : kActiveColor,
+                    bgColor: priceSuffix == 'Thousand'
+                        ? kActiveColor
+                        : kInActiveColor,
+                  ),
+                ],
+              ),
             ],
           ),
-          Row(
-            children: const [
-              FilterTitle(
-                title: 'Area Range',
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
+              children: [
+                const FilterTitle(
+                  title: 'Land size',
+                ),
+              ],
+            ),
             children: [
-              SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Min',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.area_chart,
-                  onChanged: (String) {
-                    areaStart = double.parse(String);
-                  },
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Min',
+                      keyboardtype: TextInputType.phone,
+                      obscureText: false,
+                      iconChoose: Icons.area_chart,
+                      onChanged: (String) {
+                        areaStart = double.parse(String);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * .42,
+                    child: RoundedInputField(
+                      label: 'Max',
+                      keyboardtype: TextInputType.phone,
+                      obscureText: false,
+                      iconChoose: Icons.area_chart,
+                      onChanged: (String) {
+                        areaEnd = double.parse(String);
+                      },
+                    ),
+                  )
+                ],
               ),
               SizedBox(
-                width: size.width * .42,
-                child: RoundedInputField(
-                  label: 'Max',
-                  keyboardtype: TextInputType.phone,
-                  obscureText: false,
-                  iconChoose: Icons.area_chart,
-                  onChanged: (String) {
-                    areaEnd = double.parse(String);
-                  },
-                ),
-              )
+                height: 5,
+              ),
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'm²';
+                      });
+                    },
+                    size: 70,
+                    title: 'm²',
+                    bgColor: sizeUnit == 'm²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'm²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Acres';
+                      });
+                    },
+                    size: 80,
+                    title: 'Acres',
+                    bgColor: sizeUnit == 'Acres'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Acres'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Yards²';
+                      });
+                    },
+                    size: 100,
+                    title: 'Yards²',
+                    bgColor: sizeUnit == 'Yards²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Yards²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'Feet²';
+                      });
+                    },
+                    size: 90,
+                    title: 'Feet²',
+                    bgColor: sizeUnit == 'Feet²'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'Feet²'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'biswa';
+                      });
+                    },
+                    size: 90,
+                    title: 'biswa',
+                    bgColor: sizeUnit == 'biswa'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'biswa'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        sizeUnit = 'marla';
+                      });
+                    },
+                    size: 90,
+                    title: 'marla',
+                    bgColor: sizeUnit == 'marla'
+                        ? kActiveColor
+                        : kInActiveColor,
+                    fontColor: sizeUnit == 'marla'
+                        ? Colors.white
+                        : kActiveColor,
+                  ),
+                ],
+              ),
             ],
           ),
-          const FilterTitle(
-            title: 'Side Facing',
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
               children: [
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      facing = 'North';
-                    });
-                  },
-                  text: "North",
-                  textColor: facing == 'North' ? Colors.white : kActiveColor,
-                  bgColor: facing == 'North' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      facing = 'West';
-                    });
-                  },
-                  text: "West",
-                  textColor: facing == 'West' ? Colors.white : kActiveColor,
-                  bgColor: facing == 'West' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      facing = 'East';
-                    });
-                  },
-                  text: "East",
-                  textColor: facing == 'East' ? Colors.white : kActiveColor,
-                  bgColor: facing == 'East' ? kActiveColor : kInActiveColor,
-                ),buildOption(
-                  onTap: () {
-                    setState(() {
-                      facing = 'South';
-                    });
-                  },
-                  text: "South",
-                  textColor: facing == 'South' ? Colors.white : kActiveColor,
-                  bgColor: facing == 'South' ? kActiveColor : kInActiveColor,
+                const FilterTitle(
+                  title: 'Facing Direction',
                 ),
               ],
             ),
+            children: [
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'North';
+                      });
+                    },
+                    title: "North",
+                    size: 100,
+                    fontColor: facing == 'North' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'North' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'West';
+                      });
+                    },
+                    title: "West",
+                    size: 100,
+                    fontColor: facing == 'West' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'West' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'East';
+                      });
+                    },
+                    size: 100,
+                    title: "East",
+                    fontColor: facing == 'East' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'East' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        facing = 'South';
+                      });
+                    },
+                    size: 100,
+                    title: "South",
+                    fontColor: facing == 'South' ? Colors.white : kActiveColor,
+                    bgColor: facing == 'South' ? kActiveColor : kInActiveColor,
+                  ),
+                ],
+              ),
+            ],
           ),
-          const FilterTitle(
-            title: 'Rooms',
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
               children: [
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = '1';
-                    });
-                  },
-                  text: "1",
-                  textColor: rooms == '1' ? Colors.white : kActiveColor,
-                  bgColor: rooms == '1' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = '2';
-                    });
-                  },
-                  text: "2",
-                  textColor: rooms == '2' ? Colors.white : kActiveColor,
-                  bgColor: rooms == '2' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = '3';
-                    });
-                  },
-                  text: "3",
-                  textColor: rooms == '3' ? Colors.white : kActiveColor,
-                  bgColor: rooms == '3' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = '4';
-                    });
-                  },
-                  text: "4",
-                  textColor: rooms == '4' ? Colors.white : kActiveColor,
-                  bgColor: rooms == '4' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = '4+';
-                    });
-                  },
-                  text: "4+",
-                  textColor: rooms == '4+' ? Colors.white : kActiveColor,
-                  bgColor: rooms == '4+' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      rooms = 'Na';
-                    });
-                  },
-                  text: "Na",
-                  textColor: rooms == 'Na' ? Colors.white : kActiveColor,
-                  bgColor: rooms == 'Na' ? kActiveColor : kInActiveColor,
+                const FilterTitle(
+                  title: 'Bedrooms',
                 ),
               ],
             ),
+            children: [
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '1';
+                      });
+                    },
+                    size: 70,
+                    title: "1",
+                    fontColor: bedRooms == '1' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '1' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '2';
+                      });
+                    },
+                    size: 70,
+                    title: "2",
+                    fontColor: bedRooms == '2' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '2' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '3';
+                      });
+                    },
+                    title: "3",
+                    size: 70,
+                    fontColor: bedRooms == '3' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '3' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '4';
+                      });
+                    },
+                    title: "4",
+                    size: 70,
+                    fontColor: bedRooms == '4' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '4' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = '4+';
+                      });
+                    },
+                    title: "4+",
+                    fontColor: bedRooms == '4+' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == '4+' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bedRooms = 'Na';
+                      });
+                    },
+                    title: "Na",
+                    fontColor: bedRooms == 'Na' ? Colors.white : kActiveColor,
+                    bgColor: bedRooms == 'Na' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                ],
+              ),
+            ],
           ),
-          const FilterTitle(
-            title: 'Bathrooms',
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ExpansionTile(
+            expandedAlignment: Alignment.bottomLeft,
+            title: Row(
               children: [
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      bathrooms = '1';
-                    });
-                  },
-                  text: "1",
-                  textColor: bathrooms == '1' ? Colors.white : kActiveColor,
-                  bgColor: bathrooms == '1' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  onTap: () {
-                    setState(() {
-                      bathrooms = '2';
-                    });
-                  },
-                  text: "2",
-                  textColor: bathrooms == '2' ? Colors.white : kActiveColor,
-                  bgColor: bathrooms == '2' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  textColor: bathrooms == '3' ? Colors.white : kActiveColor,
-                  onTap: () {
-                    setState(() {
-                      bathrooms = '3';
-                    });
-                  },
-                  text: "3",
-                  bgColor: bathrooms == '3' ? kActiveColor : kInActiveColor,
-                ),buildOption(
-                  textColor: bathrooms == '4' ? Colors.white : kActiveColor,
-                  onTap: () {
-                    setState(() {
-                      bathrooms = '4';
-                    });
-                  },
-                  text: "4",
-                  bgColor: bathrooms == '4' ? kActiveColor : kInActiveColor,
-                ),buildOption(
-                  textColor: bathrooms == '4+' ? Colors.white : kActiveColor,
-                  onTap: () {
-                    setState(() {
-                      bathrooms = '4+';
-                    });
-                  },
-                  text: "4+",
-                  bgColor: bathrooms == '4+' ? kActiveColor : kInActiveColor,
-                ),
-                buildOption(
-                  textColor: bathrooms == 'Na' ? Colors.white : kActiveColor,
-                  onTap: () {
-                    setState(() {
-                      bathrooms = 'Na';
-                    });
-                  },
-                  text: "Na",
-                  bgColor: bathrooms == 'Na' ? kActiveColor : kInActiveColor,
+                const FilterTitle(
+                  title: 'Bathrooms',
                 ),
               ],
             ),
+            children: [
+              Wrap(
+                children: [
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '1';
+                      });
+                    },
+                    size: 70,
+                    title: "1",
+                    fontColor: bathRooms == '1' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '1' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '2';
+                      });
+                    },
+                    title: "2",
+                    size: 70,
+                    fontColor: bathRooms == '2' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '2' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '3';
+                      });
+                    },
+                    title: "3",
+                    size: 70,
+                    fontColor: bathRooms == '3' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '3' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '4';
+                      });
+                    },
+                    title: "4",
+                    fontColor: bathRooms == '4' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '4' ? kActiveColor : kInActiveColor,
+                    size: 70,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = '4+';
+                      });
+                    },
+                    size: 70,
+                    title: "4+",
+                    fontColor: bathRooms == '4+' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == '4+' ? kActiveColor : kInActiveColor,
+                  ),
+                  ButtonWithText(
+                    onTap: () {
+                      setState(() {
+                        bathRooms = 'Na';
+                      });
+                    },
+                    title: "Na",
+                    size: 70,
+                    fontColor: bathRooms == 'Na' ? Colors.white : kActiveColor,
+                    bgColor: bathRooms == 'Na' ? kActiveColor : kInActiveColor,
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(
             height: 20,
@@ -428,6 +619,17 @@ class _FilterState extends State<Filter> {
             ),
             onPressed: () {
 
+              if (priceSuffix == 'Crore') {
+                rangeLabelEnd = rangeLabelEnd * 10000000;
+                rangeLabelStart = rangeLabelStart * 10000000;
+              } else if (priceSuffix == 'Lakh') {
+                rangeLabelEnd = rangeLabelEnd * 100000;
+                rangeLabelStart = rangeLabelStart * 100000;
+              } else {
+                rangeLabelEnd = rangeLabelEnd * 1000;
+                rangeLabelStart = rangeLabelStart * 1000;
+              }
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -436,9 +638,9 @@ class _FilterState extends State<Filter> {
                     priceStart: rangeLabelStart,
                     uid: widget.uid.toString(),
                     propertyType: propertyType,
-                    rooms: rooms,
+                    rooms: bedRooms,
                     buyOrRent: buyOrRent,
-                    bathrooms: bathrooms,
+                    bathrooms: bathRooms,
                     areaStart: areaStart,
                     areaEnd: areaEnd,
                     facing: facing
@@ -448,36 +650,6 @@ class _FilterState extends State<Filter> {
             },
           )
         ],
-      ),
-    );
-  }
-
-  Widget buildOption(
-      {required String text,
-      Color? textColor,
-      Color? bgColor,
-      required void Function() onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 45,
-        width: 65,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-        ),
       ),
     );
   }

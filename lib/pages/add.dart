@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:untitled/pages/contacts.dart';
 
 import '../addHelper.dart';
 import '../dynamic_links.dart';
@@ -44,6 +46,8 @@ class _AddState extends State<Add> {
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String type = 'None';
+  late String priceSuffix = 'None';
+  late int price = 0;
 
   final landSizeController = TextEditingController();
   final addressController = TextEditingController();
@@ -80,17 +84,23 @@ class _AddState extends State<Add> {
   bool isPicked = false;
 
   Future imagePickerMethod() async {
-    final pick = await imagePicker.pickMultiImage(imageQuality: 30);
-    setState(() {
-      if (pick != null) {
-        setState(() {
-          isPicked = true;
-        });
-        _image = pick;
-      } else {
-        showSnackBar("No File selected", const Duration(milliseconds: 400));
-      }
-    });
+    bool isGranted = await Permission.mediaLibrary.status.isGranted;
+    if (!isGranted) {
+      isGranted = await Permission.mediaLibrary.request().isGranted;
+    } else {
+      final pick = await imagePicker.pickMultiImage(imageQuality: 30);
+      setState(() {
+        if (pick != null) {
+          setState(() {
+            isPicked = true;
+          });
+          _image = pick;
+        } else {
+          showSnackBar("No File selected", const Duration(milliseconds: 400));
+        }
+      });
+    }
+
   }
 
   void uploadFunction(List<XFile> images) async {
@@ -104,24 +114,25 @@ class _AddState extends State<Add> {
 
     addUser().whenComplete(() {
       urls.clear();
+      Navigator.pop(context);
     });
   }
 
   Future<void> addUser() async {
     List varList = [
-      titleController.text,
+      titleController.text.toLowerCase(),
       buyRent[0].toLowerCase(),
-      bedRooms,
-      bathRooms,
-      sizeUnit,
-      facing,
-      construction,
-      landSizeController.text.toString(),
-      nameController.text,
-      numberController.text.toString(),
+      bedRooms.toLowerCase(),
+      bathRooms.toLowerCase(),
+      sizeUnit.toLowerCase(),
+      facing.toLowerCase(),
+      construction.toLowerCase(),
+      landSizeController.text.toString().toLowerCase(),
+      nameController.text.toLowerCase(),
+      numberController.text.toString().toLowerCase(),
       type.toLowerCase(),
-      priceController.text.toString(),
-      titleController.text
+      priceController.text.toString().toLowerCase(),
+      priceSuffix.toLowerCase(),
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -144,6 +155,14 @@ class _AddState extends State<Add> {
       ];
     }
 
+    if (priceSuffix == 'Crore') {
+      price = int.parse(priceController.text)  * 10000000;
+    } else if (priceSuffix == 'Lakh') {
+      price = int.parse(priceController.text) * 100000;
+    } else {
+      price = int.parse(priceController.text)  * 1000;
+    }
+
     CollectionReference students =
     FirebaseFirestore.instance.collection(widget.collection.toString());
     return students.add({
@@ -161,7 +180,9 @@ class _AddState extends State<Add> {
       'number': numberController.text,
       'types': type,
       'facing': facing,
-      'Price': priceController.text,
+      'Price': price,
+      'priceAmount': priceController.text.toString(),
+      'priceSuffix': priceSuffix,
       'title': titleController.text,
       'images': urls,
       'other': otherController.text,
@@ -192,6 +213,13 @@ class _AddState extends State<Add> {
       });
     });
     return await reference.getDownloadURL();
+  }
+
+  Future<void> getContact() async {
+    numberController.text = await Navigator.push(
+      context,
+      CustomPageRoute(child: Contacts()),
+    );
   }
 
   @override
@@ -367,19 +395,70 @@ class _AddState extends State<Add> {
                             ),
                           ],
                         ),
-                        const FilterTitle(
-                          title: 'Price',
-                        ),
-                        CustomTextField(
-                          titleController: priceController,
-                          keyboardType: TextInputType.number,
-                          labelText: '100000',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter a desired price';
-                            }
-                            return null;
-                          },
+                        ExpansionTile(
+                          expandedAlignment: Alignment.bottomLeft,
+                          title: Row(
+                            children: [
+                              const FilterTitle(
+                                title: 'Price',
+                              ),
+                            ],
+                          ),
+                          children: [
+                            CustomTextField(
+                              keyboardType: TextInputType.number,
+                              titleController: priceController,
+                              labelText: '100000',
+                            ),
+                            Wrap(
+                              children: [
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Crore';
+                                    });
+                                  },
+                                  size: 80,
+                                  title: "Crore",
+                                  fontColor: priceSuffix == 'Crore'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Crore'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Lakh';
+                                    });
+                                  }, size: 80,
+                                  title: "Lakh",
+                                  fontColor: priceSuffix == 'Lakh'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Lakh'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      priceSuffix = 'Thousand';
+                                    });
+                                  },
+                                  title: "Thousand",
+                                  size: 120,
+                                  fontColor: priceSuffix == 'Thousand'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                  bgColor: priceSuffix == 'Thousand'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         ExpansionTile(
                           expandedAlignment: Alignment.bottomLeft,
@@ -413,7 +492,8 @@ class _AddState extends State<Add> {
                                     setState(() {
                                       bedRooms = '2';
                                     });
-                                  }, size: 70,
+                                  },
+                                  size: 70,
                                   title: "2",
                                   fontColor: bedRooms == '2'
                                       ? Colors.white
@@ -842,6 +922,21 @@ class _AddState extends State<Add> {
                                       ? Colors.white
                                       : kActiveColor,
                                 ),
+                                ButtonWithText(
+                                  onTap: () {
+                                    setState(() {
+                                      construction = 'Under Construction';
+                                    });
+                                  },
+                                  size: 200,
+                                  title: 'Under Construction',
+                                  bgColor: construction == 'Under Construction'
+                                      ? kActiveColor
+                                      : kInActiveColor,
+                                  fontColor: construction == 'Under Construction'
+                                      ? Colors.white
+                                      : kActiveColor,
+                                ),
                               ],
                             ),
                           ],
@@ -965,41 +1060,27 @@ class _AddState extends State<Add> {
                         const SizedBox(
                           height: 10,
                         ),
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.blue[200]!),
-                            alignment: Alignment.center,
-                          ),
-                          child: const SizedBox(
-                            height: 40,
-                            // width: size.width * .8,
-                            child: Center(
-                              child: Text(
-                                'Add',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            // if (_formKey.currentState!.validate() &&
-                            //     _image != null) {
-                            //   uploadFunction(_image!);
-                            // } else if (_image == null) {
-                            //   showSnackBar('Please Select Images',
-                            //       Duration(milliseconds: 1000));
-                            // } else {
-                            //   showSnackBar('Please fill all fields',
-                            //       Duration(milliseconds: 1000));
-                            // }
-                            if (_image != null) {
-                              uploadFunction(_image!);
-                            } else {
-                              addUser();
-                            }
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                RoundedButton(getContact, 'Choose Contact', Colors.white,
+                                    Colors.blue[200]!),
+                                const SizedBox(
+                                  height: 10,
+                                ), RoundedButton( () {
+                                  if (_image != null) {
+                                    uploadFunction(_image!);
+                                  } else {
+                                    addUser();
+                                  }
 
-                          },
+                                }, 'Add Property', Colors.white,
+                                    Colors.blue[200]!),
+                              ],
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 20,
@@ -1011,5 +1092,6 @@ class _AddState extends State<Add> {
               ),
       ),
     );
+
   }
 }

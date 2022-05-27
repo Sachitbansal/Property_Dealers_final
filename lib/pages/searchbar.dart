@@ -101,13 +101,16 @@ class _SearchBarDataState extends State<SearchBarData> {
                     ),
                     CustomTextField(
                       onChanged: (String query) {
-                        setState(() {
-                          final data = noticeCollection
-                              .where("searchData",
-                                  arrayContains: searchController.text)
-                        .snapshots();
-                  });
-                },
+                        setState(
+                          () {
+                            final data = noticeCollection
+                                .where("searchData",
+                                    arrayContains:
+                                        searchController.text.toLowerCase())
+                                .snapshots();
+                          },
+                        );
+                      },
                 titleController: searchController,
                 labelText: 'Search',
               ),

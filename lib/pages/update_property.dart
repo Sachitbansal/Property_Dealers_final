@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:untitled/pages/contacts.dart';
+import '../main.dart';
 import '../widgets.dart';
 
 class UpdateProperty extends StatefulWidget {
@@ -17,11 +19,12 @@ class UpdateProperty extends StatefulWidget {
       required this.sizeUnit,
       required this.types,
       required this.facing,
+      required this.priceSuffix,
       required this.construction})
       : super(key: key);
   final String collection, id;
   final List imageUrls, buyRent;
-  String bedRooms, bathRooms, sizeUnit, types, construction, facing;
+  String bedRooms, bathRooms, sizeUnit, types, construction, facing, priceSuffix;
 
   @override
   State<UpdateProperty> createState() => _UpdatePropertyState();
@@ -44,15 +47,9 @@ class _UpdatePropertyState extends State<UpdateProperty> {
   late String sizeUnit = 'None';
   late String construction = 'None';
   late String types = 'None';
-
-  late String keywords = 'None';
-  late String address = 'None';
-  late String name = 'None';
-  late String other = 'None';
-  late String landSize = '0';
-  late String number = '0';
-  late String price = '0';
   late String facing = '0';
+  late String priceSuffix = 'None';
+  late double price = 0;
 
   late List existingUrls = [];
   late bool isPublic = false;
@@ -170,18 +167,19 @@ class _UpdatePropertyState extends State<UpdateProperty> {
 
   Future<void> updateProperty() async {
     List varList = [
-      titleController.text,
+      titleController.text.toLowerCase(),
       buyRent[0].toLowerCase(),
-      bedRooms,
-      bathRooms,
-      sizeUnit,
-      construction,
-      landSize.toString(),
-      nameController.text,
+      bedRooms.toLowerCase(),
+      bathRooms.toLowerCase(),
+      sizeUnit.toLowerCase(),
+      facing.toLowerCase(),
+      construction.toLowerCase(),
+      landSizeController.text.toString().toLowerCase(),
+      nameController.text.toLowerCase(),
       numberController.text.toString(),
       types.toLowerCase(),
-      priceController.text.toString(),
-      addressController.text
+      priceController.text.toString().toLowerCase(),
+      priceSuffix.toLowerCase(),
     ];
     List finalData = [];
     for (var i = 0; i < varList.length; i++) {
@@ -198,7 +196,13 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       finalData.addAll(setSearchParam());
     }
 
-    print(finalData);
+    if (priceSuffix == 'Crore') {
+      price = double.parse(priceController.text)  * 10000000;
+    } else if (priceSuffix == 'Lakh') {
+      price = double.parse(priceController.text)  * 100000;
+    } else {
+      price = double.parse(priceController.text)  * 1000;
+    }
 
     CollectionReference students =
     FirebaseFirestore.instance.collection(widget.collection.toString());
@@ -214,9 +218,12 @@ class _UpdatePropertyState extends State<UpdateProperty> {
       'keywords': keywordsController.text,
       'address': addressController.text,
       'name': nameController.text,
-      'number': int.parse(numberController.text),
+      'number': numberController.text,
       'types': types,
-      'Price': int.parse(priceController.text),
+      'facing': facing,
+      'Price': price,
+      'priceAmount': priceController.text,
+      'priceSuffix': priceSuffix,
       'title': titleController.text,
       'images': urls,
     }).then((value) {
@@ -276,6 +283,13 @@ class _UpdatePropertyState extends State<UpdateProperty> {
     return await reference.getDownloadURL();
   }
 
+  Future<void> getContact() async {
+    numberController.text = await Navigator.push(
+      context,
+      CustomPageRoute(child: Contacts()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -319,14 +333,14 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                           var data = snapshot.data!.data();
                           nameController.text = data!['name'];
                           landSizeController.text = data['landSize'].toString();
-                          keywordsController.text = data['keywords'];
                           addressController.text = data['address'];
                           titleController.text = data['title'];
                           numberController.text = data['number'].toString();
-                          priceController.text = data['Price'].toString();
+                          priceController.text = data['priceAmount'].toString();
                           otherController.text = data['other'].toString();
 
                           buyRent = widget.buyRent;
+                          priceSuffix = widget.priceSuffix;
                           bedRooms = widget.bedRooms;
                           bathRooms = widget.bathRooms;
                           sizeUnit = widget.sizeUnit;
@@ -679,7 +693,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                               : kActiveColor,
                                         ),
                                         ButtonWithText(
-                                          size: 150,
                                           onTap: () {
                                             setState(() =>
                                             widget.construction = 'Established');
@@ -689,6 +702,18 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                               ? kActiveColor
                                               : kInActiveColor,
                                           fontColor: construction == 'Established'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),ButtonWithText(
+                                          onTap: () {
+                                            setState(() =>
+                                            widget.construction = 'Under Construction');
+                                          },
+                                          title: 'Under Construction',
+                                          bgColor: construction == 'Under Construction'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: construction == 'Under Construction'
                                               ? Colors.white
                                               : kActiveColor,
                                         ),
@@ -710,61 +735,54 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                       children: [
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'North';
-                                            });
+                                            setState(() =>
+                                            widget.facing = 'North');
                                           },
-                                          title: "North",
-                                          size: 100,
-                                          fontColor: facing == 'North'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                          title: 'North',
                                           bgColor: facing == 'North'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'North'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'West';
-                                            });
+                                            setState(() =>
+                                            widget.facing = 'East');
                                           },
-                                          title: "West",
-                                          size: 100,
-                                          fontColor: facing == 'West'
-                                              ? Colors.white
-                                              : kActiveColor,
-                                          bgColor: facing == 'West'
-                                              ? kActiveColor
-                                              : kInActiveColor,
-                                        ),
-                                        ButtonWithText(
-                                          onTap: () {
-                                            setState(() {
-                                              facing = 'East';
-                                            });
-                                          },size: 100,
-                                          title: "East",
-                                          fontColor: facing == 'East'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                          title: 'East',
                                           bgColor: facing == 'East'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'East'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),ButtonWithText(
+                                          onTap: () {
+                                            setState(() =>
+                                            widget.facing = 'West');
+                                          },
+                                          title: 'West',
+                                          bgColor: facing == 'West'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: facing == 'West'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            setState(() {
-                                              facing = 'South';
-                                            });
-                                          },size: 100,
-                                          title: "South",
-                                          fontColor: facing == 'South'
-                                              ? Colors.white
-                                              : kActiveColor,
+                                            setState(() =>
+                                            widget.facing = 'South');
+                                          },
+                                          title: 'South',
                                           bgColor: facing == 'South'
                                               ? kActiveColor
                                               : kInActiveColor,
+                                          fontColor: facing == 'South'
+                                              ? Colors.white
+                                              : kActiveColor,
                                         ),
                                       ],
                                     ),
@@ -784,9 +802,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                       children: [
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'm²';
+                                            setState(() {
+                                              sizeUnit = 'm²';
+                                            });
                                           },
-                                          size: 60,
+                                          size: 70,
                                           title: 'm²',
                                           bgColor: sizeUnit == 'm²'
                                               ? kActiveColor
@@ -797,8 +817,11 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'Acres';
-                                          }, size: 80,
+                                            setState(() {
+                                              sizeUnit = 'Acres';
+                                            });
+                                          },
+                                          size: 80,
                                           title: 'Acres',
                                           bgColor: sizeUnit == 'Acres'
                                               ? kActiveColor
@@ -809,15 +832,127 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ),
                                         ButtonWithText(
                                           onTap: () {
-                                            sizeUnit = 'Hectares';
-                                          }, size: 140,
-                                          title: 'Hectares',
-                                          bgColor: sizeUnit == 'Hectares'
+                                            setState(() {
+                                              sizeUnit = 'Yards²';
+                                            });
+                                          },
+                                          size: 100,
+                                          title: 'Yards²',
+                                          bgColor: sizeUnit == 'Yards²'
                                               ? kActiveColor
                                               : kInActiveColor,
-                                          fontColor: sizeUnit == 'Hectares'
+                                          fontColor: sizeUnit == 'Yards²'
                                               ? Colors.white
                                               : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'Feet²';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'Feet²',
+                                          bgColor: sizeUnit == 'Feet²'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'Feet²'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'biswa';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'biswa',
+                                          bgColor: sizeUnit == 'biswa'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'biswa'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              sizeUnit = 'marla';
+                                            });
+                                          },
+                                          size: 90,
+                                          title: 'marla',
+                                          bgColor: sizeUnit == 'marla'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                          fontColor: sizeUnit == 'marla'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                ExpansionTile(
+                                  expandedAlignment: Alignment.bottomLeft,
+                                  title: Row(
+                                    children: [
+                                      const FilterTitle(
+                                        title: 'Price',
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    CustomTextField(
+                                      keyboardType: TextInputType.number,
+                                      titleController: priceController,
+                                      labelText: '100000',
+                                    ),
+                                    Wrap(
+                                      children: [
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Crore';
+                                            });
+                                          },
+                                          size: 80,
+                                          title: "Crore",
+                                          fontColor: priceSuffix == 'Crore'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Crore'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Lakh';
+                                            });
+                                          }, size: 80, title: "Lakh",
+                                          fontColor: priceSuffix == 'Lakh'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Lakh'
+                                              ? kActiveColor
+                                              : kInActiveColor,
+                                        ),
+                                        ButtonWithText(
+                                          onTap: () {
+                                            setState(() {
+                                              priceSuffix = 'Thousand';
+                                            });
+                                          },
+                                          title: "Thousand",
+                                          size: 120,
+                                          fontColor: priceSuffix == 'Thousand'
+                                              ? Colors.white
+                                              : kActiveColor,
+                                          bgColor: priceSuffix == 'Thousand'
+                                              ? kActiveColor
+                                              : kInActiveColor,
                                         ),
                                       ],
                                     ),
@@ -837,21 +972,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                   },
                                 ),
                                 const FilterTitle(
-                                  title: 'Price',
-                                ),
-                                CustomTextField(
-                                  keyboardType: TextInputType.number,
-                                  titleController: priceController,
-                                  labelText: '100000',
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter a desired price';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const FilterTitle(
-                                  title: 'Minimum Land size',
+                                  title: 'Land size',
                                 ),
                                 CustomTextField(
                                   keyboardType: TextInputType.number,
@@ -866,19 +987,6 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 ),
                                 const SizedBox(
                                   height: 5,
-                                ),
-                                const FilterTitle(
-                                  title: 'Keywords (separated by comma)',
-                                ),
-                                CustomTextField(
-                                  titleController: keywordsController,
-                                  labelText: 'Pool, Parking',
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Some Keywords';
-                                    }
-                                    return null;
-                                  },
                                 ),
                                 const FilterTitle(
                                   title: 'Address Of Property',
@@ -959,27 +1067,24 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all<Color>(
-                                        Colors.blue[200]!),
-                                    alignment: Alignment.center,
-                                  ),
-                                  child: const SizedBox(
-                                    height: 40,
-                                    child: Center(
-                                      child: Text(
-                                        'Update',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        RoundedButton(getContact, 'Choose Contact', Colors.white,
+                                            Colors.blue[200]!),
+                                        const SizedBox(
+                                          height: 10,
+                                        ), RoundedButton( () {
+                                          if (_formKey.currentState!.validate()) {
+                                            _showMyDialog();
+                                          }
+                                        }, 'Update Property', Colors.white,
+                                            Colors.blue[200]!),
+                                      ],
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      _showMyDialog();
-                                    }
-                                  },
+                                  ],
                                 ),
                                 const SizedBox(
                                   height: 20,

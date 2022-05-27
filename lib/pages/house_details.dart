@@ -13,6 +13,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/pages/update_property.dart';
+import 'package:untitled/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../addHelper.dart';
@@ -81,11 +82,24 @@ class _HouseDetailsState extends State<HouseDetails> {
   @override
   Widget build(BuildContext context) {
     void phoneCall(String phoneNumber) async {
-      final url = 'tel:$phoneNumber';
-      if (await canLaunch(url)) {
-        await launch(url);
+      final String url = 'tel:$phoneNumber';
+      final Uri link = Uri.parse(url);
+      if (await canLaunchUrl(link)) {
+        await launchUrl(link);
       } else {
-        throw 'Could not launch $url';
+        showSnackBar('Could not launch $url', Duration(seconds: 2));
+      }
+    }
+
+    void whatsapp(String number) async {
+      if (number.contains('+91') ||
+          (number.contains('91') &&
+              number.length > 10)) {
+        await launch(
+            'https://wa.me/$number');
+      } else {
+        await launch(
+            'https://wa.me/91$number');
       }
     }
 
@@ -443,48 +457,51 @@ class _HouseDetailsState extends State<HouseDetails> {
                                       onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                UpdateProperty(
-                                                  facing:
-                                                  snapshot.data!['facing'],
-                                                  types:
-                                                  snapshot.data!['types'],
-                                                  buyRent:
-                                                  snapshot.data!['buyRent'],
-                                                  bathRooms: snapshot
-                                                      .data!['bathRooms'],
-                                                  bedRooms: snapshot
-                                                      .data!['bedRooms'],
-                                                  sizeUnit: snapshot
-                                                      .data!['sizeUnit'],
-                                                  construction: snapshot
-                                                      .data!['construction'],
-                                                  collection:
-                                                  widget.uid.toString(),
-                                                  id: widget.docId,
-                                                  imageUrls:
-                                                  snapshot.data!['images'],
+                                                  CustomPageRoute(
+                                                    child: UpdateProperty(
+                                                      priceSuffix: snapshot
+                                                          .data!['priceSuffix'],
+                                                      facing: snapshot
+                                                          .data!['facing'],
+                                                      types: snapshot
+                                                          .data!['types'],
+                                                      buyRent: snapshot
+                                                          .data!['buyRent'],
+                                                      bathRooms: snapshot
+                                                          .data!['bathRooms'],
+                                                      bedRooms: snapshot
+                                                          .data!['bedRooms'],
+                                                      sizeUnit: snapshot
+                                                          .data!['sizeUnit'],
+                                                      construction:
+                                                          snapshot.data![
+                                                              'construction'],
+                                                      collection:
+                                                          widget.uid.toString(),
+                                                      id: widget.docId,
+                                                      imageUrls: snapshot
+                                                          .data!['images'],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white70,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
                                                 ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white70,
-                                          borderRadius:
-                                          BorderRadius.circular(15.0),
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            Icons.edit,
-                                            color: Colors.black,
-                                            size: 24,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(
+                                                    Icons.edit,
+                                                    color: Colors.black,
+                                                    size: 24,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                   ],
                                 ),
                               ),
@@ -514,75 +531,73 @@ class _HouseDetailsState extends State<HouseDetails> {
                                       ),
                                     ),
                                     Text(
-                                      '₹${snapshot.data!['Price'].toString()}',
-                                      style: GoogleFonts.play(
-                                        color: const Color(0xfff63e3c),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
+                                      '₹${snapshot.data!['priceAmount'].toString()} ${snapshot.data!['priceSuffix'].toString()}',
+                                              style: GoogleFonts.play(
+                                                color: const Color(0xfff63e3c),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                        snapshot.data!['address'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.play(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                snapshot.data!['address'],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.play(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _facilities(Icons.king_bed,
-                                        snapshot.data!['bedRooms']),
-                                    _facilities(Icons.bathtub,
-                                        snapshot.data!['bathRooms']),
-                                    _facilities(Icons.crop_square,
-                                        "${snapshot.data!['landSize']} ${snapshot.data!['sizeUnit']}"),
-                                    _facilities(Icons.monetization_on_outlined,
-                                        snapshot.data!['buyRent'][0]),
-                                    _facilities(Icons.construction,
-                                        snapshot.data!['construction']),
-                                    _facilities(Icons.house_outlined,
-                                        snapshot.data!['types']),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Facilities",
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Other Information",
-                                style: GoogleFonts.play(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Property Details",
+                                        style: GoogleFonts.play(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Wrap(
+                                        children: [
+                                          _facilities(Icons.king_bed,
+                                              snapshot.data!['bedRooms'], 60, 'Bedrooms:',),
+                                          _facilities(Icons.bathtub,
+                                              snapshot.data!['bathRooms'], 60, 'Bathrooms:',),
+                                          _facilities(
+                                              Icons.circle,
+                                              "${snapshot.data!['landSize']} ${snapshot.data!['sizeUnit']}",
+                                              100, 'Area:',),
+                                          _facilities(
+                                              Icons.monetization_on,
+                                              snapshot.data!['buyRent'][0],
+                                              80, 'Buy/Rent',),
+                                          _facilities(
+                                            Icons.construction,
+                                            snapshot.data!['construction'],
+                                            80, 'Construction Status:',),
+                                          _facilities(Icons.house,
+                                              snapshot.data!['types'], 80, 'Property Type:',),
+                                          _facilities(Icons.zoom_out_map,
+                                              snapshot.data!['facing'], 80, 'Facing:',),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Other Information",
+                                        style: GoogleFonts.play(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
                               ),
                               Text(
                                 snapshot.data!['other'],
@@ -720,39 +735,38 @@ class _HouseDetailsState extends State<HouseDetails> {
                                     shape: BoxShape.circle),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.phone,
-                                      size: 22,
-                                    ),
-                                    color: Colors.green,
-                                    onPressed: () =>
-                                        phoneCall(snapshot.data!['number']),
-                                  ),
-                                ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.phone,
+                                              size: 22,
+                                            ),
+                                            color: Colors.green,
+                                            onPressed: () => phoneCall(snapshot
+                                                .data!['number']
+                                                .toString()),
+                                          ),
+                                        ),
                               ),
                               const SizedBox(
                                 width: 20,
                               ),
                               Container(
                                 decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.whatsapp,
-                                      size: 22,
-                                    ),
-                                    color: const Color(0xfff63e3c),
-                                    onPressed: () async {
-                                      await launch(
-                                          'https://api.whatsapp.com/send/?phone=91${snapshot.data!['number']}&text&app_absent=0');
-                                    },
-                                  ),
-                                ),
-                              ),
+                                            color: Colors.white,
+                                            shape: BoxShape.circle),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.whatsapp,
+                                              size: 22,
+                                            ),
+                                            color: const Color(0xfff63e3c),
+                                            onPressed: () => whatsapp(snapshot
+                                                .data!['number']
+                                                .toString()),),
+                                        ),
+                                      ),
                             ],
                           ),
                         ),
@@ -780,32 +794,48 @@ class _HouseDetailsState extends State<HouseDetails> {
     );
   }
 
-  _facilities(IconData icon, String facility) {
+  _facilities(IconData icon, String facility, double? width, String title) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 7.5),
+      margin: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
       decoration: BoxDecoration(
-          color: Colors.grey[100], borderRadius: BorderRadius.circular(5.0)),
+          border: Border.all(color: Colors.blue[200]!),
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(5.0)),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: 10,
+          horizontal: 5,
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: Colors.black,
+              color: Colors.blue[800],
               size: 16,
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              facility,
+              title,
               style: GoogleFonts.play(
-                color: Colors.black,
+                color: Colors.blue[300],
                 fontWeight: FontWeight.w600,
-                fontSize: 12,
+                fontSize: 15,
+              ),
+            ), const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Text(
+                facility,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.play(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
               ),
             ),
           ],
