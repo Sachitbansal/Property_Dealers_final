@@ -86,7 +86,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                   );
                 } else {
                   return SizedBox(
-                    height: 500,
+                    height: 800,
                     child: ListView(
                       physics: const BouncingScrollPhysics(),
                       children: [

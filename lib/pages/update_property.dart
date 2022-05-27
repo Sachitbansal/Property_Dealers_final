@@ -803,7 +803,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'm²';
+                                              widget.sizeUnit = 'm²';
                                             });
                                           },
                                           size: 70,
@@ -818,7 +818,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'Acres';
+                                              widget.sizeUnit = 'Acres';
                                             });
                                           },
                                           size: 80,
@@ -833,7 +833,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'Yards²';
+                                              widget.sizeUnit = 'Yards²';
                                             });
                                           },
                                           size: 100,
@@ -848,7 +848,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'Feet²';
+                                              widget.sizeUnit = 'Feet²';
                                             });
                                           },
                                           size: 90,
@@ -863,7 +863,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'biswa';
+                                              widget.sizeUnit = 'biswa';
                                             });
                                           },
                                           size: 90,
@@ -878,7 +878,7 @@ class _UpdatePropertyState extends State<UpdateProperty> {
                                         ButtonWithText(
                                           onTap: () {
                                             setState(() {
-                                              sizeUnit = 'marla';
+                                              widget.sizeUnit = 'marla';
                                             });
                                           },
                                           size: 90,
