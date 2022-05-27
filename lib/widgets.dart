@@ -507,27 +507,6 @@ class ButtonWithText extends StatelessWidget {
   }
 }
 
-// class NearbyHomes extends StatelessWidget {
-//   const NearbyHomes({
-//     Key? key,
-//     required this.asset,
-//     required this.name,
-//     required this.location,
-//     required this.bedCount,
-//     required this.share,
-//     required this.bathCount,
-//     required this.onTap,
-//     required this.size,
-//     required this.bookmarkFunction,
-//     required this.bookmarkIcon,
-//     this.usage,
-//   }) : super(key: key);
-//   final List asset;
-//   final String location, bedCount, name, bathCount;
-//   final String? usage;
-//   final Size size;
-//   final bool bookmarkIcon;
-
 class NearbyHomes extends StatefulWidget {
   const NearbyHomes({
     Key? key,

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +13,6 @@ import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
 import 'package:untitled/pages/profile.dart';
 import 'package:untitled/pages/searchbar.dart';
-
 import '../widgets.dart';
 import 'customer_details.dart';
 import 'house_details.dart';
@@ -531,7 +529,18 @@ class _HomeState extends State<Home> {
                                               Navigator.push(
                                                 context,
                                                 CustomPageRoute(
-                                                  child: CustomerDetails(),
+                                                  child: CustomerDetails(
+                                                    priceUpper: storeDocs[i]
+                                                    ['priceUpper'],
+                                                    priceLower: storeDocs[i]
+                                                    ['priceLower'],
+                                                    sizeLower: storeDocs[i]
+                                                    ['sizeLower'],
+                                                    sizeUpper: storeDocs[i]
+                                                    ['sizeUpper'],
+                                                    sizeUnit: storeDocs[i]['sizeUnit'],
+                                                    type: storeDocs[i]['type'],
+                                                  ),
                                                 ),
                                               );
                                             },

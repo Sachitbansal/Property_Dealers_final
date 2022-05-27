@@ -12,7 +12,6 @@ class Filter extends StatefulWidget {
 }
 
 class _FilterState extends State<Filter> {
-  var selectedRange = const RangeValues(400, 1000);
   Color? kActiveColor = Colors.blue[200];
   Color? kInActiveColor = Colors.blue[200]?.withOpacity(0.05);
   String propertyType = 'Flat';
