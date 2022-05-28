@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/widgets.dart';
 
+import 'contacts.dart';
+
 class AddCustomerRequirements extends StatefulWidget {
   const AddCustomerRequirements({Key? key}) : super(key: key);
 
@@ -68,6 +70,13 @@ class _AddCustomerRequirementsState extends State<AddCustomerRequirements> {
     }).whenComplete(() => showSnackBar('Added', Duration(seconds: 2)));
   }
 
+  Future<void> getContact() async {
+    numberController.text = await Navigator.push(
+      context,
+      CustomPageRoute(child: Contacts()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +110,8 @@ class _AddCustomerRequirementsState extends State<AddCustomerRequirements> {
                   label: 'Contact',
                   keyboardtype: TextInputType.phone,
                 ),
+                SizedBox(height: 10,),
+                RoundedButton(getContact, 'Choose Contact', Colors.white, Colors.blue[300]!),
                 FilterTitle(
                   title: 'Price',
                 ),

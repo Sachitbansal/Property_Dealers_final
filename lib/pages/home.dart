@@ -53,6 +53,7 @@ class _HomeState extends State<Home> {
   Future<void> _updateConnectionState(ConnectivityResult result) async {
     setState(() => _connectivityResult = result);
   }
+
   @override
   void initState() {
     super.initState();
