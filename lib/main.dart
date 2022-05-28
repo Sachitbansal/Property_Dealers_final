@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled/addHelper.dart';
 import 'package:untitled/pages/home.dart';
 import 'package:untitled/pages/loginPage.dart';
+import 'package:untitled/pages/phone.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -90,7 +91,7 @@ class MainPage extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData && FirebaseAuth.instance.currentUser!.emailVerified) {
-          return Home(uid: FirebaseAuth.instance.currentUser!.uid);
+          return Phone(uid: FirebaseAuth.instance.currentUser!.uid);
         } else {
           return const LoginScreen();
         }

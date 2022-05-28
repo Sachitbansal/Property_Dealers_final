@@ -14,7 +14,6 @@ import 'package:untitled/pages/customer_details.dart';
 import 'package:untitled/pages/loginPage.dart';
 import 'package:untitled/pages/profile.dart';
 import 'package:untitled/pages/searchbar.dart';
-
 import '../widgets.dart';
 import 'house_details.dart';
 
@@ -75,6 +74,64 @@ class _HomeState extends State<Home> {
 
   Set selectedList = Set();
 
+  showSnackBar(String snackText, Duration d) {
+    final snackBar = SnackBar(content: Text(snackText), duration: d);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:
+          const Text('Are you sure want to logout?'),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () async {
+
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      showSnackBar(
+                        'Logged out',
+                        const Duration(milliseconds: 1000),
+                      );
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                            child: const LoginScreen(),
+                          ));
+                    } catch (e) {
+                      showSnackBar(
+                        'Could not logout because of $e',
+                        const Duration(milliseconds: 1000),
+                      );
+                    }
+
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> homeProperties = FirebaseFirestore.instance
@@ -88,11 +145,6 @@ class _HomeState extends State<Home> {
 
     final Stream<QuerySnapshot> publicProperties =
         FirebaseFirestore.instance.collection('Public').snapshots();
-
-    showSnackBar(String snackText, Duration d) {
-      final snackBar = SnackBar(content: Text(snackText), duration: d);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
 
     Size size = MediaQuery.of(context).size;
 
@@ -235,27 +287,9 @@ class _HomeState extends State<Home> {
                               },
                             ),
                             ProfileMenu(
-                              text: 'Signout',
+                              text: 'Logout',
                               icon: Icons.logout,
-                              press: () async {
-                                try {
-                                  await FirebaseAuth.instance.signOut();
-                                  showSnackBar(
-                                    'Logged out',
-                                    const Duration(milliseconds: 1000),
-                                  );
-                                  Navigator.push(
-                                    context,
-                                      CustomPageRoute(
-                                        child: const LoginScreen(),
-                                      ));
-                                } catch (e) {
-                                  showSnackBar(
-                                    'Could not loggout because of $e',
-                                    const Duration(milliseconds: 1000),
-                                  );
-                                }
-                              },
+                              press: _showMyDialog,
                             ),
                           ],
                         ),

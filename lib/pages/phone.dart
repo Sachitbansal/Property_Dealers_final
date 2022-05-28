@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/widgets.dart';
-
 import 'home.dart';
 
 class Phone extends StatefulWidget {
@@ -31,7 +29,6 @@ class _PhoneState extends State<Phone> {
 
   Future checkIfDocExists() async {
     try {
-      // Get reference to Firestore collection
       var collectionRef = FirebaseFirestore.instance.collection('UserPhone');
 
       var doc =
