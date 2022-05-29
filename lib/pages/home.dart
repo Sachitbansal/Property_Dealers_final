@@ -572,7 +572,8 @@ class _HomeState extends State<Home> {
                                                 CustomPageRoute(
                                                   child: CustomerDetails(
                                                     priceLower: storeDocs[i]
-                                                        ['priceLower'],
+                                                        ['priceLower'],docId: storeDocs[i]
+                                                        ['id'],
                                                     priceUpper: storeDocs[i]
                                                         ['priceUpper'],
                                                     sizeLower: storeDocs[i]

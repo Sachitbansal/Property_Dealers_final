@@ -444,6 +444,8 @@ class FilterTitle extends StatelessWidget {
         ),
         Text(
           title,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
