@@ -13,6 +13,7 @@ import 'package:untitled/pages/add.dart';
 import 'package:untitled/pages/loginPage.dart';
 import 'package:untitled/pages/profile.dart';
 import 'package:untitled/pages/searchbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets.dart';
 import 'house_details.dart';
 
@@ -117,7 +118,6 @@ class _HomeState extends State<Home> {
                         const Duration(milliseconds: 1000),
                       );
                     }
-
                   },
                 ),
               ],
@@ -258,6 +258,19 @@ class _HomeState extends State<Home> {
                               },
                             ),
                             ProfileMenu(
+                              text: 'Contact App Developer',
+                              icon: Icons.computer,
+                              press: () async {
+                                final String url = 'mailto:sachitbansaldeveloper@email.com';
+                                final Uri link = Uri.parse(url);
+                                if (await canLaunchUrl(link)) {
+                                await launchUrl(link);
+                                } else {
+                                showSnackBar('Could not launch $url', Duration(seconds: 2));
+                                }
+                              },
+                            ),
+                            ProfileMenu(
                               text: 'Reset Password',
                               icon: Icons.security,
                               press: () async {
@@ -266,14 +279,14 @@ class _HomeState extends State<Home> {
                                         email: FirebaseAuth
                                             .instance.currentUser!.email
                                             .toString())
-                                    .whenComplete(() {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Password Reset Email Sent to Registered Email Id'),
-                                    ),
-                                  );
-                                });
+                                    .whenComplete(
+                                  () {
+                                    showSnackBar(
+                                      'Password Reset Email Sent to Registered Email Id',
+                                      Duration(seconds: 1),
+                                    );
+                                  },
+                                );
                               },
                             ),
                             ProfileMenu(
@@ -311,13 +324,14 @@ class _HomeState extends State<Home> {
                                         String generatedDeepLink =
                                             await DynamicLinkServices
                                                 .createPropertyShareLink(
-                                                    short: false,
+                                                short: false,
                                                     collectionId:
                                                         widget.uid.toString(),
                                                     docId: selectedList
                                                         .elementAt(i)['id'],
-                                                    imageUrl: selectedList
-                                                        .elementAt(i)['id'][0],
+                                                    imageUrl:
+                                                        selectedList.elementAt(
+                                                            i)['images'][0],
                                                     propertyTitle: selectedList
                                                         .elementAt(i)['title']);
 
@@ -501,13 +515,14 @@ class _HomeState extends State<Home> {
                                         String generatedDeepLink =
                                             await DynamicLinkServices
                                                 .createPropertyShareLink(
-                                                    short: false,
+                                                short: false,
                                                     collectionId:
                                                         widget.uid.toString(),
                                                     docId: selectedList
                                                         .elementAt(i)['id'],
-                                                    imageUrl: selectedList
-                                                        .elementAt(i)['id'][0],
+                                                    imageUrl:
+                                                        selectedList.elementAt(
+                                                            i)['images'][0],
                                                     propertyTitle: selectedList
                                                         .elementAt(i)['title']);
 
@@ -697,13 +712,14 @@ class _HomeState extends State<Home> {
                                         String generatedDeepLink =
                                             await DynamicLinkServices
                                                 .createPropertyShareLink(
-                                                    short: false,
+                                                short: false,
                                                     collectionId:
                                                         widget.uid.toString(),
                                                     docId: selectedList
                                                         .elementAt(i)['id'],
-                                                    imageUrl: selectedList
-                                                        .elementAt(i)['id'][0],
+                                                    imageUrl:
+                                                        selectedList.elementAt(
+                                                            i)['images'][0],
                                                     propertyTitle: selectedList
                                                         .elementAt(i)['title']);
 

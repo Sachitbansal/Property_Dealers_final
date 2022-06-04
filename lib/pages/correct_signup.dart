@@ -317,7 +317,7 @@ class _SignUpState extends State<SignUp> {
                   height: size.height * .02,
                 ),
                 const Text(
-                  'EstateMate by Sachit Bansal',
+                  'PropMagic by Sachit Bansal',
                   style: TextStyle(
                     color: Colors.grey,
                   ),

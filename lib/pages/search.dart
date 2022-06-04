@@ -54,9 +54,8 @@ class _SearchState extends State<Search> {
 
     final data = noticeCollection
         .where("types", isEqualTo: widget.propertyType)
+        .where("facing", isEqualTo: widget.facing)
         .where("buyRent", arrayContainsAny: [widget.buyOrRent])
-        .where("Price", isGreaterThanOrEqualTo: widget.priceStart)
-        .where("Price", isLessThanOrEqualTo: widget.priceEnd)
         .where("bathRooms", isEqualTo: widget.bathrooms)
         .where("bedRooms", isEqualTo: widget.rooms)
         .snapshots();
@@ -84,20 +83,14 @@ class _SearchState extends State<Search> {
                 i < selectedList.length;
                 i++) {
                   String generatedDeepLink =
-                  await DynamicLinkServices
-                      .createPropertyShareLink(
-                      short: false,
-                      collectionId:
-                      widget.uid.toString(),
-                      docId: selectedList
-                          .elementAt(i)['id'],
-                      imageUrl: selectedList
-                          .elementAt(i)['id'][0],
-                      propertyTitle: selectedList
-                          .elementAt(i)['title']);
+                      await DynamicLinkServices.createPropertyShareLink(
+                          short: false,
+                          collectionId: widget.uid.toString(),
+                          docId: selectedList.elementAt(i)['id'],
+                          imageUrl: selectedList.elementAt(i)['images'][0],
+                          propertyTitle: selectedList.elementAt(i)['title']);
 
-                  linkList =
-                      linkList + '\n $generatedDeepLink';
+                  linkList = linkList + '\n $generatedDeepLink';
                 }
                 Share.share(linkList).whenComplete(() =>
                     setState(() => isLoading = false));
@@ -105,8 +98,9 @@ class _SearchState extends State<Search> {
                 selectedList = Set();
               } else {
                 showSnackBar(
-                    'Please Select Properties to Share',
-                    Duration(seconds: 2));
+                  'Please Select Properties to Share',
+                  Duration(seconds: 2),
+                );
               }
             },
             child: Icon(Icons.share),
@@ -139,55 +133,51 @@ class _SearchState extends State<Search> {
                               const SnackBar(
                                 content: Text('Something Went Wrong.'),
                               ),
-                      );
-                    }
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                            );
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
 
-                    final List storeDocs = [];
-                    snapshot.data!.docs
-                        .map((DocumentSnapshot document) {
-                      Map a = document.data() as Map<String, dynamic>;
-                      storeDocs.add(a);
-                      a['id'] = document.id;
-                    }).toList();
-
-                    return ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        for (var i = 0;
-                        i < storeDocs.length;
-                        i++) ...[
-                          if (storeDocs[i]['landSize'] >= widget.areaStart &&
-                              storeDocs[i]['landSize'] <= widget.areaEnd &&
-                              storeDocs[i]['facing'] == widget.facing)
-                            NearbyHomes(
-                              isSelected: (bool value) {
-                                if (value) {
-                                  selectedList.add(storeDocs[i]);
-                                } else {
-                                  selectedList.remove(storeDocs[i]);
-                                }
-                              },
-                              key: Key((i).toString()),
-                              size: size,
-                              asset: storeDocs[i]['images'],
-                              name: storeDocs[i]['title'],
-                              location: storeDocs[i]
-                              ['address'],
-                              bedCount: storeDocs[i]
-                              ['bedRooms'],
-                              bathCount: storeDocs[i]
-                              ['bathRooms'],
-                              bookmarkIcon: storeDocs[i]
-                              ['bookmark'],
-                              bookmarkFunction: () async {
-                                CollectionReference students =
-                                FirebaseFirestore.instance
+                          final List storeDocs = [];
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map a = document.data() as Map<String, dynamic>;
+                            storeDocs.add(a);
+                            a['id'] = document.id;
+                          }).toList();
+                          return ListView(
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              for (var i = 0; i < storeDocs.length; i++) ...[
+                                if (storeDocs[i]['landSize'] >=
+                                        widget.areaStart &&
+                                    storeDocs[i]['landSize'] <=
+                                        widget.areaEnd &&
+                                    storeDocs[i]['Price'] >=
+                                        widget.priceStart &&
+                                    storeDocs[i]['Price'] <= widget.priceEnd)
+                                  NearbyHomes(
+                                    isSelected: (bool value) {
+                                      if (value) {
+                                        selectedList.add(storeDocs[i]);
+                                      } else {
+                                        selectedList.remove(storeDocs[i]);
+                                      }
+                                    },
+                                    key: Key((i).toString()),
+                                    size: size,
+                                    asset: storeDocs[i]['images'],
+                                    name: storeDocs[i]['title'],
+                                    location: storeDocs[i]['address'],
+                                    bedCount: storeDocs[i]['bedRooms'],
+                                    bathCount: storeDocs[i]['bathRooms'],
+                                    bookmarkIcon: storeDocs[i]['bookmark'],
+                                    bookmarkFunction: () async {
+                                      CollectionReference students =
+                                          FirebaseFirestore.instance
                                     .collection(widget.uid
                                     .toString());
 

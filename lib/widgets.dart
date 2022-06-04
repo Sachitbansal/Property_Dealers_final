@@ -1092,7 +1092,7 @@ class _TitleFilterState extends State<TitleFilter> {
         return SingleChildScrollView(
           child: Wrap(
             children: [
-              Filter(uid: FirebaseAuth.instance.currentUser!.uid),
+              Filter(),
             ],
           ),
         );

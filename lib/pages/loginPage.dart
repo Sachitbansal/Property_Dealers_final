@@ -330,7 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: size.height * .05,
                 ),
                 const Text(
-                  'EstateMate by Sachit Bansal',
+                  'PropMagic by Sachit Bansal',
                   style: TextStyle(
                     color: Colors.grey,
                   ),
